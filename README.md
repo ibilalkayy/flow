@@ -20,7 +20,7 @@ To get started in flow, you need to have Golang installed on your machine. Once 
 You can install the application in your local machine using the following command:
 
   ```bash
-  git install github.com/ibilalkayy/flow@latest
+  go install github.com/ibilalkayy/flow@latest
   ```
 
 Verify the installation through the following command:
