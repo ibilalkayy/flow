@@ -1,6 +1,7 @@
 package app
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 
@@ -36,22 +37,44 @@ func CreateBudget(bv *BudgetVariables) error {
 }
 
 func ViewBudget(category string) (string, error) {
+	// Create a new instance of BudgetVariables to hold the retrieved data
 	bv := new(BudgetVariables)
+
+	// Connect to the database
 	db, err := db.Connection()
 	if err != nil {
 		return "", err
 	}
+	defer db.Close()
 
-	query := "SELECT categories, amounts FROM Budget WHERE categories=$1"
-	if err := db.QueryRow(query, category).Scan(&bv.Category, &bv.Amount); err != nil {
-		return "", err
-	}
+	// Prepare the table writer
 	tw := table.NewWriter()
 	tw.AppendHeader(table.Row{"Category", "Amount"})
-	tw.AppendRows([]table.Row{
-		{bv.Category, bv.Amount},
-	})
-	return "Budget Data\n" + tw.Render(), err
+
+	// Query the database based on the provided category
+	var rows *sql.Rows
+	if len(category) != 0 {
+		query := "SELECT categories, amounts FROM Budget WHERE categories=$1"
+		rows, err = db.Query(query, category)
+	} else {
+		query := "SELECT categories, amounts FROM Budget"
+		rows, err = db.Query(query)
+	}
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+
+	// Iterate over the rows and add them to the table writer
+	for rows.Next() {
+		if err := rows.Scan(&bv.Category, &bv.Amount); err != nil {
+			return "", err
+		}
+		tw.AppendRow([]interface{}{bv.Category, bv.Amount})
+	}
+
+	// Render the table
+	return "Budget Data\n" + tw.Render(), nil
 }
 
 func RemoveBudget(category string) error {
