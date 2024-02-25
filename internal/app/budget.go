@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/db"
+	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 type BudgetVariables struct {
@@ -34,18 +35,23 @@ func CreateBudget(bv *BudgetVariables) error {
 	return nil
 }
 
-func ViewBudget(category string) ([2]string, error) {
+func ViewBudget(category string) (string, error) {
 	bv := new(BudgetVariables)
 	db, err := db.Connection()
 	if err != nil {
-		return [2]string{}, err
+		return "", err
 	}
 
 	query := "SELECT categories, amounts FROM Budget WHERE categories=$1"
 	if err := db.QueryRow(query, category).Scan(&bv.Category, &bv.Amount); err != nil {
-		return [2]string{}, err
+		return "", err
 	}
-	return [2]string{bv.Category, bv.Amount}, err
+	tw := table.NewWriter()
+	tw.AppendHeader(table.Row{"Category", "Amount"})
+	tw.AppendRows([]table.Row{
+		{bv.Category, bv.Amount},
+	})
+	return "Budget Data\n" + tw.Render(), err
 }
 
 func RemoveBudget(category string) error {

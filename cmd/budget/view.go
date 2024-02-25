@@ -18,7 +18,7 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("Budget Details:\n\tCategory: %s\n\tAmount: %s", details[0], details[1])
+		fmt.Println(details)
 	},
 }
 
