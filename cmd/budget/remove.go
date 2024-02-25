@@ -1,4 +1,4 @@
-package remove
+package budget
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 // removeCmd represents the remove command
-var RemoveCmd = &cobra.Command{
+var removeCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -17,5 +17,5 @@ var RemoveCmd = &cobra.Command{
 }
 
 func init() {
-	RemoveCmd.Flags().StringP("category", "c", "", "Write the category name to remove")
+	removeCmd.Flags().StringP("category", "c", "", "Write the category name to remove")
 }

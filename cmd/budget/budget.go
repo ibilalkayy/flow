@@ -1,13 +1,9 @@
-package cmd
+package budget
 
 import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/cmd"
-	"github.com/ibilalkayy/flow/cmd/budget/adjust"
-	"github.com/ibilalkayy/flow/cmd/budget/create"
-	"github.com/ibilalkayy/flow/cmd/budget/remove"
-	"github.com/ibilalkayy/flow/cmd/budget/view"
 	"github.com/spf13/cobra"
 )
 
@@ -27,8 +23,8 @@ and adjust their budgets to effectively track and control their expenses.
 func init() {
 	cmd.RootCmd.AddCommand(budgetCmd)
 	// Added subcommands
-	budgetCmd.AddCommand(create.CreateCmd)
-	budgetCmd.AddCommand(view.ViewCmd)
-	budgetCmd.AddCommand(adjust.AdjustCmd)
-	budgetCmd.AddCommand(remove.RemoveCmd)
+	budgetCmd.AddCommand(createCmd)
+	budgetCmd.AddCommand(viewCmd)
+	budgetCmd.AddCommand(adjustCmd)
+	budgetCmd.AddCommand(removeCmd)
 }

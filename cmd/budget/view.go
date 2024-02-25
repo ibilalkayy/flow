@@ -1,4 +1,4 @@
-package view
+package budget
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 // viewCmd represents the view command
-var ViewCmd = &cobra.Command{
+var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -17,5 +17,5 @@ var ViewCmd = &cobra.Command{
 }
 
 func init() {
-	ViewCmd.Flags().StringP("category", "c", "", "Write the category name to show the specific details")
+	viewCmd.Flags().StringP("category", "c", "", "Write the category name to show the specific details")
 }

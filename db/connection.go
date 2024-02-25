@@ -6,20 +6,29 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ibilalkayy/flow/internal/middleware"
 	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "hostname"
-	port     = 65464
-	user     = "username"
-	password = "password"
-	dbname   = "dbname"
-)
+type Variables struct {
+	Host     string
+	Port     string
+	User     string
+	Password string
+	DBName   string
+}
 
 func connection() (*sql.DB, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	v := Variables{
+		Host:     middleware.LoadEnvVariable("host"),
+		Port:     middleware.LoadEnvVariable("port"),
+		User:     middleware.LoadEnvVariable("user"),
+		Password: middleware.LoadEnvVariable("password"),
+		DBName:   middleware.LoadEnvVariable("dbname"),
+	}
+
+	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", v.Host, v.Port, v.User, v.Password, v.DBName)
+	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
 		return nil, err
 	}
@@ -28,31 +37,29 @@ func connection() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("Successfully connected to the database!")
 	return db, nil
 }
 
-func Table(table_name, filename string, number int) error {
+func Table(table_name, filename string, number int) (*sql.DB, error) {
 	db, err := connection()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	query, err := os.ReadFile("db/migrations/" + filename)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	requests := strings.Split(string(query), ";")[number]
 	stmt, err := db.Prepare(requests)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	_, err = stmt.Exec()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return db, nil
 }
