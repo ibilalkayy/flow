@@ -18,7 +18,7 @@ type Variables struct {
 	DBName   string
 }
 
-func connection() (*sql.DB, error) {
+func Connection() (*sql.DB, error) {
 	v := Variables{
 		Host:     middleware.LoadEnvVariable("host"),
 		Port:     middleware.LoadEnvVariable("port"),
@@ -41,7 +41,7 @@ func connection() (*sql.DB, error) {
 }
 
 func Table(table_name, filename string, number int) (*sql.DB, error) {
-	db, err := connection()
+	db, err := Connection()
 	if err != nil {
 		return nil, err
 	}

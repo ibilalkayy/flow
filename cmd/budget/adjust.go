@@ -1,8 +1,9 @@
 package budget
 
 import (
-	"fmt"
+	"log"
 
+	"github.com/ibilalkayy/flow/internal/app"
 	"github.com/spf13/cobra"
 )
 
@@ -14,9 +15,10 @@ var adjustCmd = &cobra.Command{
 		oldCategory, _ := cmd.Flags().GetString("oldcategory")
 		newCategory, _ := cmd.Flags().GetString("newcategory")
 		amount, _ := cmd.Flags().GetString("amount")
-		fmt.Println(oldCategory)
-		fmt.Println(newCategory)
-		fmt.Println(amount)
+		err := app.UpdateBudget(oldCategory, newCategory, amount)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 

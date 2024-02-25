@@ -2,7 +2,9 @@ package budget
 
 import (
 	"fmt"
+	"log"
 
+	"github.com/ibilalkayy/flow/internal/app"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +14,11 @@ var viewCmd = &cobra.Command{
 	Short: "View the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		fmt.Println(category)
+		details, err := app.ViewBudget(category)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("Budget Details:\n\tCategory: %s\n\tAmount: %s", details[0], details[1])
 	},
 }
 

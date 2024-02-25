@@ -1,8 +1,9 @@
 package budget
 
 import (
-	"fmt"
+	"log"
 
+	"github.com/ibilalkayy/flow/internal/app"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +13,10 @@ var removeCmd = &cobra.Command{
 	Short: "Remove the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		fmt.Println(category)
+		err := app.RemoveBudget(category)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
