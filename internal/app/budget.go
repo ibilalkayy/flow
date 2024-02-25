@@ -75,13 +75,16 @@ func RemoveBudget(category string) error {
 }
 
 func UpdateBudget(old, new, amount string) error {
+	var count int
+	var query string
+	var params []interface{}
+
 	db, err := db.Connection()
 	if err != nil {
 		return err
 	}
 
 	// Check if the old category exists
-	var count int
 	err = db.QueryRow("SELECT COUNT(*) FROM Budget WHERE categories = $1", old).Scan(&count)
 	if err != nil {
 		return err
@@ -92,12 +95,24 @@ func UpdateBudget(old, new, amount string) error {
 		return errors.New("'" + old + "'" + " category does not exist")
 	}
 
-	// If the old category exists, execute the update query
-	query := "UPDATE Budget SET categories=$1, amounts=$2 WHERE categories=$3"
-	_, err = db.Exec(query, new, amount, old)
+	if len(new) != 0 {
+		query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
+		params = []interface{}{new, old}
+	} else if len(amount) != 0 {
+		query = "UPDATE Budget SET amounts=$1 WHERE categories=$2"
+		params = []interface{}{amount, old}
+	} else if len(new) != 0 && len(amount) != 0 {
+		query = "UPDATE Budget SET categories=$1, amounts=$2 WHERE categories=$3"
+		params = []interface{}{new, amount, old}
+	} else {
+		fmt.Println("No field provided to adjust")
+	}
+
+	_, err = db.Exec(query, params...)
 	if err != nil {
 		return err
 	}
+
 	fmt.Println("Your budget category is successfully updated!")
 	return nil
 }
