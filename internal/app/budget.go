@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ibilalkayy/flow/db"
+	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
@@ -17,7 +17,7 @@ type BudgetVariables struct {
 }
 
 func CreateBudget(bv *BudgetVariables) error {
-	data, err := db.Table("budget", "001_create_budget_table.sql", 0)
+	data, err := budget_db.Table("../../db/budget_db/migrations/001_create_budget_table.sql", 0)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func ViewBudget(category string) (string, error) {
 	bv := new(BudgetVariables)
 
 	// Connect to the database
-	db, err := db.Connection()
+	db, err := budget_db.Connection()
 	if err != nil {
 		return "", err
 	}
@@ -80,7 +80,7 @@ func ViewBudget(category string) (string, error) {
 }
 
 func RemoveBudget(category string) error {
-	db, err := db.Connection()
+	db, err := budget_db.Connection()
 	if err != nil {
 		return err
 	}
@@ -110,7 +110,7 @@ func UpdateBudget(old, new, amount string) error {
 	var query string
 	var params []interface{}
 
-	db, err := db.Connection()
+	db, err := budget_db.Connection()
 	if err != nil {
 		return err
 	}
@@ -150,7 +150,7 @@ func UpdateBudget(old, new, amount string) error {
 
 func GetBudgetData(filepath, filename string) error {
 	bv := new(BudgetVariables)
-	db, err := db.Connection()
+	db, err := budget_db.Connection()
 	if err != nil {
 		return err
 	}

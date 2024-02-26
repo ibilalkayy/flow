@@ -1,4 +1,4 @@
-package budget
+package handler
 
 import (
 	"log"
@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// adjustCmd represents the adjust command
-var adjustCmd = &cobra.Command{
+// AdjustCmd represents the adjust command
+var AdjustCmd = &cobra.Command{
 	Use:   "adjust",
 	Short: "Adjust the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -23,7 +23,7 @@ var adjustCmd = &cobra.Command{
 }
 
 func init() {
-	adjustCmd.Flags().StringP("oldcategory", "o", "", "Write the old category name to adjust")
-	adjustCmd.Flags().StringP("newcategory", "n", "", "Write the new category name to allocate")
-	adjustCmd.Flags().StringP("amount", "a", "", "Write the new amount of the category to adjust")
+	AdjustCmd.Flags().StringP("oldcategory", "o", "", "Write the old category name to adjust")
+	AdjustCmd.Flags().StringP("newcategory", "n", "", "Write the new category name to allocate")
+	AdjustCmd.Flags().StringP("amount", "a", "", "Write the new amount of the category to adjust")
 }

@@ -1,4 +1,4 @@
-package budget
+package handler
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// viewCmd represents the view command
-var viewCmd = &cobra.Command{
+// ViewCmd represents the view command
+var ViewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -23,5 +23,5 @@ var viewCmd = &cobra.Command{
 }
 
 func init() {
-	viewCmd.Flags().StringP("category", "c", "", "Write the category name to show the specific details")
+	ViewCmd.Flags().StringP("category", "c", "", "Write the category name to show the specific details")
 }

@@ -1,4 +1,4 @@
-package budget
+package handler
 
 import (
 	"log"
@@ -8,7 +8,7 @@ import (
 )
 
 // createCmd represents the create command
-var createCmd = &cobra.Command{
+var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create the budget of different categories",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -23,6 +23,6 @@ var createCmd = &cobra.Command{
 }
 
 func init() {
-	createCmd.Flags().StringP("category", "c", "", "Write the category like groceries, utilities")
-	createCmd.Flags().StringP("amount", "a", "", "Write the total amount for that category")
+	CreateCmd.Flags().StringP("category", "c", "", "Write the category like groceries, utilities")
+	CreateCmd.Flags().StringP("amount", "a", "", "Write the total amount for that category")
 }

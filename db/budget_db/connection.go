@@ -1,4 +1,4 @@
-package db
+package budget_db
 
 import (
 	"database/sql"
@@ -40,13 +40,13 @@ func Connection() (*sql.DB, error) {
 	return db, nil
 }
 
-func Table(table_name, filename string, number int) (*sql.DB, error) {
+func Table(filename string, number int) (*sql.DB, error) {
 	db, err := Connection()
 	if err != nil {
 		return nil, err
 	}
 
-	query, err := os.ReadFile("db/migrations/" + filename)
+	query, err := os.ReadFile("db/budget_db/migrations/" + filename)
 	if err != nil {
 		return nil, err
 	}

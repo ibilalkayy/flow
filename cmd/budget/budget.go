@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/cmd"
+	"github.com/ibilalkayy/flow/cmd/budget/handler"
 	"github.com/spf13/cobra"
 )
 
@@ -23,9 +24,9 @@ and adjust their budgets to effectively track and control their expenses.
 func init() {
 	cmd.RootCmd.AddCommand(budgetCmd)
 	// Added subcommands
-	budgetCmd.AddCommand(createCmd)
-	budgetCmd.AddCommand(viewCmd)
-	budgetCmd.AddCommand(adjustCmd)
-	budgetCmd.AddCommand(removeCmd)
-	budgetCmd.AddCommand(getCmd)
+	budgetCmd.AddCommand(handler.CreateCmd)
+	budgetCmd.AddCommand(handler.ViewCmd)
+	budgetCmd.AddCommand(handler.AdjustCmd)
+	budgetCmd.AddCommand(handler.RemoveCmd)
+	budgetCmd.AddCommand(handler.GetCmd)
 }

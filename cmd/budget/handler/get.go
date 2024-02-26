@@ -1,12 +1,12 @@
-package budget
+package handler
 
 import (
 	"github.com/ibilalkayy/flow/internal/app"
 	"github.com/spf13/cobra"
 )
 
-// getCmd represents the get command
-var getCmd = &cobra.Command{
+// GetCmd represents the get command
+var GetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get the budget data in CSV",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -17,6 +17,6 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().StringP("filepath", "p", "", "Give the file path to store the data")
-	getCmd.Flags().StringP("filename", "n", "", "Give the CSV file name to store the data")
+	GetCmd.Flags().StringP("filepath", "p", "", "Give the file path to store the data")
+	GetCmd.Flags().StringP("filename", "n", "", "Give the CSV file name to store the data")
 }
