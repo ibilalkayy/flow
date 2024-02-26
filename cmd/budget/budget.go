@@ -27,4 +27,5 @@ func init() {
 	budgetCmd.AddCommand(viewCmd)
 	budgetCmd.AddCommand(adjustCmd)
 	budgetCmd.AddCommand(removeCmd)
+	budgetCmd.AddCommand(getCmd)
 }

@@ -2,8 +2,10 @@ package app
 
 import (
 	"database/sql"
+	"encoding/csv"
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/ibilalkayy/flow/db"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -143,5 +145,50 @@ func UpdateBudget(old, new, amount string) error {
 	}
 
 	fmt.Println("Your budget category is successfully updated!")
+	return nil
+}
+
+func GetBudgetData(filepath, filename string) error {
+	bv := new(BudgetVariables)
+	db, err := db.Connection()
+	if err != nil {
+		return err
+	}
+
+	// var rows *sql.Rows
+	query := "SELECT categories, amounts FROM Budget"
+	rows, err := db.Query(query)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	file, err := os.Create(filepath + "/" + filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	header := []string{"Category", "Amount"}
+	if err := writer.Write(header); err != nil {
+		return err
+	}
+	for rows.Next() {
+		if err := rows.Scan(&bv.Category, &bv.Amount); err != nil {
+			return err
+		}
+
+		data := []string{bv.Category, bv.Amount}
+		if err := writer.Write(data); err != nil {
+			return err
+		}
+
+		if err := rows.Err(); err != nil {
+			return err
+		}
+	}
 	return nil
 }
