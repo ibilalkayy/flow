@@ -126,15 +126,15 @@ func UpdateBudget(old, new, amount string) error {
 		return errors.New("'" + old + "'" + " category does not exist")
 	}
 
-	if len(new) != 0 {
+	if len(new) != 0 && len(amount) != 0 {
+		query = "UPDATE Budget SET categories=$1, amounts=$2 WHERE categories=$3"
+		params = []interface{}{new, amount, old}
+	} else if len(new) != 0 {
 		query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
 		params = []interface{}{new, old}
 	} else if len(amount) != 0 {
 		query = "UPDATE Budget SET amounts=$1 WHERE categories=$2"
 		params = []interface{}{amount, old}
-	} else if len(new) != 0 && len(amount) != 0 {
-		query = "UPDATE Budget SET categories=$1, amounts=$2 WHERE categories=$3"
-		params = []interface{}{new, amount, old}
 	} else {
 		fmt.Println("No field provided to adjust")
 	}
