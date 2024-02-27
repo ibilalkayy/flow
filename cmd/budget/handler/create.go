@@ -3,7 +3,7 @@ package handler
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/internal/app"
+	app "github.com/ibilalkayy/flow/internal/app/budget"
 	"github.com/spf13/cobra"
 )
 
