@@ -17,7 +17,7 @@ for different spending categories. With this command, you can create, view,
 and adjust their budgets to effectively track and control their expenses.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Nothing specified, nothing added.")
+		fmt.Println("Nothing specified, nothing added")
 	},
 }
 

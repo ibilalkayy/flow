@@ -1,0 +1,4 @@
+*.md
+.git
+main.go
+LICENSE
