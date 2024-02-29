@@ -16,6 +16,7 @@ type Variables struct {
 	User     string
 	Password string
 	DBName   string
+	SSLMode  string
 }
 
 func Connection() (*sql.DB, error) {
@@ -25,9 +26,10 @@ func Connection() (*sql.DB, error) {
 		User:     middleware.LoadEnvVariable("user"),
 		Password: middleware.LoadEnvVariable("password"),
 		DBName:   middleware.LoadEnvVariable("dbname"),
+		SSLMode:  middleware.LoadEnvVariable("sslmode"),
 	}
 
-	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", v.Host, v.Port, v.User, v.Password, v.DBName)
+	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", v.Host, v.Port, v.User, v.Password, v.DBName, v.SSLMode)
 	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
 		return nil, err
