@@ -17,7 +17,7 @@ type BudgetVariables struct {
 }
 
 func CreateBudget(bv *BudgetVariables) error {
-	data, err := budget_db.Table("../../db/budget_db/migrations/001_create_budget_table.sql", 0)
+	data, err := budget_db.Table("001_create_budget_table.sql", 0)
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func RemoveBudget(category string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("%s category is successfully removed!", category)
+		fmt.Printf("'%s' category is successfully removed!\n", category)
 	} else {
 		fmt.Println("First enter the category and then remove it")
 	}
@@ -155,7 +155,6 @@ func GetBudgetData(filepath, filename string) error {
 		return err
 	}
 
-	// var rows *sql.Rows
 	query := "SELECT categories, amounts FROM Budget"
 	rows, err := db.Query(query)
 	if err != nil {
@@ -190,5 +189,6 @@ func GetBudgetData(filepath, filename string) error {
 			return err
 		}
 	}
+	fmt.Printf("Successfully created a '%s' file in '%s'\n", filename, filepath)
 	return nil
 }

@@ -42,7 +42,6 @@ To use the application, simply run the `flow` command followed by one of the fol
 Each subcommand has its own set of options and arguments. Here are some examples of how to use the application:
 
 ```bash
-# Connect with the WCS instance
 flow budget create --category groceries/utilities --amount 300
 ```
 

@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ibilalkayy/flow/internal/middleware"
 	_ "github.com/lib/pq"
 )
 
@@ -20,17 +19,26 @@ type Variables struct {
 }
 
 func Connection() (*sql.DB, error) {
+	// v := Variables{
+	// 	Host:     middleware.LoadEnvVariable("host"),
+	// 	Port:     middleware.LoadEnvVariable("port"),
+	// 	User:     middleware.LoadEnvVariable("user"),
+	// 	Password: middleware.LoadEnvVariable("password"),
+	// 	DBName:   middleware.LoadEnvVariable("dbname"),
+	// 	SSLMode:  middleware.LoadEnvVariable("sslmode"),
+	// }
+
 	v := Variables{
-		Host:     middleware.LoadEnvVariable("host"),
-		Port:     middleware.LoadEnvVariable("port"),
-		User:     middleware.LoadEnvVariable("user"),
-		Password: middleware.LoadEnvVariable("password"),
-		DBName:   middleware.LoadEnvVariable("dbname"),
-		SSLMode:  middleware.LoadEnvVariable("sslmode"),
+		Host:     os.Getenv("POSTGRES_HOST"),
+		Port:     os.Getenv("POSTGRES_PORT"),
+		User:     os.Getenv("POSTGRES_USER"),
+		Password: os.Getenv("POSTGRES_PASSWORD"),
+		DBName:   os.Getenv("POSTGRES_DB"),
+		SSLMode:  os.Getenv("POSTGRES_SSL"),
 	}
 
-	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", v.Host, v.Port, v.User, v.Password, v.DBName, v.SSLMode)
-	db, err := sql.Open("postgres", connectionString)
+	connectStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", v.Host, v.Port, v.User, v.Password, v.DBName, v.SSLMode)
+	db, err := sql.Open("postgres", connectStr)
 	if err != nil {
 		return nil, err
 	}
