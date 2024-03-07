@@ -8,12 +8,12 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${PORT}
-      POSTGRES_USER: ${USER}
-      POSTGRES_PASSWORD: ${PASSWORD}
-      POSTGRES_DB: ${DBNAME}
-      POSTGRES_SSL: ${SSLMODE}
+      POSTGRES_HOST: "${POSTGRES_HOST}"
+      POSTGRES_PORT: "${PORT}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${PASSWORD}"
+      POSTGRES_DB: "${DBNAME}"
+      POSTGRES_SSL: "${SSLMODE}"
     depends_on:
       - postgres
 
@@ -25,9 +25,9 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${USER}
-      POSTGRES_PASSWORD: ${PASSWORD}
-      POSTGRES_DB: ${DBNAME}
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${PASSWORD}"
+      POSTGRES_DB: "${DBNAME}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
