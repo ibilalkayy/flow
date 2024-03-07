@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ibilalkayy/flow/internal/middleware"
 	_ "github.com/lib/pq"
 )
 
@@ -19,22 +20,26 @@ type Variables struct {
 }
 
 func Connection() (*sql.DB, error) {
-	// v := Variables{
-	// 	Host:     middleware.LoadEnvVariable("host"),
-	// 	Port:     middleware.LoadEnvVariable("port"),
-	// 	User:     middleware.LoadEnvVariable("user"),
-	// 	Password: middleware.LoadEnvVariable("password"),
-	// 	DBName:   middleware.LoadEnvVariable("dbname"),
-	// 	SSLMode:  middleware.LoadEnvVariable("sslmode"),
-	// }
+	var v Variables
 
-	v := Variables{
-		Host:     os.Getenv("POSTGRES_HOST"),
-		Port:     os.Getenv("POSTGRES_PORT"),
-		User:     os.Getenv("POSTGRES_USER"),
-		Password: os.Getenv("POSTGRES_PASSWORD"),
-		DBName:   os.Getenv("POSTGRES_DB"),
-		SSLMode:  os.Getenv("POSTGRES_SSL"),
+	if os.Getenv("POSTGRES_HOST") != "" {
+		v = Variables{
+			Host:     os.Getenv("POSTGRES_HOST"),
+			Port:     os.Getenv("POSTGRES_PORT"),
+			User:     os.Getenv("POSTGRES_USER"),
+			Password: os.Getenv("POSTGRES_PASSWORD"),
+			DBName:   os.Getenv("POSTGRES_DB"),
+			SSLMode:  os.Getenv("POSTGRES_SSL"),
+		}
+	} else {
+		v = Variables{
+			Host:     middleware.LoadEnvVariable("LOCAL_HOST"),
+			Port:     middleware.LoadEnvVariable("PORT"),
+			User:     middleware.LoadEnvVariable("POSTGRES_USER"),
+			Password: middleware.LoadEnvVariable("PASSWORD"),
+			DBName:   middleware.LoadEnvVariable("DBNAME"),
+			SSLMode:  middleware.LoadEnvVariable("SSLMODE"),
+		}
 	}
 
 	connectStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", v.Host, v.Port, v.User, v.Password, v.DBName, v.SSLMode)
