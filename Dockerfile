@@ -12,4 +12,4 @@ RUN go mod download
 
 RUN go build -o flow .
 
-CMD ["./flow"]
+CMD ["sh", "-c", "./flow && while true; do echo 'App is running'; sleep 10; done"]

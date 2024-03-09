@@ -4,7 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: sh -c "while true; do echo 'App is running'; sleep 10; done"
     env_file:
       - .env
     environment:
@@ -16,6 +15,8 @@ services:
       POSTGRES_SSL: "${SSLMODE}"
     depends_on:
       - postgres
+    volumes:
+      - ./app_data:/app/data 
 
   postgres:
     image: postgres:latest
