@@ -1,19 +1,26 @@
 # Flow
 
-Flow is a budget planning application designed to empower users with the ability to track,  analyze, and optimize their spending habits and financial goals. With a user-friendly CLI. It manages the finances and achieve greater financial stability  by leveraging the Formance API for a comprehensive financial management solution.
+Flow is a budget planning application designed to empower users with the ability to track,  analyze, and optimize their spending habits and financial goals. 
+
+With a user-friendly CLI. It manages the finances and achieve greater financial stability  by leveraging the Formance API for a comprehensive financial management solution.
 
 ## Table of Contents
 
+- [What You Need?](#what-you-need)
 - [Clonning](#clonning)
-- [Getting Started](#getting-started)
 - [Installation](#installation)
 - [Commands](#commands)
+- [Run The App](#run-the-app)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Getting Started
 
-To get started in flow, you need to have Golang installed on your machine. Once you have installed Go, you can clone the application using the following command:
+## What You Need?
+
+To get started in flow, you need to have two applications installed on your machine.
+
+1. [Golang](https://go.dev/dl/)
+2. [Docker](https://www.docker.com/get-started/)
 
 ## Installation
 
@@ -33,7 +40,7 @@ This will display the installed flow version.
 
 ## Commands
 
-Flow provides a variety of commands for managing Weaviate instances. Below are some key commands:
+Flow provides a variety of commands for managing the budget. Below are some key commands:
 
 To use the application, simply run the `flow` command followed by one of the following subcommands:
 
@@ -42,27 +49,50 @@ To use the application, simply run the `flow` command followed by one of the fol
 Each subcommand has its own set of options and arguments. Here are some examples of how to use the application:
 
 ```bash
+# Create a budget
 flow budget create --category groceries/utilities --amount 300
+
+# View the budget info
+flow budget view
 ```
 
 ## Clonning
 
-1. Clone the repository:
+Clone the repository:
+
+```bash
+git clone https://github.com/ibilalkayy/flow.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd flow
+```
+
+## Run the App
+
+There are two ways through which you can run this clonned application.
+
+1. Build and install the flow binary through Golang:
 
     ```bash
-    git clone https://github.com/ibilalkayy/flow.git
+    go build
     ```
-
-2. Navigate to the project directory:
-
-    ```bash
-    cd flow
-    ```
-
-3. Build and install the flow binary:
 
     ```bash
     go install
+    ```
+2. Use the docker command to run it:
+
+    ```bash
+    docker compose up -d
+    ```
+
+    ```bash
+    1. docker exec -it flow-app-1 ./flow budget create
+    2. docker exec -it flow-app-1 ./flow budget view
+    ...
     ```
 
 ## Contributing
