@@ -21,6 +21,7 @@ To get started in flow, you need to have two applications installed on your mach
 
 1. [Golang](https://go.dev/dl/)
 2. [Docker](https://www.docker.com/get-started/)
+3. [PostgreSQL](https://www.postgresql.org/)
 
 ## Installation
 
@@ -69,6 +70,8 @@ Navigate to the project directory:
 ```bash
 cd flow
 ```
+
+Create a `.env` file to put all your PostgresSQL credentials.
 
 ## Run the App
 
