@@ -16,8 +16,8 @@ type BudgetVariables struct {
 	Amount   string
 }
 
-func CreateBudget(bv *BudgetVariables) error {
-	data, err := budget_db.Table("001_create_budget_table.sql", 0)
+func CreateBudget(bv *BudgetVariables, basePath string) error {
+	data, err := budget_db.Table(basePath, "001_create_budget_table.sql", 0)
 	if err != nil {
 		return err
 	}

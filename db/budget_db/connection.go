@@ -55,13 +55,13 @@ func Connection() (*sql.DB, error) {
 	return db, nil
 }
 
-func Table(filename string, number int) (*sql.DB, error) {
+func Table(basePath, filename string, number int) (*sql.DB, error) {
 	db, err := Connection()
 	if err != nil {
 		return nil, err
 	}
 
-	query, err := os.ReadFile("db/budget_db/migrations/" + filename)
+	query, err := os.ReadFile(basePath + filename)
 	if err != nil {
 		return nil, err
 	}

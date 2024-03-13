@@ -15,7 +15,7 @@ var CreateCmd = &cobra.Command{
 		category, _ := cmd.Flags().GetString("category")
 		amount, _ := cmd.Flags().GetString("amount")
 		bv := &app.BudgetVariables{Category: category, Amount: amount}
-		err := app.CreateBudget(bv)
+		err := app.CreateBudget(bv, "db/budget_db/migrations/")
 		if err != nil {
 			log.Fatal(err)
 		}
