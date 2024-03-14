@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const version = "v0.1.23"
+const version = "v0.1.24"
 
 // rootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{

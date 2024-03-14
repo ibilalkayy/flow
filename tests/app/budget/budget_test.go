@@ -1,158 +1,159 @@
 package app
 
 import (
+	"fmt"
 	"testing"
 
 	app "github.com/ibilalkayy/flow/internal/app/budget"
 )
 
-// func TestCreateBudget(t *testing.T) {
-// 	testCases := []struct {
-// 		name        string
-// 		input       *app.BudgetVariables
-// 		expectedMsg string
-// 	}{
-// 		{
-// 			name: "ValidInput",
-// 			input: &app.BudgetVariables{
-// 				Category: "TestCategory",
-// 				Amount:   "100",
-// 			},
-// 			expectedMsg: "Created budget for category: TestCategory, amount: 100\n",
-// 		},
-// 		{
-// 			name: "EmptyCategory",
-// 			input: &app.BudgetVariables{
-// 				Category: "",
-// 				Amount:   "100",
-// 			},
-// 			expectedMsg: "Created budget for category: , amount: 100\n",
-// 		},
-// 		{
-// 			name: "EmptyAmount",
-// 			input: &app.BudgetVariables{
-// 				Category: "CategoryTest",
-// 				Amount:   "",
-// 			},
-// 			expectedMsg: "Created budget for category: TestCategory, amount: \n",
-// 		},
-// 	}
+func TestCreateBudget(t *testing.T) {
+	testCases := []struct {
+		name        string
+		input       *app.BudgetVariables
+		expectedMsg string
+	}{
+		{
+			name: "ValidInput",
+			input: &app.BudgetVariables{
+				Category: "TestCategory",
+				Amount:   "100",
+			},
+			expectedMsg: "Created budget for category: TestCategory, amount: 100\n",
+		},
+		{
+			name: "EmptyCategory",
+			input: &app.BudgetVariables{
+				Category: "",
+				Amount:   "100",
+			},
+			expectedMsg: "Created budget for category: , amount: 100\n",
+		},
+		{
+			name: "EmptyAmount",
+			input: &app.BudgetVariables{
+				Category: "CategoryTest",
+				Amount:   "",
+			},
+			expectedMsg: "Created budget for category: TestCategory, amount: \n",
+		},
+	}
 
-// 	basePath := "../../../db/budget_db/migrations/"
-// 	for _, tc := range testCases {
-// 		t.Run(tc.name, func(t *testing.T) {
-// 			err := app.CreateBudget(tc.input, basePath)
-// 			if err != nil {
-// 				t.Errorf("Expected no error, got %v", err)
-// 			}
-// 		})
-// 	}
-// }
+	basePath := "../../../db/budget_db/migrations/"
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := app.CreateBudget(tc.input, basePath)
+			if err != nil {
+				t.Errorf("Expected no error, got %v", err)
+			}
+		})
+	}
+}
 
-// func TestViewBudget(t *testing.T) {
-// 	testCases := []struct {
-// 		name        string
-// 		category    string
-// 		expectedMsg string
-// 	}{
-// 		{
-// 			name:        "FilledCategory",
-// 			category:    "TestCategory",
-// 			expectedMsg: "Viewed the Budget info of category: TestCategory",
-// 		},
-// 		{
-// 			name:        "EmptyCategory",
-// 			category:    "",
-// 			expectedMsg: "Viewed the Budget info of category: ",
-// 		},
-// 	}
+func TestViewBudget(t *testing.T) {
+	testCases := []struct {
+		name        string
+		category    string
+		expectedMsg string
+	}{
+		{
+			name:        "FilledCategory",
+			category:    "TestCategory",
+			expectedMsg: "Viewed the Budget info of category: TestCategory",
+		},
+		{
+			name:        "EmptyCategory",
+			category:    "",
+			expectedMsg: "Viewed the Budget info of category: ",
+		},
+	}
 
-// 	for _, tc := range testCases {
-// 		t.Run(tc.name, func(t *testing.T) {
-// 			data, err := app.ViewBudget(tc.category)
-// 			if err != nil {
-// 				t.Errorf("Expected no error, got %v", err)
-// 			}
-// 			fmt.Println(data)
-// 		})
-// 	}
-// }
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			data, err := app.ViewBudget(tc.category)
+			if err != nil {
+				t.Errorf("Expected no error, got %v", err)
+			}
+			fmt.Println(data)
+		})
+	}
+}
 
-// func TestRemoveBudget(t *testing.T) {
-// 	testCases := []struct {
-// 		name        string
-// 		category    string
-// 		expectedMsg string
-// 	}{
-// 		{
-// 			name:        "FilledCategory",
-// 			category:    "TestCategory",
-// 			expectedMsg: "Removed the budget info of category: TestCategory\n",
-// 		},
-// 		{
-// 			name:        "EmptyCategory",
-// 			category:    "",
-// 			expectedMsg: "Removed the budget info of category: TestCategory\n",
-// 		},
-// 	}
+func TestRemoveBudget(t *testing.T) {
+	testCases := []struct {
+		name        string
+		category    string
+		expectedMsg string
+	}{
+		{
+			name:        "FilledCategory",
+			category:    "TestCategory",
+			expectedMsg: "Removed the budget info of category: TestCategory\n",
+		},
+		{
+			name:        "EmptyCategory",
+			category:    "",
+			expectedMsg: "Removed the budget info of category: TestCategory\n",
+		},
+	}
 
-// 	for _, tc := range testCases {
-// 		t.Run(tc.name, func(t *testing.T) {
-// 			err := app.RemoveBudget(tc.category)
-// 			if err != nil {
-// 				t.Errorf("Expected no error: got %v", err)
-// 			}
-// 		})
-// 	}
-// }
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := app.RemoveBudget(tc.category)
+			if err != nil {
+				t.Errorf("Expected no error: got %v", err)
+			}
+		})
+	}
+}
 
-// func TestUpdateBudget(t *testing.T) {
-// 	testCases := []struct {
-// 		name        string
-// 		oldCategory string
-// 		newCategory string
-// 		amount      string
-// 		expectedMsg string
-// 	}{
-// 		{
-// 			name:        "CategoryAndAmount",
-// 			oldCategory: "TestCategory",
-// 			newCategory: "NewCategory",
-// 			amount:      "200",
-// 			expectedMsg: "Updated the category: NewCategory, amount: 200\n",
-// 		},
-// 		{
-// 			name:        "Category",
-// 			oldCategory: "NewCategory",
-// 			newCategory: "SecondNewCategory",
-// 			amount:      "",
-// 			expectedMsg: "Updated the category: NewCategory, amount: \n",
-// 		},
-// 		{
-// 			name:        "Amount",
-// 			oldCategory: "SecondNewCategory",
-// 			newCategory: "",
-// 			amount:      "150",
-// 			expectedMsg: "Updated the category: , amount: 100\n",
-// 		},
-// 		{
-// 			name:        "EmptyBudget",
-// 			oldCategory: "SecondNewCategory",
-// 			newCategory: "",
-// 			amount:      "",
-// 			expectedMsg: "Updated the category: , amount: \n",
-// 		},
-// 	}
+func TestUpdateBudget(t *testing.T) {
+	testCases := []struct {
+		name        string
+		oldCategory string
+		newCategory string
+		amount      string
+		expectedMsg string
+	}{
+		{
+			name:        "CategoryAndAmount",
+			oldCategory: "TestCategory",
+			newCategory: "NewCategory",
+			amount:      "200",
+			expectedMsg: "Updated the category: NewCategory, amount: 200\n",
+		},
+		{
+			name:        "Category",
+			oldCategory: "NewCategory",
+			newCategory: "SecondNewCategory",
+			amount:      "",
+			expectedMsg: "Updated the category: NewCategory, amount: \n",
+		},
+		{
+			name:        "Amount",
+			oldCategory: "SecondNewCategory",
+			newCategory: "",
+			amount:      "150",
+			expectedMsg: "Updated the category: , amount: 100\n",
+		},
+		{
+			name:        "EmptyBudget",
+			oldCategory: "SecondNewCategory",
+			newCategory: "",
+			amount:      "",
+			expectedMsg: "Updated the category: , amount: \n",
+		},
+	}
 
-// 	for _, tc := range testCases {
-// 		t.Run(tc.name, func(t *testing.T) {
-// 			err := app.UpdateBudget(tc.oldCategory, tc.newCategory, tc.amount)
-// 			if err != nil {
-// 				t.Errorf("Expected no error, got %v", err)
-// 			}
-// 		})
-// 	}
-// }
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := app.UpdateBudget(tc.oldCategory, tc.newCategory, tc.amount)
+			if err != nil {
+				t.Errorf("Expected no error, got %v", err)
+			}
+		})
+	}
+}
 
 func TestGetBudgetData(t *testing.T) {
 	testCases := []struct {
