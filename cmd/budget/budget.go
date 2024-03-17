@@ -29,4 +29,5 @@ func init() {
 	budgetCmd.AddCommand(handler.AdjustCmd)
 	budgetCmd.AddCommand(handler.RemoveCmd)
 	budgetCmd.AddCommand(handler.GetCmd)
+	budgetCmd.AddCommand(handler.AlertCmd)
 }

@@ -192,3 +192,31 @@ func GetBudgetData(filepath, filename string) error {
 	fmt.Printf("Successfully created a '%s' file in '%s'\n", filename, filepath)
 	return nil
 }
+
+func BudgetAmount(category string) (string, error) {
+	bv := new(BudgetVariables)
+
+	db, err := budget_db.Connection()
+	if err != nil {
+		return "", err
+	}
+
+	query := "SELECT amounts FROM Budget WHERE categories=$1"
+	rows, err := db.Query(query, category)
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(&bv.Amount); err != nil {
+			return "", err
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return "", err
+	}
+
+	return bv.Amount, nil
+}
