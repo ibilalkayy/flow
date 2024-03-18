@@ -14,8 +14,8 @@ var budgetCmd = &cobra.Command{
 	Short: "Manage your budget",
 	Long: `Budget command allows users to manage their budgetary allocations 
 for different spending categories. With this command, you can create, view, 
-and adjust their budgets to effectively track and control their expenses.
-`,
+and adjust their budgets to effectively track and control their expenses.`,
+
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Nothing specified, nothing added")
 	},
