@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/internal/structs"
@@ -23,14 +24,17 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 	if err != nil {
 		return err
 	}
-
 	defer insert.Close()
 
-	_, err = insert.Exec(bv.Category, bv.Amount)
-	if err != nil {
-		return err
+	if len(bv.Category) != 0 {
+		_, err = insert.Exec(bv.Category, bv.Amount)
+		if err != nil {
+			return err
+		}
+		fmt.Println("Budget data is successfully inserted!")
+	} else {
+		return errors.New("category can't be empty")
 	}
-	fmt.Println("Budget data is successfully inserted!")
 	return nil
 }
 
@@ -48,6 +52,9 @@ func ViewBudget(category string) (string, error) {
 	// Prepare the table writer
 	tw := table.NewWriter()
 	tw.AppendHeader(table.Row{"Category", "Amount"})
+
+	// Initialize total amount
+	totalAmount := 0.0
 
 	// Query the database based on the provided category
 	var rows *sql.Rows
@@ -68,11 +75,25 @@ func ViewBudget(category string) (string, error) {
 		if err := rows.Scan(&bv.Category, &bv.Amount); err != nil {
 			return "", err
 		}
-		tw.AppendRow([]interface{}{bv.Category, bv.Amount})
+		// Check if amount is empty
+		if bv.Amount != "" {
+			// Convert bv.Amount to float64
+			amount, err := strconv.ParseFloat(bv.Amount, 64)
+			if err != nil {
+				return "", err
+			}
+			tw.AppendRow([]interface{}{bv.Category, amount})
+			totalAmount += amount // Accumulate total amount
+		}
 	}
 
+	// Add total amount row to the table
+	tw.AppendFooter(table.Row{"Total Amount", totalAmount})
+
 	// Render the table
-	return "Budget Data\n" + tw.Render(), nil
+	tableRender := "Budget Data\n" + tw.Render()
+
+	return tableRender, nil
 }
 
 func RemoveBudget(category string) error {

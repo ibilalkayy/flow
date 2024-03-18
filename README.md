@@ -6,6 +6,7 @@ With a user-friendly CLI. It manages the finances and achieve greater financial 
 
 ## Table of Contents
 
+- [Documentation](#documentation)
 - [What You Need?](#what-you-need)
 - [Clonning](#clonning)
 - [Installation](#installation)
@@ -14,6 +15,10 @@ With a user-friendly CLI. It manages the finances and achieve greater financial 
 - [Contributing](#contributing)
 - [License](#license)
 
+
+## Documentation
+
+To get to know about the application in detail, you can visit the [docs](https://github.com/ibilalkayy/flow/tree/main/docs) to understand the application in a better way.
 
 ## What You Need?
 
