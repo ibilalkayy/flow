@@ -5,17 +5,18 @@ import (
 	"testing"
 
 	app "github.com/ibilalkayy/flow/internal/app/budget"
+	"github.com/ibilalkayy/flow/internal/structs"
 )
 
 func TestCreateBudget(t *testing.T) {
 	testCases := []struct {
 		name        string
-		input       *app.BudgetVariables
+		input       *structs.BudgetVariables
 		expectedMsg string
 	}{
 		{
 			name: "ValidInput",
-			input: &app.BudgetVariables{
+			input: &structs.BudgetVariables{
 				Category: "TestCategory",
 				Amount:   "100",
 			},
@@ -23,7 +24,7 @@ func TestCreateBudget(t *testing.T) {
 		},
 		{
 			name: "EmptyCategory",
-			input: &app.BudgetVariables{
+			input: &structs.BudgetVariables{
 				Category: "",
 				Amount:   "100",
 			},
@@ -31,7 +32,7 @@ func TestCreateBudget(t *testing.T) {
 		},
 		{
 			name: "EmptyAmount",
-			input: &app.BudgetVariables{
+			input: &structs.BudgetVariables{
 				Category: "CategoryTest",
 				Amount:   "",
 			},

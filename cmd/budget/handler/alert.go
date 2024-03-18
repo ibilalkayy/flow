@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 
 	app "github.com/ibilalkayy/flow/internal/app/budget"
+	"github.com/ibilalkayy/flow/internal/structs"
 	"github.com/spf13/cobra"
 )
 
-// alertCmd represents the alert command
+// AlertCmd represents the alert command
 var AlertCmd = &cobra.Command{
 	Use:   "alert",
 	Short: "Get notification once you pass the budget",
@@ -16,18 +16,23 @@ var AlertCmd = &cobra.Command{
 		category, _ := cmd.Flags().GetString("category")
 		frequency, _ := cmd.Flags().GetString("frequency")
 		method, _ := cmd.Flags().GetString("method")
-		amount, err := app.BudgetAmount(category)
+
+		av := structs.AlertVariables{
+			Category:  category,
+			Frequency: frequency,
+			Method:    method,
+		}
+
+		err := app.Alert(av)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(frequency)
-		fmt.Println(method)
-		fmt.Println(amount)
 	},
 }
 
 func init() {
-	AlertCmd.Flags().StringP("category", "c", "", "Write the category name to take it's budget amount")
-	AlertCmd.Flags().StringP("frequency", "f", "", "Write the daily, weekly, or monthly frequency")
-	AlertCmd.Flags().StringP("method", "m", "", "Write the preferred method of notification either email or CLI messsage")
+	AlertCmd.AddCommand(MsgCmd)
+	AlertCmd.Flags().StringP("category", "c", "", "Write the category name to take its budget amount")
+	AlertCmd.Flags().StringP("frequency", "f", "", "Write the frequency of notifications (e.g., hourly, daily, weekly, monthly)")
+	AlertCmd.Flags().StringP("method", "m", "", "Write the preferred method of notification [email or CLI] message")
 }

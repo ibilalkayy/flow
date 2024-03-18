@@ -8,15 +8,11 @@ import (
 	"os"
 
 	"github.com/ibilalkayy/flow/db/budget_db"
+	"github.com/ibilalkayy/flow/internal/structs"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-type BudgetVariables struct {
-	Category string
-	Amount   string
-}
-
-func CreateBudget(bv *BudgetVariables, basePath string) error {
+func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 	data, err := budget_db.Table(basePath, "001_create_budget_table.sql", 0)
 	if err != nil {
 		return err
@@ -40,7 +36,7 @@ func CreateBudget(bv *BudgetVariables, basePath string) error {
 
 func ViewBudget(category string) (string, error) {
 	// Create a new instance of BudgetVariables to hold the retrieved data
-	bv := new(BudgetVariables)
+	bv := new(structs.BudgetVariables)
 
 	// Connect to the database
 	db, err := budget_db.Connection()
@@ -149,7 +145,7 @@ func UpdateBudget(old, new, amount string) error {
 }
 
 func GetBudgetData(filepath, filename string) error {
-	bv := new(BudgetVariables)
+	bv := new(structs.BudgetVariables)
 	db, err := budget_db.Connection()
 	if err != nil {
 		return err
@@ -194,29 +190,95 @@ func GetBudgetData(filepath, filename string) error {
 }
 
 func BudgetAmount(category string) (string, error) {
-	bv := new(BudgetVariables)
+	if len(category) == 0 {
+		return "", errors.New("category is not entered")
+	} else {
+		bv := new(structs.BudgetVariables)
 
-	db, err := budget_db.Connection()
-	if err != nil {
-		return "", err
-	}
-
-	query := "SELECT amounts FROM Budget WHERE categories=$1"
-	rows, err := db.Query(query, category)
-	if err != nil {
-		return "", err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if err := rows.Scan(&bv.Amount); err != nil {
+		db, err := budget_db.Connection()
+		if err != nil {
 			return "", err
 		}
-	}
 
-	if err := rows.Err(); err != nil {
-		return "", err
-	}
+		checkQuery := "SELECT COUNT(*) FROM Budget WHERE categories=$1"
+		var count int
+		err = db.QueryRow(checkQuery, category).Scan(&count)
+		if err != nil {
+			return "", nil
+		}
 
-	return bv.Amount, nil
+		if count == 0 {
+			return "", errors.New("category not found")
+		}
+
+		query := "SELECT amounts FROM Budget WHERE categories=$1"
+		rows, err := db.Query(query, category)
+		if err != nil {
+			return "", err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			if err := rows.Scan(&bv.Amount); err != nil {
+				return "", err
+			}
+		}
+		if err := rows.Err(); err != nil {
+			return "", err
+		}
+
+		return bv.Amount, nil
+	}
+}
+
+func Frequency(value string) (string, error) {
+	switch value {
+	case "hourly", "Hourly":
+		return "You selected the hourly", nil
+	case "daily", "Daily":
+		return "You selected the daily", nil
+	case "weekly", "Weekly":
+		return "You selected the weekly", nil
+	case "monthly", "Monthly":
+		return "You selected the monthly", nil
+	default:
+		return "", errors.New("invalid selection. write [ hourly | daily | weekly | monthly ]")
+	}
+}
+
+func Method(value string) (string, error) {
+	switch value {
+	case "email", "Email":
+		return "You selected an email", nil
+	case "cli", "Cli", "CLI":
+		return "You selected the CLI", nil
+	default:
+		return "invalid selection. write [ email | CLI ]", nil
+	}
+}
+
+func Alert(av structs.AlertVariables) error {
+	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
+		amount, err := BudgetAmount(av.Category)
+		if err != nil {
+			return err
+		}
+
+		frequencyMsg, err := Frequency(av.Frequency)
+		if err != nil {
+			return err
+		}
+
+		method, err := Method(av.Method)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(amount)
+		fmt.Println(frequencyMsg)
+		fmt.Println(method)
+	} else {
+		return errors.New("enter all the alert values")
+	}
+	return nil
 }
