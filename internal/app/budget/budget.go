@@ -210,7 +210,7 @@ func GetBudgetData(filepath, filename string) error {
 	return nil
 }
 
-func BudgetAmount(category string) (string, error) {
+func CategoryAmount(category string) (string, error) {
 	if len(category) == 0 {
 		return "", errors.New("category is not entered")
 	} else {
@@ -252,6 +252,43 @@ func BudgetAmount(category string) (string, error) {
 	}
 }
 
+func TotalBudgetAmount() (float64, error) {
+	var totalAmount float64
+	bv := new(structs.BudgetVariables)
+
+	db, err := budget_db.Connection()
+	if err != nil {
+		return 0, err
+	}
+
+	query := "SELECT amounts FROM Budget"
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(&bv.Amount); err != nil {
+			return 0, err
+		}
+		if bv.Amount == "" {
+			continue // Skip empty amounts
+		}
+		amount, err := strconv.ParseFloat(bv.Amount, 64)
+		if err != nil {
+			return 0, err
+		}
+		totalAmount += amount
+	}
+	if err := rows.Err(); err != nil {
+		return 0, err
+	}
+
+	return totalAmount, nil
+}
+
 func Frequency(value string) (string, error) {
 	switch value {
 	case "hourly", "Hourly":
@@ -280,7 +317,13 @@ func Method(value string) (string, error) {
 
 func Alert(av structs.AlertVariables) error {
 	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
-		amount, err := BudgetAmount(av.Category)
+		totalAmount, err := TotalBudgetAmount()
+		if err != nil {
+			return err
+		}
+		fmt.Println(totalAmount)
+
+		amount, err := CategoryAmount(av.Category)
 		if err != nil {
 			return err
 		}
