@@ -1,4 +1,4 @@
-package handler
+package transaction
 
 import (
 	"fmt"
@@ -7,12 +7,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func TransactionAmount() int {
+	amount := 1600
+	return amount
+}
+
 // transactionCmd represents the transaction command
 var TransactionCmd = &cobra.Command{
 	Use:   "transaction",
 	Short: "Transaction service",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("transaction is called")
+		amount := TransactionAmount()
+		fmt.Println(amount)
 	},
 }
 

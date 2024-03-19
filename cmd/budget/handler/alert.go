@@ -23,7 +23,7 @@ var AlertCmd = &cobra.Command{
 			Method:    method,
 		}
 
-		err := app.Alert(av)
+		err := app.AlertSetup(av)
 		if err != nil {
 			log.Fatal(err)
 		}

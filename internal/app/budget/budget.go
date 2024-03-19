@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/ibilalkayy/flow/cmd/transaction"
 	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/internal/structs"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -252,8 +253,8 @@ func CategoryAmount(category string) (string, error) {
 	}
 }
 
-func TotalBudgetAmount() (float64, error) {
-	var totalAmount float64
+func TotalBudgetAmount() (int, error) {
+	var totalAmount int
 	bv := new(structs.BudgetVariables)
 
 	db, err := budget_db.Connection()
@@ -276,7 +277,7 @@ func TotalBudgetAmount() (float64, error) {
 		if bv.Amount == "" {
 			continue // Skip empty amounts
 		}
-		amount, err := strconv.ParseFloat(bv.Amount, 64)
+		amount, err := strconv.Atoi(bv.Amount)
 		if err != nil {
 			return 0, err
 		}
@@ -315,14 +316,8 @@ func Method(value string) (string, error) {
 	}
 }
 
-func Alert(av structs.AlertVariables) error {
+func AlertSetup(av structs.AlertVariables) error {
 	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
-		totalAmount, err := TotalBudgetAmount()
-		if err != nil {
-			return err
-		}
-		fmt.Println(totalAmount)
-
 		amount, err := CategoryAmount(av.Category)
 		if err != nil {
 			return err
@@ -341,8 +336,24 @@ func Alert(av structs.AlertVariables) error {
 		fmt.Println(amount)
 		fmt.Println(frequencyMsg)
 		fmt.Println(method)
+		fmt.Println("Your alart message is setup")
 	} else {
 		return errors.New("enter all the alert values")
+	}
+	return nil
+}
+
+func AlertMessage() error {
+	totalAmount, err := TotalBudgetAmount()
+	if err != nil {
+		return err
+	}
+	transactionAmount := transaction.TransactionAmount()
+
+	if transactionAmount >= totalAmount {
+		fmt.Printf("You can't spend more becuase your budget is set to %d\n", totalAmount)
+	} else {
+		return errors.New("enjoy your spending")
 	}
 	return nil
 }
