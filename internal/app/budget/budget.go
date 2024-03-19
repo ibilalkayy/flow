@@ -317,26 +317,49 @@ func Method(value string) (string, error) {
 }
 
 func AlertSetup(av structs.AlertVariables) error {
-	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
-		amount, err := CategoryAmount(av.Category)
+	if len(av.Frequency) != 0 && len(av.Method) != 0 {
+		if len(av.Total) != 0 {
+			budgetAmount, err := TotalBudgetAmount()
+			if err != nil {
+				return err
+			}
+			totalAmount := strconv.Itoa(budgetAmount)
+
+			if len(totalAmount) != 0 && av.Total == "amount" {
+				fmt.Println("Alert is setup for the total amount")
+			} else {
+				return errors.New("total amount is not present or the flag value is not given properly")
+			}
+		} else if len(av.Category) != 0 {
+			categoryAmount, err := CategoryAmount(av.Category)
+			if err != nil {
+				return err
+			}
+
+			if len(categoryAmount) != 0 {
+				fmt.Println("Alert is setup for a specific category")
+			} else {
+				return errors.New("category amount is not present")
+			}
+		} else {
+			return errors.New("select a category")
+		}
+
+		var err error
+
+		_, err = Frequency(av.Frequency)
 		if err != nil {
 			return err
 		}
 
-		frequencyMsg, err := Frequency(av.Frequency)
+		_, err = Method(av.Method)
 		if err != nil {
 			return err
 		}
 
-		method, err := Method(av.Method)
-		if err != nil {
-			return err
-		}
-
-		fmt.Println(amount)
-		fmt.Println(frequencyMsg)
-		fmt.Println(method)
-		fmt.Println("Your alart message is setup")
+		// fmt.Println(frequencyMsg)
+		// fmt.Println(method)
+		// fmt.Println("Your alart message is setup")
 	} else {
 		return errors.New("enter all the alert values")
 	}

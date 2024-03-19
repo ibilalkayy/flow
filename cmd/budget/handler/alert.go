@@ -13,11 +13,13 @@ var AlertCmd = &cobra.Command{
 	Use:   "alert",
 	Short: "Get notification once you pass the budget",
 	Run: func(cmd *cobra.Command, args []string) {
+		total, _ := cmd.Flags().GetString("total")
 		category, _ := cmd.Flags().GetString("category")
 		frequency, _ := cmd.Flags().GetString("frequency")
 		method, _ := cmd.Flags().GetString("method")
 
 		av := structs.AlertVariables{
+			Total:     total,
 			Category:  category,
 			Frequency: frequency,
 			Method:    method,
@@ -32,6 +34,7 @@ var AlertCmd = &cobra.Command{
 
 func init() {
 	AlertCmd.AddCommand(MsgCmd)
+	AlertCmd.Flags().StringP("total", "t", "", "Write the 'amount' flag value to take the total budget amount")
 	AlertCmd.Flags().StringP("category", "c", "", "Write the category name to take its budget amount")
 	AlertCmd.Flags().StringP("frequency", "f", "", "Write the frequency of notifications (e.g., hourly, daily, weekly, monthly)")
 	AlertCmd.Flags().StringP("method", "m", "", "Write the preferred method of notification [email or CLI] message")

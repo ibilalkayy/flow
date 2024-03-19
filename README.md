@@ -18,7 +18,7 @@ With a user-friendly CLI. It manages the finances and achieve greater financial 
 
 ## Documentation
 
-To get to know about the application in detail, you can visit the [docs](https://github.com/ibilalkayy/flow/tree/main/docs) to understand the application in a better way.
+To know about the application in detail, you can visit the [docs](https://github.com/ibilalkayy/flow/tree/main/docs) to understand the application in a better way.
 
 ## What You Need?
 
