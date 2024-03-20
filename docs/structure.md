@@ -16,13 +16,17 @@
     │   └── budget_db
     │       ├── connection.go
     │       └── migrations
-    │           └── 001_create_budget_table.sql
+    │           ├── 001_create_budget_table.sql
+    │           └── 002_create_alert_table.sql
     ├── docs
+    │   ├── commands.md
     │   └── structure.md
     ├── internal
     │   ├── app
-    │   │   └── budget
-    │   │       └── budget.go
+    │   │   ├── budget
+    │   │   │   └── budget.go
+    │   │   └── alert
+    │   │       └── alert.go
     │   ├── middleware
     │   │   └── env.go
     │   └── structs
@@ -56,7 +60,10 @@
 - **cmd/transaction/transaction.go:** Transaction service entry point.
 - **db/budget_db/connection.go:** Database connection setup.
 - **db/budget_db/migrations/001_create_budget_table.sql:** SQL script for creating budget table.
+- **db/budget_db/migrations/002_create_alert_table.sql:** SQL script for creating alert table.
+- **docs/commands.md:** Commands of the whole application.
 - **docs/structure.md:** Structure of the whole application.
+- **internal/app/alert/alert.go:** Implementation of alert management functionality.
 - **internal/app/budget/budget.go:** Implementation of budget management functionality.
 - **internal/middleware/env.go:** Environment middleware for handling environment variables.
 - **tests/app/budget/budget_test.go:** Test file for handling the budget test functions.
