@@ -25,7 +25,7 @@ var SetupCmd = &cobra.Command{
 			Method:    method,
 		}
 
-		err := internal_alert.AlertSetup(av)
+		err := internal_alert.AlertSetup(&av)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -33,7 +33,7 @@ var SetupCmd = &cobra.Command{
 }
 
 func init() {
-	SetupCmd.Flags().StringP("total", "t", "", "Write the 'amount' flag value to take the total budget amount")
+	SetupCmd.Flags().StringP("total", "t", "", "Write the total budget amount to set the alert for")
 	SetupCmd.Flags().StringP("category", "c", "", "Write the category name to take its budget amount")
 	SetupCmd.Flags().StringP("frequency", "f", "", "Write the frequency of notifications (e.g., hourly, daily, weekly, monthly)")
 	SetupCmd.Flags().StringP("method", "m", "", "Write the preferred method of notification [email or CLI] message")

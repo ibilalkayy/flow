@@ -3,7 +3,7 @@ package internal_alert
 import (
 	"errors"
 	"fmt"
-	"log"
+	"math/rand"
 	"strconv"
 	"strings"
 
@@ -13,53 +13,64 @@ import (
 	"github.com/ibilalkayy/flow/internal/structs"
 )
 
+func generateUniqueCategory() string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, 8)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return fmt.Sprintf("default_%s", b)
+}
+
 func CreateAlert(av *structs.AlertVariables, basePath string) error {
 	data, err := budget_db.Table(basePath, "002_create_alert_table.sql", 0)
 	if err != nil {
 		return err
 	}
 
-	query := "INSERT INTO Alert(alert_methods, alert_frequencies) VALUES($1, $2)"
+	query := "INSERT INTO Alert(totals, categories, alert_methods, alert_frequencies) VALUES($1, $2, $3, $4)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
 	}
 	defer insert.Close()
 
-	if len(av.Method) != 0 && len(av.Frequency) != 0 {
-		_, err = insert.Exec(av.Method, av.Frequency)
-		if err != nil {
-			return err
-		}
-		fmt.Println("Alert data is successfully inserted!")
+	var total, category string
+
+	if len(av.Category) == 0 {
+		category = generateUniqueCategory()
 	} else {
-		return errors.New("enter both the method and frequency")
-	}
-	return nil
-}
-
-func Notification(av *structs.AlertVariables) error {
-	validMethods := map[string]bool{"email": true, "cli": true}
-	validFrequencies := map[string]bool{"hourly": true, "daily": true, "weekly": true, "monthly": true}
-
-	if !validMethods[strings.ToLower(av.Method)] {
-		return errors.New("invalid alert method")
+		category = av.Category
 	}
 
-	if !validFrequencies[strings.ToLower(av.Frequency)] {
-		return errors.New("invalid alert frequency")
+	if len(av.Total) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
+		total = av.Total
+	} else if len(av.Category) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
+		category = av.Category
+	} else {
+		return errors.New("enter the required flags")
 	}
 
-	err := CreateAlert(av, "db/budget_db/migrations/")
+	_, err = insert.Exec(total, category, av.Method, av.Frequency)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
-func AlertSetup(av structs.AlertVariables) error {
+func AlertSetup(av *structs.AlertVariables) error {
 	if len(av.Frequency) != 0 && len(av.Method) != 0 {
+		validMethods := map[string]bool{"email": true, "cli": true}
+		validFrequencies := map[string]bool{"hourly": true, "daily": true, "weekly": true, "monthly": true}
+
+		if !validMethods[strings.ToLower(av.Method)] {
+			return errors.New("invalid alert method")
+		}
+
+		if !validFrequencies[strings.ToLower(av.Frequency)] {
+			return errors.New("invalid alert frequency")
+		}
+
 		if len(av.Total) != 0 {
 			budgetAmount, err := internal_budget.TotalBudgetAmount()
 			if err != nil {
@@ -67,10 +78,14 @@ func AlertSetup(av structs.AlertVariables) error {
 			}
 			totalAmount := strconv.Itoa(budgetAmount)
 
-			if len(totalAmount) != 0 && av.Total == "amount" {
+			if len(totalAmount) != 0 && av.Total == totalAmount {
+				err := CreateAlert(av, "db/budget_db/migrations/")
+				if err != nil {
+					return err
+				}
 				fmt.Println("Alert is set for the total amount")
 			} else {
-				return errors.New("total amount is not present or the flag value is not given properly")
+				return errors.New("total amount is not given")
 			}
 		} else if len(av.Category) != 0 {
 			categoryAmount, err := internal_budget.CategoryAmount(av.Category)
@@ -79,6 +94,10 @@ func AlertSetup(av structs.AlertVariables) error {
 			}
 
 			if len(categoryAmount) != 0 {
+				err := CreateAlert(av, "db/budget_db/migrations/")
+				if err != nil {
+					return err
+				}
 				fmt.Println("Alert is set for a specific category")
 			} else {
 				return errors.New("category amount is not present")
@@ -86,12 +105,6 @@ func AlertSetup(av structs.AlertVariables) error {
 		} else {
 			return errors.New("select a category")
 		}
-
-		err := Notification(&av)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println("Your alert information is setup successfully")
 	} else {
 		return errors.New("enter all the alert values")
 	}
