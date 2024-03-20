@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	app "github.com/ibilalkayy/flow/internal/app/budget"
+	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	"github.com/ibilalkayy/flow/internal/structs"
 )
 
@@ -43,7 +43,7 @@ func TestCreateBudget(t *testing.T) {
 	basePath := "../../../db/budget_db/migrations/"
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := app.CreateBudget(tc.input, basePath)
+			err := internal_budget.CreateBudget(tc.input, basePath)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}
@@ -71,7 +71,7 @@ func TestViewBudget(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			data, err := app.ViewBudget(tc.category)
+			data, err := internal_budget.ViewBudget(tc.category)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}
@@ -100,7 +100,7 @@ func TestRemoveBudget(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := app.RemoveBudget(tc.category)
+			err := internal_budget.RemoveBudget(tc.category)
 			if err != nil {
 				t.Errorf("Expected no error: got %v", err)
 			}
@@ -148,7 +148,7 @@ func TestUpdateBudget(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := app.UpdateBudget(tc.oldCategory, tc.newCategory, tc.amount)
+			err := internal_budget.UpdateBudget(tc.oldCategory, tc.newCategory, tc.amount)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}
@@ -191,7 +191,7 @@ func TestGetBudgetData(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := app.GetBudgetData(tc.filepath, tc.filename)
+			err := internal_budget.GetBudgetData(tc.filepath, tc.filename)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}
