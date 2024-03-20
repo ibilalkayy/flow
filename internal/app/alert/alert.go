@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/ibilalkayy/flow/cmd/transaction"
 	"github.com/ibilalkayy/flow/db/budget_db"
@@ -38,18 +39,22 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 }
 
 func Notification(av *structs.AlertVariables) error {
-	if av.Method == "email" || av.Method == "Email" || av.Method == "cli" || av.Method == "Cli" || av.Method == "CLI" {
-		if av.Frequency == "hourly" || av.Frequency == "Hourly" || av.Frequency == "daily" || av.Frequency == "Daily" || av.Frequency == "weekly" || av.Frequency == "Weekly" || av.Frequency == "monthly" || av.Frequency == "Monthly" {
-			err := CreateAlert(av, "db/budget_db/migrations/")
-			if err != nil {
-				return err
-			}
-		} else {
-			return errors.New("invalid alert frequency")
-		}
-	} else {
+	validMethods := map[string]bool{"email": true, "cli": true}
+	validFrequencies := map[string]bool{"hourly": true, "daily": true, "weekly": true, "monthly": true}
+
+	if !validMethods[strings.ToLower(av.Method)] {
 		return errors.New("invalid alert method")
 	}
+
+	if !validFrequencies[strings.ToLower(av.Frequency)] {
+		return errors.New("invalid alert frequency")
+	}
+
+	err := CreateAlert(av, "db/budget_db/migrations/")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
