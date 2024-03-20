@@ -1,4 +1,4 @@
-package app
+package internal_budget
 
 import (
 	"database/sql"
@@ -8,7 +8,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/ibilalkayy/flow/cmd/transaction"
 	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/internal/structs"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -288,95 +287,4 @@ func TotalBudgetAmount() (int, error) {
 	}
 
 	return totalAmount, nil
-}
-
-func Frequency(value string) (string, error) {
-	switch value {
-	case "hourly", "Hourly":
-		return "You selected the hourly", nil
-	case "daily", "Daily":
-		return "You selected the daily", nil
-	case "weekly", "Weekly":
-		return "You selected the weekly", nil
-	case "monthly", "Monthly":
-		return "You selected the monthly", nil
-	default:
-		return "", errors.New("invalid selection. write [ hourly | daily | weekly | monthly ]")
-	}
-}
-
-func Method(value string) (string, error) {
-	switch value {
-	case "email", "Email":
-		return "You selected an email", nil
-	case "cli", "Cli", "CLI":
-		return "You selected the CLI", nil
-	default:
-		return "invalid selection. write [ email | CLI ]", nil
-	}
-}
-
-func AlertSetup(av structs.AlertVariables) error {
-	if len(av.Frequency) != 0 && len(av.Method) != 0 {
-		if len(av.Total) != 0 {
-			budgetAmount, err := TotalBudgetAmount()
-			if err != nil {
-				return err
-			}
-			totalAmount := strconv.Itoa(budgetAmount)
-
-			if len(totalAmount) != 0 && av.Total == "amount" {
-				fmt.Println("Alert is setup for the total amount")
-			} else {
-				return errors.New("total amount is not present or the flag value is not given properly")
-			}
-		} else if len(av.Category) != 0 {
-			categoryAmount, err := CategoryAmount(av.Category)
-			if err != nil {
-				return err
-			}
-
-			if len(categoryAmount) != 0 {
-				fmt.Println("Alert is setup for a specific category")
-			} else {
-				return errors.New("category amount is not present")
-			}
-		} else {
-			return errors.New("select a category")
-		}
-
-		var err error
-
-		_, err = Frequency(av.Frequency)
-		if err != nil {
-			return err
-		}
-
-		_, err = Method(av.Method)
-		if err != nil {
-			return err
-		}
-
-		// fmt.Println(frequencyMsg)
-		// fmt.Println(method)
-		// fmt.Println("Your alart message is setup")
-	} else {
-		return errors.New("enter all the alert values")
-	}
-	return nil
-}
-
-func AlertMessage() error {
-	totalAmount, err := TotalBudgetAmount()
-	if err != nil {
-		return err
-	}
-	transactionAmount := transaction.TransactionAmount()
-
-	if transactionAmount >= totalAmount {
-		fmt.Printf("You can't spend more becuase your budget is set to %d\n", totalAmount)
-	} else {
-		return errors.New("enjoy your spending")
-	}
-	return nil
 }

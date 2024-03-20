@@ -3,7 +3,7 @@ package handler
 import (
 	"log"
 
-	app "github.com/ibilalkayy/flow/internal/app/budget"
+	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	"github.com/ibilalkayy/flow/internal/structs"
 	"github.com/spf13/cobra"
 )
@@ -16,7 +16,7 @@ var CreateCmd = &cobra.Command{
 		category, _ := cmd.Flags().GetString("category")
 		amount, _ := cmd.Flags().GetString("amount")
 		bv := structs.BudgetVariables{Category: category, Amount: amount}
-		err := app.CreateBudget(&bv, "db/budget_db/migrations/")
+		err := internal_budget.CreateBudget(&bv, "db/budget_db/migrations/")
 		if err != nil {
 			log.Fatal(err)
 		}

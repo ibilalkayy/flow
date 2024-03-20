@@ -3,7 +3,7 @@ package handler
 import (
 	"log"
 
-	app "github.com/ibilalkayy/flow/internal/app/budget"
+	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +12,7 @@ var MsgCmd = &cobra.Command{
 	Use:   "msg",
 	Short: "The message of alert notifications",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := app.AlertMessage()
+		err := internal_alert.AlertMessage()
 		if err != nil {
 			log.Fatal(err)
 		}

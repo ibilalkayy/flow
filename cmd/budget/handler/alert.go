@@ -3,7 +3,7 @@ package handler
 import (
 	"log"
 
-	app "github.com/ibilalkayy/flow/internal/app/budget"
+	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
 	"github.com/ibilalkayy/flow/internal/structs"
 	"github.com/spf13/cobra"
 )
@@ -25,7 +25,7 @@ var AlertCmd = &cobra.Command{
 			Method:    method,
 		}
 
-		err := app.AlertSetup(av)
+		err := internal_alert.AlertSetup(av)
 		if err != nil {
 			log.Fatal(err)
 		}
