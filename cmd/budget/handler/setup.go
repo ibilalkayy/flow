@@ -33,7 +33,7 @@ var SetupCmd = &cobra.Command{
 }
 
 func init() {
-	SetupCmd.Flags().StringP("total", "t", "", "Write the total budget amount to set the alert for")
+	SetupCmd.Flags().StringP("total", "t", "", "Write the total budget amount to set the alert")
 	SetupCmd.Flags().StringP("category", "c", "", "Write the category name to take its budget amount")
 	SetupCmd.Flags().StringP("frequency", "f", "", "Write the frequency of notifications (e.g., hourly, daily, weekly, monthly)")
 	SetupCmd.Flags().StringP("method", "m", "", "Write the preferred method of notification [email or CLI] message")

@@ -6,8 +6,9 @@ type BudgetVariables struct {
 }
 
 type AlertVariables struct {
-	Total     string
-	Category  string
-	Frequency string
-	Method    string
+	Category       string
+	CategoryAmount string
+	Total          string
+	Frequency      string
+	Method         string
 }

@@ -57,44 +57,58 @@ Sure, let's break down each command along with its structure for better understa
   - `-o, --oldcategory string`: Old category name to adjust
 
 ### 4. `flow budget alert`
-- **Description**: Sets up alerts to get notifications when the budget for a specific category is passed.
+- **Description**: Command for the alert notification.
 - **Usage**: 
   - `flow budget alert [flags]`
   - `flow budget alert [command]`
 - **Available Commands**:
   - `msg`: The message of alert notifications
+  - `setup`: Setup for alert notification
+
+### 5. `flow budget alert setup`
+- **Description**: Sets up alerts to get notifications when the budget (for a specific category amount or the whole amount) is passed.
+- **Usage**: 
+  - `flow budget alert setup [flags]`
 - **Flags**:
   - `-c, --category string`: Category name to monitor for budget
   - `-f, --frequency string`: Frequency of notifications (e.g., hourly, daily, weekly, monthly)
   - `-m, --method string`: Preferred method of notification [email or CLI] message
+  - `-t, --total string`:  Total budget amount to set the alert
 
-### 5. `flow budget create`
+### 6. `flow budget alert msg`
+- **Description**: Show the alert messages that were set.
+- **Usage**: 
+  - `flow budget alert msg [flags]`
+- **Flags**:
+  - `-h, --help`: Display help information
+
+### 7. `flow budget create`
 - **Description**: Creates a budget for different spending categories.
 - **Usage**: `flow budget create [flags]`
 - **Flags**:
   - `-a, --amount string`: Total amount for the category
   - `-c, --category string`: Category name (e.g., groceries, utilities, etc.)
 
-### 6. `flow budget get`
+### 8. `flow budget get`
 - **Description**: Retrieves the budget data in CSV format.
 - **Usage**: `flow budget get [flags]`
 - **Flags**:
   - `-n, --filename string`: CSV file name to store the data
   - `-p, --filepath string`: File path to store the data
 
-### 7. `flow budget remove`
+### 9. `flow budget remove`
 - **Description**: Removes budget details for a specific category.
 - **Usage**: `flow budget remove [flags]`
 - **Flags**:
   - `-c, --category string`: Category name to remove
 
-### 8. `flow budget view`
+### 10. `flow budget view`
 - **Description**: Views the budget details, optionally for a specific category.
 - **Usage**: `flow budget view [flags]`
 - **Flags**:
   - `-c, --category string`: Category name to show specific details
 
-### 9. `flow completion`
+### 11. `flow completion`
 - **Description**: Generates autocompletion scripts for various shells.
 - **Usage**: `flow completion [command]`
 - **Available Commands**:
@@ -105,9 +119,9 @@ Sure, let's break down each command along with its structure for better understa
 - **Flags**:
   - `-h, --help`: Display help information
 
-### 10. `flow help`
+### 12. `flow help`
 - **Description**: Provides help about the Flow application or specific commands.
 - **Usage**: `flow help [command]`
 
-### 11. `flow transaction`
+### 13. `flow transaction`
 - **Description**: Provides transaction services (not further detailed in provided output).

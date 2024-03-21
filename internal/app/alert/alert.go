@@ -19,7 +19,7 @@ func generateUniqueCategory() string {
 	for i := range b {
 		b[i] = charset[rand.Intn(len(charset))]
 	}
-	return fmt.Sprintf("default_%s", b)
+	return fmt.Sprintf("total_category_%s", b)
 }
 
 func CreateAlert(av *structs.AlertVariables, basePath string) error {
@@ -28,14 +28,14 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 		return err
 	}
 
-	query := "INSERT INTO Alert(totals, categories, alert_methods, alert_frequencies) VALUES($1, $2, $3, $4)"
+	query := "INSERT INTO Alert(categories, category_amounts, total_amount, alert_methods, alert_frequencies) VALUES($1, $2, $3, $4, $5)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
 	}
 	defer insert.Close()
 
-	var total, category string
+	var total, category, categoryAmount string
 
 	if len(av.Category) == 0 {
 		category = generateUniqueCategory()
@@ -47,11 +47,15 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 		total = av.Total
 	} else if len(av.Category) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
 		category = av.Category
+		categoryAmount, err = internal_budget.CategoryAmount(category)
+		if err != nil {
+			return err
+		}
 	} else {
 		return errors.New("enter the required flags")
 	}
 
-	_, err = insert.Exec(total, category, av.Method, av.Frequency)
+	_, err = insert.Exec(category, categoryAmount, total, av.Method, av.Frequency)
 	if err != nil {
 		return err
 	}

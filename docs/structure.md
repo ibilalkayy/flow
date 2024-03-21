@@ -9,6 +9,7 @@
     │   │       ├── get.go
     │   │       ├── msg.go
     │   │       ├── remove.go
+    │   │       ├── setup.go     
     │   │       └── view.go
     │   └── transaction
     │       └── transaction.go
@@ -51,11 +52,12 @@
 
 - **cmd/budget/budget.go:** Budget service entry point.
 - **cmd/budget/handler/adjust.go:** Handler for adjusting budget.
-- **cmd/budget/handler/alert.go:** Handler for alerting once the budget limit is passed.
+- **cmd/budget/handler/alert.go:** Handler for alerting.
 - **cmd/budget/handler/create.go:** Handler for creating budget.
 - **cmd/budget/handler/get.go:** Handler for getting budget.
 - **cmd/budget/handler/msg.go:** Handler for showing the alert messages.
 - **cmd/budget/handler/remove.go:** Handler for removing budget.
+- **cmd/budget/handler/setup.go:** Handler for setting up the alert when the limitation is passed.
 - **cmd/budget/handler/view.go:** Handler for viewing budget.
 - **cmd/transaction/transaction.go:** Transaction service entry point.
 - **db/budget_db/connection.go:** Database connection setup.
