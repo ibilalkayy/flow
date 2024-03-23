@@ -13,7 +13,7 @@ import (
 	"github.com/ibilalkayy/flow/internal/structs"
 )
 
-func generateUniqueCategory() string {
+func GenerateUniqueCategory() string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, 8)
 	for i := range b {
@@ -38,7 +38,7 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 	var total, category, categoryAmount string
 
 	if len(av.Category) == 0 {
-		category = generateUniqueCategory()
+		category = GenerateUniqueCategory()
 	} else {
 		category = av.Category
 	}
