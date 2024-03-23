@@ -8,6 +8,32 @@ import (
 	"github.com/ibilalkayy/flow/internal/structs"
 )
 
+type mockDB struct{}
+
+func (m *mockDB) Connection() (*mockRows, error) {
+	return &mockRows{}, nil
+}
+
+type mockRows struct{}
+
+func (m *mockRows) Close() error {
+	return nil
+}
+
+func (m *mockRows) Next() bool {
+	return true
+}
+
+func (m *mockRows) Scan(dest ...interface{}) error {
+	// Assuming the budget amount is 100 for testing purposes
+	*dest[0].(*string) = "100"
+	return nil
+}
+
+func (m *mockRows) Err() error {
+	return nil
+}
+
 func TestCreateBudget(t *testing.T) {
 	testCases := []struct {
 		name        string
@@ -196,5 +222,53 @@ func TestGetBudgetData(t *testing.T) {
 				t.Errorf("Expected no error, got %v", err)
 			}
 		})
+	}
+}
+
+func TestCategoryAmount(t *testing.T) {
+	testCases := []struct {
+		name        string
+		category    string
+		expectedMsg string
+	}{
+		{
+			name:        "RightCategory",
+			category:    "first",
+			expectedMsg: "Found the category amount: 500\n",
+		},
+		{
+			name:        "Wrongcategory",
+			category:    "wrong",
+			expectedMsg: "Found the category amount: \n",
+		},
+		{
+			name:        "EmptyCategory",
+			category:    "",
+			expectedMsg: "Found no category amount\n",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := internal_budget.CategoryAmount(tc.category)
+			if err != nil {
+				t.Errorf("Expected no error, got %v", err)
+			}
+		})
+	}
+}
+
+func TestTotalBudgetAmount(t *testing.T) {
+	// Replace the original DB connection with the mockDB
+	_ = &mockDB{}
+
+	expectedTotal := 1200
+	total, err := internal_budget.TotalBudgetAmount()
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+
+	if total != expectedTotal {
+		t.Errorf("expected total amount %d, got %d", expectedTotal, total)
 	}
 }
