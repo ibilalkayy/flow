@@ -89,7 +89,7 @@ func AlertSetup(av *structs.AlertVariables) error {
 				}
 				fmt.Println("Alert is set for the total amount")
 			} else {
-				return errors.New("total amount is not given")
+				return errors.New("total amount is not given. type 'flow budget view' to get the total amount")
 			}
 		} else if len(av.Category) != 0 {
 			categoryAmount, err := internal_budget.CategoryAmount(av.Category)
