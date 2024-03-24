@@ -12,30 +12,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func Connection2(values [6]string) (*sql.DB, error) {
-	params := structs.DatabaseVariables{
-		Host:     values[0],
-		Port:     values[1],
-		User:     values[2],
-		Password: values[3],
-		DBName:   values[4],
-		SSLMode:  values[5],
-	}
-
-	connectStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", params.Host, params.Port, params.User, params.Password, params.DBName, params.SSLMode)
-	db, err := sql.Open("postgres", connectStr)
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}
-
 func Connection() (*sql.DB, error) {
 	var dv structs.DatabaseVariables
 

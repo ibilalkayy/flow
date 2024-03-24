@@ -42,7 +42,7 @@ var InitCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Println("Successfully connected to the database and saved values to .env file!")
+		fmt.Println("Successfully connected to the database")
 	},
 }
 
