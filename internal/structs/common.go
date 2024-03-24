@@ -1,5 +1,11 @@
 package structs
 
+type AuthVariables struct {
+	Username    string
+	Gmail       string
+	AppPassword string
+}
+
 type DatabaseVariables struct {
 	Host     string
 	Port     string

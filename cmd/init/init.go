@@ -10,44 +10,82 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func allNonEmpty(params ...string) bool {
+	for _, param := range params {
+		if len(param) == 0 {
+			return false
+		}
+	}
+	return true
+}
+
 var InitCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize your flow application",
-	Run: func(cmd *cobra.Command, args []string) {
-		db_host, _ := cmd.Flags().GetString("host")
-		postgres_port, _ := cmd.Flags().GetString("port")
-		postgres_user, _ := cmd.Flags().GetString("user")
-		postgres_password, _ := cmd.Flags().GetString("password")
-		postgres_dbname, _ := cmd.Flags().GetString("dbname")
-		sslmode, _ := cmd.Flags().GetString("sslmode")
+	Run:   initApp,
+}
 
-		parameters := &structs.DatabaseVariables{
-			Host:     db_host,
-			Port:     postgres_port,
-			User:     postgres_user,
-			Password: postgres_password,
-			DBName:   postgres_dbname,
-			SSLMode:  sslmode,
-		}
+func initApp(cmd *cobra.Command, args []string) {
+	username, _ := cmd.Flags().GetString("username")
+	gmail, _ := cmd.Flags().GetString("gmail")
+	appPassword, _ := cmd.Flags().GetString("app_password")
 
-		err := internal_init.WriteEnvFile(parameters)
+	dbHost, _ := cmd.Flags().GetString("host")
+	postgresPort, _ := cmd.Flags().GetString("port")
+	postgresUser, _ := cmd.Flags().GetString("user")
+	postgresPassword, _ := cmd.Flags().GetString("password")
+	postgresDBName, _ := cmd.Flags().GetString("dbname")
+	sslMode, _ := cmd.Flags().GetString("sslmode")
+
+	authParams := &structs.AuthVariables{
+		Username:    username,
+		Gmail:       gmail,
+		AppPassword: appPassword,
+	}
+
+	dbParams := &structs.DatabaseVariables{
+		Host:     dbHost,
+		Port:     postgresPort,
+		User:     postgresUser,
+		Password: postgresPassword,
+		DBName:   postgresDBName,
+		SSLMode:  sslMode,
+	}
+
+	if allNonEmpty(
+		authParams.Username, authParams.Gmail, authParams.AppPassword,
+		dbParams.Host, dbParams.Port, dbParams.User, dbParams.Password,
+		dbParams.DBName, dbParams.SSLMode,
+	) {
+		err := initializeApplication(authParams, dbParams)
 		if err != nil {
-			fmt.Println("Error writing to .env file:", err)
+			fmt.Println("Error during initialization:", err)
 			return
 		}
+	} else {
+		fmt.Println("Please provide all the required flag values")
+	}
+}
 
-		_, err = budget_db.Connection()
-		if err != nil {
-			fmt.Println("Error connecting to the database:", err)
-			return
-		}
+func initializeApplication(authParams *structs.AuthVariables, dbParams *structs.DatabaseVariables) error {
+	err := internal_init.WriteEnvFile(authParams, dbParams)
+	if err != nil {
+		return fmt.Errorf("error writing to .env file: %v", err)
+	}
 
-		fmt.Println("Successfully connected to the database")
-	},
+	_, err = budget_db.Connection()
+	if err != nil {
+		return fmt.Errorf("error connecting to the database: %v", err)
+	}
+	fmt.Println("Successfully connected to the database")
+	return nil
 }
 
 func init() {
 	cmd.RootCmd.AddCommand(InitCmd)
+	InitCmd.Flags().StringP("username", "n", "", "Write your username")
+	InitCmd.Flags().StringP("gmail", "g", "", "Write your Gmail address for alert notifications")
+	InitCmd.Flags().StringP("app_password", "a", "", "Write the App Password of your Gmail account")
 	InitCmd.Flags().StringP("host", "o", "", "Write the PostgreSQL host")
 	InitCmd.Flags().StringP("port", "p", "", "Write the PostgreSQL port")
 	InitCmd.Flags().StringP("password", "w", "", "Write the PostgreSQL password")

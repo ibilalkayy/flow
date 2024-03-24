@@ -7,36 +7,33 @@ import (
 	"github.com/ibilalkayy/flow/internal/structs"
 )
 
-func WriteEnvFile(dv *structs.DatabaseVariables) error {
+func WriteEnvFile(av *structs.AuthVariables, dv *structs.DatabaseVariables) error {
 	f, err := os.Create(".env")
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	_, err = fmt.Fprintf(f, "DB_HOST=%s\n", dv.Host)
-	if err != nil {
-		return err
+	fields := []struct {
+		Key   string
+		Value string
+	}{
+		{"USERNAME", av.Username},
+		{"GMAIL", av.Gmail},
+		{"APP_PASSWORD", av.AppPassword},
+
+		{"DB_HOST", dv.Host},
+		{"DB_PORT", dv.Port},
+		{"DB_USER", dv.User},
+		{"DB_PASSWORD", dv.Password},
+		{"DB_NAME", dv.DBName},
+		{"SSL_MODE", dv.SSLMode},
 	}
-	_, err = fmt.Fprintf(f, "DB_PORT=%s\n", dv.Port)
-	if err != nil {
-		return err
-	}
-	_, err = fmt.Fprintf(f, "DB_USER=%s\n", dv.User)
-	if err != nil {
-		return err
-	}
-	_, err = fmt.Fprintf(f, "DB_PASSWORD=%s\n", dv.Password)
-	if err != nil {
-		return err
-	}
-	_, err = fmt.Fprintf(f, "DB_NAME=%s\n", dv.DBName)
-	if err != nil {
-		return err
-	}
-	_, err = fmt.Fprintf(f, "SSL_MODE=%s\n", dv.SSLMode)
-	if err != nil {
-		return err
+
+	for _, field := range fields {
+		if _, err := fmt.Fprintf(f, "%s=%s\n", field.Key, field.Value); err != nil {
+			return err
+		}
 	}
 
 	return nil
