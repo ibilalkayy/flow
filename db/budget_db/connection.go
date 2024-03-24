@@ -2,47 +2,57 @@ package budget_db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/ibilalkayy/flow/internal/middleware"
+	"github.com/ibilalkayy/flow/internal/structs"
 	_ "github.com/lib/pq"
 )
 
-type Variables struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	DBName   string
-	SSLMode  string
+func Connection2(values [6]string) (*sql.DB, error) {
+	params := structs.DatabaseVariables{
+		Host:     values[0],
+		Port:     values[1],
+		User:     values[2],
+		Password: values[3],
+		DBName:   values[4],
+		SSLMode:  values[5],
+	}
+
+	connectStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", params.Host, params.Port, params.User, params.Password, params.DBName, params.SSLMode)
+	db, err := sql.Open("postgres", connectStr)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Ping()
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
 
 func Connection() (*sql.DB, error) {
-	var v Variables
+	var dv structs.DatabaseVariables
 
-	if os.Getenv("POSTGRES_HOST") != "" {
-		v = Variables{
-			Host:     os.Getenv("POSTGRES_HOST"),
-			Port:     os.Getenv("POSTGRES_PORT"),
-			User:     os.Getenv("POSTGRES_USER"),
-			Password: os.Getenv("POSTGRES_PASSWORD"),
-			DBName:   os.Getenv("POSTGRES_DB"),
-			SSLMode:  os.Getenv("POSTGRES_SSL"),
+	if middleware.LoadEnvVariable("DB_HOST") != "" {
+		dv = structs.DatabaseVariables{
+			Host:     middleware.LoadEnvVariable("DB_HOST"),
+			Port:     middleware.LoadEnvVariable("DB_PORT"),
+			User:     middleware.LoadEnvVariable("DB_USER"),
+			Password: middleware.LoadEnvVariable("DB_PASSWORD"),
+			DBName:   middleware.LoadEnvVariable("DB_NAME"),
+			SSLMode:  middleware.LoadEnvVariable("SSL_MODE"),
 		}
 	} else {
-		v = Variables{
-			Host:     middleware.LoadEnvVariable("LOCAL_HOST"),
-			Port:     middleware.LoadEnvVariable("PORT"),
-			User:     middleware.LoadEnvVariable("POSTGRES_USER"),
-			Password: middleware.LoadEnvVariable("PASSWORD"),
-			DBName:   middleware.LoadEnvVariable("DBNAME"),
-			SSLMode:  middleware.LoadEnvVariable("SSLMODE"),
-		}
+		return nil, errors.New("invalid host provided")
 	}
 
-	connectStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", v.Host, v.Port, v.User, v.Password, v.DBName, v.SSLMode)
+	connectStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", dv.Host, dv.Port, dv.User, dv.Password, dv.DBName, dv.SSLMode)
 	db, err := sql.Open("postgres", connectStr)
 	if err != nil {
 		return nil, err
