@@ -19,7 +19,7 @@ func WriteEnvFile(av *structs.AuthVariables, dv *structs.DatabaseVariables) erro
 		Value string
 	}{
 		{"USERNAME", av.Username},
-		{"GMAIL", av.Gmail},
+		{"APP_EMAIL", av.Gmail},
 		{"APP_PASSWORD", av.AppPassword},
 
 		{"DB_HOST", dv.Host},

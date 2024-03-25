@@ -3,7 +3,6 @@ package internal_alert
 import (
 	"errors"
 	"fmt"
-	"math/rand"
 	"strconv"
 	"strings"
 
@@ -12,15 +11,6 @@ import (
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	"github.com/ibilalkayy/flow/internal/structs"
 )
-
-func GenerateUniqueCategory() string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, 8)
-	for i := range b {
-		b[i] = charset[rand.Intn(len(charset))]
-	}
-	return fmt.Sprintf("total_category_%s", b)
-}
 
 func CreateAlert(av *structs.AlertVariables, basePath string) error {
 	data, err := budget_db.Table(basePath, "002_create_alert_table.sql", 0)
@@ -37,19 +27,22 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 
 	var total, category, categoryAmount string
 
-	if len(av.Category) == 0 {
-		category = GenerateUniqueCategory()
-	} else {
-		category = av.Category
-	}
-
 	if len(av.Total) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
-		total = av.Total
+		if len(av.Category) == 0 {
+			total = av.Total
+			category = "total_category"
+		} else {
+			return errors.New("remove the category flag because there is no specific category for total amount")
+		}
 	} else if len(av.Category) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
-		category = av.Category
-		categoryAmount, err = internal_budget.CategoryAmount(category)
-		if err != nil {
-			return err
+		if av.Category == "first" {
+			category = av.Category
+			categoryAmount, err = internal_budget.CategoryAmount(category)
+			if err != nil {
+				return err
+			}
+		} else {
+			return errors.New("enter the correct category")
 		}
 	} else {
 		return errors.New("enter the required flags")
@@ -70,6 +63,10 @@ func AlertSetup(av *structs.AlertVariables) error {
 		if !validMethods[strings.ToLower(av.Method)] {
 			return errors.New("invalid alert method")
 		}
+		// } else {
+		// var value string
+		// email.SendAlertMail()
+		// }
 
 		if !validFrequencies[strings.ToLower(av.Frequency)] {
 			return errors.New("invalid alert frequency")
@@ -128,4 +125,47 @@ func AlertMessage() error {
 		return errors.New("enjoy your spending")
 	}
 	return nil
+}
+
+func ViewEmailCredentials(category string) ([3]string, error) {
+	if len(category) == 0 {
+		return [3]string{}, errors.New("category is not entered")
+	} else {
+		ev := new(structs.EmailVariables)
+
+		db, err := budget_db.Connection()
+		if err != nil {
+			return [3]string{}, err
+		}
+
+		checkQuery := "SELECT COUNT(*) FROM Alert WHERE categories=$1"
+		var count int
+		err = db.QueryRow(checkQuery, category).Scan(&count)
+		if err != nil {
+			return [3]string{}, nil
+		}
+
+		if count == 0 {
+			return [3]string{}, errors.New("category not found")
+		}
+
+		query := "SELECT categories, category_amounts, total_amount FROM Alert WHERE categories=$1"
+		rows, err := db.Query(query, category)
+		if err != nil {
+			return [3]string{}, err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			if err := rows.Scan(&ev.Category, &ev.CategoryAmount, &ev.TotalAmount); err != nil {
+				return [3]string{}, err
+			}
+		}
+		if err := rows.Err(); err != nil {
+			return [3]string{}, err
+		}
+
+		values := [3]string{ev.Category, ev.CategoryAmount, ev.TotalAmount}
+		return values, nil
+	}
 }

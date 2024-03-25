@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <b>Hey {{.Username}}</b>
+
+    {{if .CategoryAmount}}
+        <p>Your {{.Category}} category has {{.CategoryAmount}} but now you have crossed it. Please spend below or equal to your limit.</p>
+        <p>Thank you!</p>
+    {{else}} 
+    {{if .TotalAmount}}
+        <p>Your {{.Category}} category has {{.TotalAmount}} but now you have crossed it. Please spend below or equal to your limit.</p>
+        <p>Thank you!</p>
+    {{end}} {{end}}
+</body>
+</html>

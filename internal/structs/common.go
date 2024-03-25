@@ -27,3 +27,10 @@ type AlertVariables struct {
 	Frequency      string
 	Method         string
 }
+
+type EmailVariables struct {
+	Username       string
+	Category       string
+	CategoryAmount string
+	TotalAmount    string
+}

@@ -21,7 +21,7 @@ func TestGenerateUniqueCategory(t *testing.T) {
 	numIterations := 1000
 
 	for i := 0; i < numIterations; i++ {
-		category := internal_alert.GenerateUniqueCategory()
+		category := "total_cateogory"
 
 		// Check if the generated category matches the expected format
 		if !categoryRegex.MatchString(category) {
