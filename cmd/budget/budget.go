@@ -5,7 +5,6 @@ import (
 
 	"github.com/ibilalkayy/flow/cmd"
 	"github.com/ibilalkayy/flow/cmd/budget/handler"
-	"github.com/ibilalkayy/flow/email"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +17,6 @@ for different spending categories. With this command, you can create, view,
 and adjust their budgets to effectively track and control their expenses.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		email.SendAlertMail()
 		fmt.Println("Nothing specified, nothing added")
 	},
 }

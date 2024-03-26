@@ -8,6 +8,7 @@ import (
 
 	"github.com/ibilalkayy/flow/cmd/transaction"
 	"github.com/ibilalkayy/flow/db/budget_db"
+	"github.com/ibilalkayy/flow/email"
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	"github.com/ibilalkayy/flow/internal/structs"
 )
@@ -42,7 +43,7 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 				return err
 			}
 		} else {
-			return errors.New("enter the correct category")
+			return errors.New("enter the right category")
 		}
 	} else {
 		return errors.New("enter the required flags")
@@ -55,6 +56,20 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 	return nil
 }
 
+func CheckMethod(method, category string) error {
+	if method == "email" {
+		err := email.SendAlertEmail(category)
+		if err != nil {
+			return err
+		}
+	} else if method == "cli" {
+		fmt.Println("cli is called")
+	} else {
+		return errors.New("write the correct method")
+	}
+	return nil
+}
+
 func AlertSetup(av *structs.AlertVariables) error {
 	if len(av.Frequency) != 0 && len(av.Method) != 0 {
 		validMethods := map[string]bool{"email": true, "cli": true}
@@ -63,10 +78,6 @@ func AlertSetup(av *structs.AlertVariables) error {
 		if !validMethods[strings.ToLower(av.Method)] {
 			return errors.New("invalid alert method")
 		}
-		// } else {
-		// var value string
-		// email.SendAlertMail()
-		// }
 
 		if !validFrequencies[strings.ToLower(av.Frequency)] {
 			return errors.New("invalid alert frequency")
@@ -84,6 +95,10 @@ func AlertSetup(av *structs.AlertVariables) error {
 				if err != nil {
 					return err
 				}
+				err = CheckMethod(av.Method, "total_category")
+				if err != nil {
+					return err
+				}
 				fmt.Println("Alert is set for the total amount")
 			} else {
 				return errors.New("total amount is not given. type 'flow budget view' to get the total amount")
@@ -96,6 +111,10 @@ func AlertSetup(av *structs.AlertVariables) error {
 
 			if len(categoryAmount) != 0 {
 				err := CreateAlert(av, "db/budget_db/migrations/")
+				if err != nil {
+					return err
+				}
+				err = CheckMethod(av.Method, av.Category)
 				if err != nil {
 					return err
 				}
@@ -125,47 +144,4 @@ func AlertMessage() error {
 		return errors.New("enjoy your spending")
 	}
 	return nil
-}
-
-func ViewEmailCredentials(category string) ([3]string, error) {
-	if len(category) == 0 {
-		return [3]string{}, errors.New("category is not entered")
-	} else {
-		ev := new(structs.EmailVariables)
-
-		db, err := budget_db.Connection()
-		if err != nil {
-			return [3]string{}, err
-		}
-
-		checkQuery := "SELECT COUNT(*) FROM Alert WHERE categories=$1"
-		var count int
-		err = db.QueryRow(checkQuery, category).Scan(&count)
-		if err != nil {
-			return [3]string{}, nil
-		}
-
-		if count == 0 {
-			return [3]string{}, errors.New("category not found")
-		}
-
-		query := "SELECT categories, category_amounts, total_amount FROM Alert WHERE categories=$1"
-		rows, err := db.Query(query, category)
-		if err != nil {
-			return [3]string{}, err
-		}
-		defer rows.Close()
-
-		for rows.Next() {
-			if err := rows.Scan(&ev.Category, &ev.CategoryAmount, &ev.TotalAmount); err != nil {
-				return [3]string{}, err
-			}
-		}
-		if err := rows.Err(); err != nil {
-			return [3]string{}, err
-		}
-
-		values := [3]string{ev.Category, ev.CategoryAmount, ev.TotalAmount}
-		return values, nil
-	}
 }

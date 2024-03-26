@@ -211,45 +211,41 @@ func GetBudgetData(filepath, filename string) error {
 }
 
 func CategoryAmount(category string) (string, error) {
-	if len(category) == 0 {
-		return "", errors.New("category is not entered")
-	} else {
-		bv := new(structs.BudgetVariables)
+	bv := new(structs.BudgetVariables)
 
-		db, err := budget_db.Connection()
-		if err != nil {
-			return "", err
-		}
-
-		checkQuery := "SELECT COUNT(*) FROM Budget WHERE categories=$1"
-		var count int
-		err = db.QueryRow(checkQuery, category).Scan(&count)
-		if err != nil {
-			return "", nil
-		}
-
-		if count == 0 {
-			return "", errors.New("category not found")
-		}
-
-		query := "SELECT amounts FROM Budget WHERE categories=$1"
-		rows, err := db.Query(query, category)
-		if err != nil {
-			return "", err
-		}
-		defer rows.Close()
-
-		for rows.Next() {
-			if err := rows.Scan(&bv.Amount); err != nil {
-				return "", err
-			}
-		}
-		if err := rows.Err(); err != nil {
-			return "", err
-		}
-
-		return bv.Amount, nil
+	db, err := budget_db.Connection()
+	if err != nil {
+		return "", err
 	}
+
+	checkQuery := "SELECT COUNT(*) FROM Budget WHERE categories=$1"
+	var count int
+	err = db.QueryRow(checkQuery, category).Scan(&count)
+	if err != nil {
+		return "", nil
+	}
+
+	if count == 0 {
+		return "", errors.New("category not found")
+	}
+
+	query := "SELECT amounts FROM Budget WHERE categories=$1"
+	rows, err := db.Query(query, category)
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(&bv.Amount); err != nil {
+			return "", err
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return "", err
+	}
+
+	return bv.Amount, nil
 }
 
 func TotalBudgetAmount() (int, error) {
