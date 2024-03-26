@@ -5,9 +5,9 @@ WORKDIR /app
 COPY go.mod /app
 COPY go.sum /app
 
-COPY . /app
-
 RUN go mod download
+
+COPY . /app
 
 RUN go build -o flow .
 
