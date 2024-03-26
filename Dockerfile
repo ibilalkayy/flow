@@ -9,6 +9,6 @@ RUN go mod download
 
 COPY . /app
 
-RUN go build -o flow .
+RUN go build -ldflags="-w -s" -o flow
 
 CMD ["sh", "-c", "./flow && while true; do echo 'App is running'; sleep 10; done"]
