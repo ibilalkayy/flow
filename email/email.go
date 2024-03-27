@@ -5,46 +5,18 @@ import (
 	"errors"
 	"text/template"
 
-	"github.com/ibilalkayy/flow/db/budget_db"
+	"github.com/ibilalkayy/flow/db/alert_db"
 	"github.com/ibilalkayy/flow/internal/middleware"
 	"github.com/ibilalkayy/flow/internal/structs"
 	"gopkg.in/gomail.v2"
 )
-
-func ViewAlert(category string) ([2]string, error) {
-	ev := new(structs.EmailVariables)
-
-	db, err := budget_db.Connection()
-	if err != nil {
-		return [2]string{}, err
-	}
-
-	query := "SELECT categories, category_amounts FROM Alert WHERE categories=$1"
-	rows, err := db.Query(query, category)
-	if err != nil {
-		return [2]string{}, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if err := rows.Scan(&ev.Category, &ev.CategoryAmount); err != nil {
-			return [2]string{}, err
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return [2]string{}, err
-	}
-
-	values := [2]string{ev.Category, ev.CategoryAmount}
-	return values, nil
-}
 
 func SendAlertEmail(category string) error {
 	myEmail := middleware.LoadEnvVariable("APP_EMAIL")
 	myPassword := middleware.LoadEnvVariable("APP_PASSWORD")
 	myUsername := middleware.LoadEnvVariable("USERNAME")
 
-	emailCreds, err := ViewAlert(category)
+	emailCreds, err := alert_db.ViewAlert(category)
 	if err != nil {
 		return err
 	}

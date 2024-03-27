@@ -3,7 +3,7 @@ package handler
 import (
 	"log"
 
-	app "github.com/ibilalkayy/flow/internal/app/budget"
+	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +15,7 @@ var AdjustCmd = &cobra.Command{
 		oldCategory, _ := cmd.Flags().GetString("oldcategory")
 		newCategory, _ := cmd.Flags().GetString("newcategory")
 		amount, _ := cmd.Flags().GetString("amount")
-		err := app.UpdateBudget(oldCategory, newCategory, amount)
+		err := budget_db.UpdateBudget(oldCategory, newCategory, amount)
 		if err != nil {
 			log.Fatal(err)
 		}

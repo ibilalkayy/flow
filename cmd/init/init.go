@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/cmd"
-	"github.com/ibilalkayy/flow/db/budget_db"
+	"github.com/ibilalkayy/flow/db"
 	internal_init "github.com/ibilalkayy/flow/internal/app/init"
 	"github.com/ibilalkayy/flow/internal/structs"
 	"github.com/spf13/cobra"
@@ -73,7 +73,7 @@ func initializeApplication(authParams *structs.AuthVariables, dbParams *structs.
 		return fmt.Errorf("error writing to .env file: %v", err)
 	}
 
-	_, err = budget_db.Connection()
+	_, err = db.Connection()
 	if err != nil {
 		return fmt.Errorf("error connecting to the database: %v", err)
 	}

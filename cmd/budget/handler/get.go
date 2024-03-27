@@ -1,7 +1,7 @@
 package handler
 
 import (
-	app "github.com/ibilalkayy/flow/internal/app/budget"
+	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +12,7 @@ var GetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		filepath, _ := cmd.Flags().GetString("filepath")
 		filename, _ := cmd.Flags().GetString("filename")
-		app.GetBudgetData(filepath, filename)
+		budget_db.GetBudgetData(filepath, filename)
 	},
 }
 

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/ibilalkayy/flow/db/alert_db"
 	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
 	"github.com/ibilalkayy/flow/internal/structs"
 )
@@ -55,7 +56,7 @@ func TestCreateAlert(t *testing.T) {
 	basePath := "../../../db/budget_db/migrations/"
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := internal_alert.CreateAlert(tc.input, basePath)
+			err := alert_db.CreateAlert(tc.input, basePath)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	app "github.com/ibilalkayy/flow/internal/app/budget"
+	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +14,7 @@ var ViewCmd = &cobra.Command{
 	Short: "View the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		details, err := app.ViewBudget(category)
+		details, err := budget_db.ViewBudget(category)
 		if err != nil {
 			log.Fatal(err)
 		}
