@@ -257,18 +257,3 @@ func TestCategoryAmount(t *testing.T) {
 		})
 	}
 }
-
-func TestTotalBudgetAmount(t *testing.T) {
-	// Replace the original DB connection with the mockDB
-	_ = &mockDB{}
-
-	expectedTotal := 1200
-	total, err := internal_budget.TotalBudgetAmount()
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-
-	if total != expectedTotal {
-		t.Errorf("expected total amount %d, got %d", expectedTotal, total)
-	}
-}

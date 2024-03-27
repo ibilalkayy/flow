@@ -248,39 +248,18 @@ func CategoryAmount(category string) (string, error) {
 	return bv.Amount, nil
 }
 
-func TotalBudgetAmount() (int, error) {
-	var totalAmount int
-	bv := new(structs.BudgetVariables)
-
+func IsCategoryPresent(category string) (bool, error) {
 	db, err := budget_db.Connection()
 	if err != nil {
-		return 0, err
+		return false, err
 	}
 
-	query := "SELECT amounts FROM Budget"
-
-	rows, err := db.Query(query)
+	var count int
+	query := "SELECT COUNT(*) FROM Budget WHERE categories=$1"
+	err = db.QueryRow(query, category).Scan(&count)
 	if err != nil {
-		return 0, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if err := rows.Scan(&bv.Amount); err != nil {
-			return 0, err
-		}
-		if bv.Amount == "" {
-			continue // Skip empty amounts
-		}
-		amount, err := strconv.Atoi(bv.Amount)
-		if err != nil {
-			return 0, err
-		}
-		totalAmount += amount
-	}
-	if err := rows.Err(); err != nil {
-		return 0, err
+		return false, err
 	}
 
-	return totalAmount, nil
+	return count > 0, nil
 }

@@ -11,31 +11,31 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-func ViewAlert(category string) ([3]string, error) {
+func ViewAlert(category string) ([2]string, error) {
 	ev := new(structs.EmailVariables)
 
 	db, err := budget_db.Connection()
 	if err != nil {
-		return [3]string{}, err
+		return [2]string{}, err
 	}
 
 	query := "SELECT categories, category_amounts FROM Alert WHERE categories=$1"
 	rows, err := db.Query(query, category)
 	if err != nil {
-		return [3]string{}, err
+		return [2]string{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&ev.Category, &ev.CategoryAmount); err != nil {
-			return [3]string{}, err
+			return [2]string{}, err
 		}
 	}
 	if err := rows.Err(); err != nil {
-		return [3]string{}, err
+		return [2]string{}, err
 	}
 
-	values := [3]string{ev.Category, ev.CategoryAmount}
+	values := [2]string{ev.Category, ev.CategoryAmount}
 	return values, nil
 }
 

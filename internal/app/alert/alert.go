@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ibilalkayy/flow/cmd/transaction"
 	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/email"
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
@@ -28,7 +27,12 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 	var category, categoryAmount string
 
 	if len(av.Category) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
-		if av.Category == "first" {
+		categoryPresent, err := internal_budget.IsCategoryPresent(av.Category)
+		if err != nil {
+			return err
+		}
+
+		if categoryPresent {
 			category = av.Category
 			categoryAmount, err = internal_budget.CategoryAmount(category)
 			if err != nil {
@@ -63,7 +67,7 @@ func CheckMethod(method, category string) error {
 }
 
 func AlertSetup(av *structs.AlertVariables) error {
-	if len(av.Frequency) != 0 && len(av.Method) != 0 {
+	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
 		validMethods := map[string]bool{"email": true, "cli": true}
 		validFrequencies := map[string]bool{"hourly": true, "daily": true, "weekly": true, "monthly": true}
 
@@ -75,27 +79,23 @@ func AlertSetup(av *structs.AlertVariables) error {
 			return errors.New("invalid alert frequency")
 		}
 
-		if len(av.Category) != 0 {
-			categoryAmount, err := internal_budget.CategoryAmount(av.Category)
+		categoryAmount, err := internal_budget.CategoryAmount(av.Category)
+		if err != nil {
+			return err
+		}
+
+		if len(categoryAmount) != 0 {
+			err := CreateAlert(av, "db/budget_db/migrations/")
 			if err != nil {
 				return err
 			}
-
-			if len(categoryAmount) != 0 {
-				err := CreateAlert(av, "db/budget_db/migrations/")
-				if err != nil {
-					return err
-				}
-				err = CheckMethod(av.Method, av.Category)
-				if err != nil {
-					return err
-				}
-				fmt.Println("Alert is set for a specific category")
-			} else {
-				return errors.New("category amount is not present")
+			err = CheckMethod(av.Method, av.Category)
+			if err != nil {
+				return err
 			}
+			fmt.Println("Alert is set for a specific category")
 		} else {
-			return errors.New("select a category")
+			return errors.New("category amount is not present")
 		}
 	} else {
 		return errors.New("enter all the alert values")
@@ -103,17 +103,17 @@ func AlertSetup(av *structs.AlertVariables) error {
 	return nil
 }
 
-func AlertMessage() error {
-	totalAmount, err := internal_budget.TotalBudgetAmount()
-	if err != nil {
-		return err
-	}
-	transactionAmount := transaction.TransactionAmount()
+// func AlertMessage() error {
+// 	totalAmount, err := internal_budget.TotalBudgetAmount()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	transactionAmount := transaction.TransactionAmount()
 
-	if transactionAmount >= totalAmount {
-		fmt.Printf("You can't spend more becuase your budget is set to %d\n", totalAmount)
-	} else {
-		return errors.New("enjoy your spending")
-	}
-	return nil
-}
+// 	if transactionAmount >= totalAmount {
+// 		fmt.Printf("You can't spend more becuase your budget is set to %d\n", totalAmount)
+// 	} else {
+// 		return errors.New("enjoy your spending")
+// 	}
+// 	return nil
+// }

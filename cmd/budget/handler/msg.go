@@ -1,9 +1,8 @@
 package handler
 
 import (
-	"log"
+	"fmt"
 
-	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
 	"github.com/spf13/cobra"
 )
 
@@ -12,10 +11,11 @@ var MsgCmd = &cobra.Command{
 	Use:   "msg",
 	Short: "The message of alert notifications",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := internal_alert.AlertMessage()
-		if err != nil {
-			log.Fatal(err)
-		}
+		// err := internal_alert.AlertMessage()
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		fmt.Println("msg is printed")
 	},
 }
 
