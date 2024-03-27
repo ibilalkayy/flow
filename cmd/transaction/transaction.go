@@ -7,8 +7,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// set a new category amount equal to zero so that its transaction start form the beginning
 func TransactionAmount() int {
-	amount := 1600
+	amount := 600
 	return amount
 }
 
