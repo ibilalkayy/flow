@@ -3,7 +3,6 @@ package email
 import (
 	"bytes"
 	"errors"
-	"strings"
 	"text/template"
 
 	"github.com/ibilalkayy/flow/db/budget_db"
@@ -20,7 +19,7 @@ func ViewAlert(category string) ([3]string, error) {
 		return [3]string{}, err
 	}
 
-	query := "SELECT categories, category_amounts, total_amount FROM Alert WHERE categories=$1"
+	query := "SELECT categories, category_amounts FROM Alert WHERE categories=$1"
 	rows, err := db.Query(query, category)
 	if err != nil {
 		return [3]string{}, err
@@ -28,7 +27,7 @@ func ViewAlert(category string) ([3]string, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&ev.Category, &ev.CategoryAmount, &ev.TotalAmount); err != nil {
+		if err := rows.Scan(&ev.Category, &ev.CategoryAmount); err != nil {
 			return [3]string{}, err
 		}
 	}
@@ -36,12 +35,11 @@ func ViewAlert(category string) ([3]string, error) {
 		return [3]string{}, err
 	}
 
-	values := [3]string{ev.Category, ev.CategoryAmount, ev.TotalAmount}
+	values := [3]string{ev.Category, ev.CategoryAmount}
 	return values, nil
 }
 
 func SendAlertEmail(category string) error {
-	var myCategoryAmount, myTotalAmount string
 	myEmail := middleware.LoadEnvVariable("APP_EMAIL")
 	myPassword := middleware.LoadEnvVariable("APP_PASSWORD")
 	myUsername := middleware.LoadEnvVariable("USERNAME")
@@ -49,13 +47,6 @@ func SendAlertEmail(category string) error {
 	emailCreds, err := ViewAlert(category)
 	if err != nil {
 		return err
-	}
-
-	if strings.HasPrefix(emailCreds[0], "total_category") {
-		_ = strings.TrimPrefix(emailCreds[0], "total_category")
-		myTotalAmount = emailCreds[2]
-	} else {
-		myCategoryAmount = emailCreds[1]
 	}
 
 	mail := gomail.NewMessage()
@@ -69,8 +60,7 @@ func SendAlertEmail(category string) error {
 	emailVariables := structs.EmailVariables{
 		Username:       myUsername,
 		Category:       emailCreds[0],
-		CategoryAmount: myCategoryAmount,
-		TotalAmount:    myTotalAmount,
+		CategoryAmount: emailCreds[1],
 	}
 
 	if err := temp.Execute(body, emailVariables); err != nil {

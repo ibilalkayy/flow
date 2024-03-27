@@ -10,10 +10,6 @@
     {{if .CategoryAmount}}
         <p>Your {{.Category}} category has {{.CategoryAmount}} but now you have crossed it. Please spend below or equal to your limit.</p>
         <p>Thank you!</p>
-    {{else}} 
-    {{if .TotalAmount}}
-        <p>Your {{.Category}} category has {{.TotalAmount}} but now you have crossed it. Please spend below or equal to your limit.</p>
-        <p>Thank you!</p>
-    {{end}} {{end}}
+    {{end}}
 </body>
 </html>

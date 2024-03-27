@@ -23,7 +23,6 @@ type BudgetVariables struct {
 type AlertVariables struct {
 	Category       string
 	CategoryAmount string
-	Total          string
 	Frequency      string
 	Method         string
 }

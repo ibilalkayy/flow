@@ -51,7 +51,6 @@ func TestCreateAlert(t *testing.T) {
 			name: "ValidInput",
 			input: &structs.AlertVariables{
 				Category:  "first",
-				Total:     "500",
 				Frequency: "hourly",
 				Method:    "email",
 			},
@@ -61,7 +60,6 @@ func TestCreateAlert(t *testing.T) {
 			name: "NoCategory",
 			input: &structs.AlertVariables{
 				Category:  "",
-				Total:     "500",
 				Frequency: "hourly",
 				Method:    "email",
 			},
@@ -71,7 +69,6 @@ func TestCreateAlert(t *testing.T) {
 			name: "NoTotalAmount",
 			input: &structs.AlertVariables{
 				Category:  "first",
-				Total:     "",
 				Frequency: "hourly",
 				Method:    "email",
 			},
@@ -81,7 +78,6 @@ func TestCreateAlert(t *testing.T) {
 			name: "NoFrequency",
 			input: &structs.AlertVariables{
 				Category:  "first",
-				Total:     "500",
 				Frequency: "",
 				Method:    "email",
 			},
@@ -91,7 +87,6 @@ func TestCreateAlert(t *testing.T) {
 			name: "NoFrequency",
 			input: &structs.AlertVariables{
 				Category:  "first",
-				Total:     "500",
 				Frequency: "hourly",
 				Method:    "",
 			},
@@ -122,7 +117,6 @@ func TestAlertSetup(t *testing.T) {
 			alertVars: &structs.AlertVariables{
 				Frequency: "daily",
 				Method:    "email",
-				Total:     "1200",
 			},
 			expectedErr: nil,
 		},

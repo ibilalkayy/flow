@@ -3,7 +3,6 @@ package internal_alert
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/ibilalkayy/flow/cmd/transaction"
@@ -19,23 +18,16 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 		return err
 	}
 
-	query := "INSERT INTO Alert(categories, category_amounts, total_amount, alert_methods, alert_frequencies) VALUES($1, $2, $3, $4, $5)"
+	query := "INSERT INTO Alert(categories, category_amounts, alert_methods, alert_frequencies) VALUES($1, $2, $3, $4)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
 	}
 	defer insert.Close()
 
-	var total, category, categoryAmount string
+	var category, categoryAmount string
 
-	if len(av.Total) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
-		if len(av.Category) == 0 {
-			total = av.Total
-			category = "total_category"
-		} else {
-			return errors.New("remove the category flag because there is no specific category for total amount")
-		}
-	} else if len(av.Category) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
+	if len(av.Category) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
 		if av.Category == "first" {
 			category = av.Category
 			categoryAmount, err = internal_budget.CategoryAmount(category)
@@ -49,7 +41,7 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 		return errors.New("enter the required flags")
 	}
 
-	_, err = insert.Exec(category, categoryAmount, total, av.Method, av.Frequency)
+	_, err = insert.Exec(category, categoryAmount, av.Method, av.Frequency)
 	if err != nil {
 		return err
 	}
@@ -83,27 +75,7 @@ func AlertSetup(av *structs.AlertVariables) error {
 			return errors.New("invalid alert frequency")
 		}
 
-		if len(av.Total) != 0 {
-			budgetAmount, err := internal_budget.TotalBudgetAmount()
-			if err != nil {
-				return err
-			}
-			totalAmount := strconv.Itoa(budgetAmount)
-
-			if len(totalAmount) != 0 && av.Total == totalAmount {
-				err := CreateAlert(av, "db/budget_db/migrations/")
-				if err != nil {
-					return err
-				}
-				err = CheckMethod(av.Method, "total_category")
-				if err != nil {
-					return err
-				}
-				fmt.Println("Alert is set for the total amount")
-			} else {
-				return errors.New("total amount is not given. type 'flow budget view' to get the total amount")
-			}
-		} else if len(av.Category) != 0 {
+		if len(av.Category) != 0 {
 			categoryAmount, err := internal_budget.CategoryAmount(av.Category)
 			if err != nil {
 				return err
