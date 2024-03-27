@@ -1,3 +1,8 @@
 *.md
 .git
 LICENSE
+Dockerfile
+.dockerignore
+docker-compose.yml
+docs
+tests
