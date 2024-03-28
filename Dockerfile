@@ -1,15 +1,18 @@
-FROM golang:1.22.0-alpine3.19
+FROM golang:1.22.0-alpine3.19 as builder
 
-RUN mkdir -p /app
 WORKDIR /app
 
 COPY go.mod /app
 COPY go.sum /app
 
-COPY . /app
-
 RUN go mod download
 
-RUN go build -o flow .
+COPY . /app
+
+RUN go build -ldflags="-w -s" -o flow
+
+FROM busybox
+
+COPY --from=builder /app/flow /flow
 
 CMD ["sh", "-c", "./flow && while true; do echo 'App is running'; sleep 10; done"]
