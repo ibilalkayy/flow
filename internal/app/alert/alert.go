@@ -3,29 +3,12 @@ package internal_alert
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
-	"github.com/ibilalkayy/flow/cmd/transaction"
 	"github.com/ibilalkayy/flow/db/alert_db"
-	"github.com/ibilalkayy/flow/email"
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	"github.com/ibilalkayy/flow/internal/structs"
 )
-
-func CheckMethod(method, category string) error {
-	if method == "email" {
-		err := email.SendAlertEmail(category)
-		if err != nil {
-			return err
-		}
-	} else if method == "cli" {
-		fmt.Println("cli is called")
-	} else {
-		return errors.New("write the correct method")
-	}
-	return nil
-}
 
 func AlertSetup(av *structs.AlertVariables) error {
 	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
@@ -45,31 +28,21 @@ func AlertSetup(av *structs.AlertVariables) error {
 			return err
 		}
 
-		transactionAmount := transaction.TransactionAmount()
-		category_amount, err := strconv.Atoi(categoryAmount)
-		if err != nil {
-			return err
-		}
-
-		if transactionAmount <= category_amount {
-			if len(categoryAmount) != 0 {
-				err := alert_db.CreateAlert(av, "db/migrations/")
-				if err != nil {
-					return err
-				}
-				err = CheckMethod(av.Method, av.Category)
-				if err != nil {
-					return err
-				}
-				fmt.Printf("Alert is set for the '%s' category", av.Category)
-			} else {
-				return errors.New("category amount is not present")
+		if len(categoryAmount) != 0 {
+			err := alert_db.CreateAlert(av, "db/migrations/")
+			if err != nil {
+				return err
 			}
+			// err = CheckMethod(av.Method, av.Category)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("Alert is set for the '%s' category", av.Category)
 		} else {
-			fmt.Printf("You can't more than your '%s' category budget", av.Category)
+			return errors.New("category amount is not present")
 		}
 	} else {
-		return errors.New("enter all the alert values")
+		fmt.Printf("You can't more than your '%s' category budget", av.Category)
 	}
 	return nil
 }

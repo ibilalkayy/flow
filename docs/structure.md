@@ -2,19 +2,19 @@
     ├── cmd
     │   ├── budget
     │   │   ├── budget.go
-    │   │   ├── handler
-    │   │   │   ├── adjust.go
-    │   │   │   ├── alert.go
-    │   │   │   ├── create.go
-    │   │   │   ├── get.go
-    │   │   │   ├── msg.go
-    │   │   │   ├── remove.go
-    │   │   │   ├── setup.go     
-    │   │   │   └── view.go
+    │   │   └── handler
+    │   │       ├── adjust.go
+    │   │       ├── alert.go
+    │   │       ├── create.go
+    │   │       ├── get.go
+    │   │       ├── msg.go
+    │   │       ├── remove.go
+    │   │       ├── setup.go     
+    │   │       └── view.go
     │   ├── init
-    │   │   ├── init.go
-    │   ├── transaction
-    │   │   ├── transaction.go
+    │   │   └── init.go
+    │   ├── spend
+    │   │   └── spend.go
     │   └── root.go
     ├── db
     │   ├── alert_db
@@ -38,8 +38,10 @@
     │   │   │   └── alert.go
     │   │   ├── budget
     │   │   │   └── budget.go
-    │   │   └── init
-    │   │       └── init.go
+    │   │   ├── init
+    │   │   │   └── init.go
+    │   │   └── spend
+    │   │       └── spend.go
     │   ├── middleware
     │   │   └── env.go
     │   └── structs
@@ -76,7 +78,7 @@
 - **cmd/budget/handler/setup.go:** Handler for setting up the alert when the limitation is passed.
 - **cmd/budget/handler/view.go:** Handler for viewing budget.
 - **cmd/init/init.go:** Flow initialization functionality.
-- **cmd/transaction/transaction.go:** Transaction service entry point.
+- **cmd/spend/spend.go:** Spending money on various categories.
 
 ### Database files
 - **db/connection.go:** Database connection setup.
@@ -100,7 +102,11 @@
 - **internal/app/alert/alert.go:** Logic for alert management functionality.
 - **internal/app/budget/budget.go:** Logic for budget management functionality.
 - **internal/app/init/init.go:** Logic for init functionality.
+- **internal/app/spend/spend.go:** Logic for transaction functionality.
 - **internal/middleware/env.go:** Environment middleware for handling environment variables.
+
+### Testing files
+
 - **tests/app/budget/alert_test.go:** Test file for handling the alert test functions.
 - **tests/app/budget/budget_test.go:** Test file for handling the budget test functions.
 

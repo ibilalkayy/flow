@@ -39,16 +39,16 @@ Sure, let's break down each command along with its structure for better understa
 - **Note**: All these commands are required to enter.
 - **Usage**: `flow budget flow [flags]`
 - **Flags**:
-  `-a, --app_password string`   Write the App Password of your Gmail account
-  `-d, --dbname string`         Write the PostgreSQL DB name
-  `-g, --gmail string`          Write your Gmail address for alert notifications
-  `-h, --help`                  help for init
-  `-o, --host string`           Write the PostgreSQL host
-  `-w, --password string`       Write the PostgreSQL password
-  `-p, --port string`           Write the PostgreSQL port
-  `-s, --sslmode string`        Write the PostgreSQL SSLMode
-  `-u, --user string`           Write the PostgreSQL username
-  `-n, --username string`       Write your username
+  - `-a, --app_password string`   Write the App Password of your Gmail account
+  - `-d, --dbname string`         Write the PostgreSQL DB name
+  - `-g, --gmail string`          Write your Gmail address for alert notifications
+  - `-h, --help`                  help for init
+  - `-o, --host string`           Write the PostgreSQL host
+  - `-w, --password string`       Write the PostgreSQL password
+  - `-p, --port string`           Write the PostgreSQL port
+  - `-s, --sslmode string`        Write the PostgreSQL SSLMode
+  - `-u, --user string`           Write the PostgreSQL username
+  - `-n, --username string`       Write your username
 
 ### 3. `flow budget`
 - **Description**: Allows users to manage their budgetary allocations for different spending categories. Users can create, view, adjust, remove, and get budget details.
@@ -139,5 +139,10 @@ Sure, let's break down each command along with its structure for better understa
 - **Description**: Provides help about the Flow application or specific commands.
 - **Usage**: `flow help [command]`
 
-### 14. `flow transaction`
-- **Description**: Provides transaction services (not further detailed in provided output).
+### 14. `flow spend`
+- **Description**: Provides spending services on various categories.
+- **Usage**: `flow spend [flags]`
+- **Flags**:
+  - `-a, --amount string`: Write the spending amount for a category
+  - `-c, --category string`: Write the category name to spend the money on
+  - `-h, --help`: Display help for spend

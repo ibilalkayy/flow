@@ -31,5 +31,4 @@ type EmailVariables struct {
 	Username       string
 	Category       string
 	CategoryAmount string
-	TotalAmount    string
 }

@@ -49,30 +49,30 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 	return nil
 }
 
-func ViewAlert(category string) ([2]string, error) {
-	ev := new(structs.EmailVariables)
+func ViewAlert(category string) ([4]string, error) {
+	av := new(structs.AlertVariables)
 
 	db, err := db.Connection()
 	if err != nil {
-		return [2]string{}, err
+		return [4]string{}, err
 	}
 
-	query := "SELECT categories, category_amounts FROM Alert WHERE categories=$1"
+	query := "SELECT categories, category_amounts, alert_methods, alert_frequencies FROM Alert WHERE categories=$1"
 	rows, err := db.Query(query, category)
 	if err != nil {
-		return [2]string{}, err
+		return [4]string{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&ev.Category, &ev.CategoryAmount); err != nil {
-			return [2]string{}, err
+		if err := rows.Scan(&av.Category, &av.CategoryAmount, &av.Method, &av.Frequency); err != nil {
+			return [4]string{}, err
 		}
 	}
 	if err := rows.Err(); err != nil {
-		return [2]string{}, err
+		return [4]string{}, err
 	}
 
-	values := [2]string{ev.Category, ev.CategoryAmount}
+	values := [4]string{av.Category, av.CategoryAmount, av.Method, av.Frequency}
 	return values, nil
 }
