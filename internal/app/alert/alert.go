@@ -33,10 +33,6 @@ func AlertSetup(av *structs.AlertVariables) error {
 			if err != nil {
 				return err
 			}
-			// err = CheckMethod(av.Method, av.Category)
-			if err != nil {
-				return err
-			}
 			fmt.Printf("Alert is set for the '%s' category", av.Category)
 		} else {
 			return errors.New("category amount is not present")
