@@ -25,6 +25,11 @@ type AlertVariables struct {
 	CategoryAmount string
 	Frequency      string
 	Method         string
+	Days           string
+	Weekdays       string
+	Hours          string
+	Minutes        string
+	Seconds        string
 }
 
 type EmailVariables struct {

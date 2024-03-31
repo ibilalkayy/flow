@@ -14,7 +14,7 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 		return err
 	}
 
-	query := "INSERT INTO Alert(categories, category_amounts, alert_methods, alert_frequencies) VALUES($1, $2, $3, $4)"
+	query := "INSERT INTO Alert(categories, category_amounts, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
@@ -24,27 +24,18 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 	var category, categoryAmount string
 
 	if len(av.Category) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
-		categoryPresent, err := internal_budget.IsCategoryPresent(av.Category)
+		category = av.Category
+		categoryAmount, err = internal_budget.CategoryAmount(category)
 		if err != nil {
 			return err
 		}
 
-		if categoryPresent {
-			category = av.Category
-			categoryAmount, err = internal_budget.CategoryAmount(category)
-			if err != nil {
-				return err
-			}
-		} else {
-			return errors.New("enter the right category")
+		_, err = insert.Exec(category, categoryAmount, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds)
+		if err != nil {
+			return err
 		}
 	} else {
-		return errors.New("enter the required flags")
-	}
-
-	_, err = insert.Exec(category, categoryAmount, av.Method, av.Frequency)
-	if err != nil {
-		return err
+		return errors.New("enter all the flags")
 	}
 	return nil
 }

@@ -1,6 +1,8 @@
 package spend
 
 import (
+	"errors"
+	"fmt"
 	"log"
 
 	"github.com/ibilalkayy/flow/cmd"
@@ -15,9 +17,13 @@ var SpendCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		categoryName, _ := cmd.Flags().GetString("category")
 		spendingAmount, _ := cmd.Flags().GetString("amount")
-		err := internal_spending.SpendMoney(categoryName, spendingAmount)
-		if err != nil {
-			log.Fatal(err)
+		if len(categoryName) != 0 && len(spendingAmount) != 0 {
+			err := internal_spending.SpendMoney(categoryName, spendingAmount)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			fmt.Println(errors.New("select the command and flags"))
 		}
 	},
 }
