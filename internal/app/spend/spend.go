@@ -3,59 +3,60 @@ package internal_spending
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/ibilalkayy/flow/db/alert_db"
-	"github.com/ibilalkayy/flow/email"
 )
 
-func AlertMethod(category string) error {
-	method, err := alert_db.ViewAlert(category)
+func SendAlert(category string) error {
+	value, err := alert_db.ViewAlert(category)
 	if err != nil {
 		return err
 	}
 
-	if method[2] == "email" {
-		err := email.SendAlertEmail(category)
-		if err != nil {
-			return err
+	day, _ := strconv.Atoi(value[4])
+	hour, _ := strconv.Atoi(value[6])
+	minute, _ := strconv.Atoi(value[7])
+	second, _ := strconv.Atoi(value[8])
+
+	var weekday time.Weekday
+
+	switch value[5] {
+	case "monday":
+		weekday = time.Monday
+	case "tuesday":
+		weekday = time.Tuesday
+	case "wednesday":
+		weekday = time.Wednesday
+	case "thursday":
+		weekday = time.Thursday
+	case "friday":
+		weekday = time.Friday
+	case "saturday":
+		weekday = time.Saturday
+	case "sunday":
+		weekday = time.Sunday
+	default:
+		return errors.New("wrong weekday is selected")
+	}
+
+	switch value[2] {
+	case "email":
+		switch value[3] {
+		case "hourly":
+			HourlyNotification(category)
+		case "daily":
+			DailyNotification(hour, minute, second, category)
+		case "weekly":
+			WeeklyNotification(weekday, hour, minute, second, category)
+		case "monthly":
+			MonthlyNotification(day, hour, minute, second, category)
+		default:
+			return errors.New("wrong or no frequency is selected")
 		}
-	} else if method[2] == "cli" {
-		fmt.Println("you can't spend above your budget limit")
-	} else {
-		return errors.New("write the correct method")
-	}
-	return nil
-}
-
-func AlertFrequency(category string) error {
-	frequency, err := alert_db.ViewAlert(category)
-	if err != nil {
-		return err
-	}
-
-	if frequency[3] == "hourly" {
-		HourlyNotification(category)
-	} else if frequency[3] == "daily" {
-		DailyNotification(11, 37, 0, category)
-	} else if frequency[3] == "weekly" {
-		WeeklyNotification(time.Sunday, 11, 53, 0, category)
-	} else if frequency[3] == "monthly" {
-		MonthlyNotification(31, 12, 19, 0, category)
-	} else {
-		return errors.New("select the right frequency")
-	}
-	return nil
-}
-
-func GiveAlerts(category string) error {
-	err := AlertMethod(category)
-	if err != nil {
-		return err
-	}
-	err = AlertFrequency(category)
-	if err != nil {
-		return err
+	case "cli":
+		return errors.New("you can't spend above your budget limit")
 	}
 	return nil
 }
@@ -70,7 +71,7 @@ func SpendMoney(category, spending_amount string) error {
 		if spending_amount <= values[1] {
 			fmt.Println("enjoy your spending")
 		} else {
-			if err := GiveAlerts(category); err != nil {
+			if err := SendAlert(category); err != nil {
 				return err
 			}
 		}
