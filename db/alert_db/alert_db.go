@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/ibilalkayy/flow/db"
-	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	"github.com/ibilalkayy/flow/internal/structs"
 )
 
@@ -14,23 +13,15 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 		return err
 	}
 
-	query := "INSERT INTO Alert(categories, category_amounts, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)"
+	query := "INSERT INTO Alert(categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds) VALUES($1, $2, $3, $4, $5, $6, $7, $8)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
 	}
 	defer insert.Close()
 
-	var category, categoryAmount string
-
 	if len(av.Category) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
-		category = av.Category
-		categoryAmount, err = internal_budget.CategoryAmount(category)
-		if err != nil {
-			return err
-		}
-
-		_, err = insert.Exec(category, categoryAmount, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds)
+		_, err = insert.Exec(av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds)
 		if err != nil {
 			return err
 		}
@@ -48,7 +39,7 @@ func ViewAlert(category string) ([9]string, error) {
 		return [9]string{}, err
 	}
 
-	query := "SELECT categories, category_amounts, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds FROM Alert WHERE categories=$1"
+	query := "SELECT categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds FROM Alert WHERE categories=$1"
 	rows, err := db.Query(query, category)
 	if err != nil {
 		return [9]string{}, err
@@ -56,7 +47,7 @@ func ViewAlert(category string) ([9]string, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&av.Category, &av.CategoryAmount, &av.Method, &av.Frequency, &av.Days, &av.Weekdays, &av.Hours, &av.Minutes, &av.Seconds); err != nil {
+		if err := rows.Scan(&av.Category, &av.Method, &av.Frequency, &av.Days, &av.Weekdays, &av.Hours, &av.Minutes, &av.Seconds); err != nil {
 			return [9]string{}, err
 		}
 	}
@@ -64,6 +55,6 @@ func ViewAlert(category string) ([9]string, error) {
 		return [9]string{}, err
 	}
 
-	values := [9]string{av.Category, av.CategoryAmount, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds}
+	values := [9]string{av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds}
 	return values, nil
 }

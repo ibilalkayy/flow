@@ -42,7 +42,7 @@ func AlertSetup(av *structs.AlertVariables) error {
 			return errors.New("category amount is not present")
 		}
 	} else {
-		fmt.Printf("You can't more than your '%s' category budget", av.Category)
+		fmt.Printf("You can't spend more than your '%s' category budget", av.Category)
 	}
 	return nil
 }

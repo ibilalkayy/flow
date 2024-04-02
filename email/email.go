@@ -5,7 +5,7 @@ import (
 	"errors"
 	"text/template"
 
-	"github.com/ibilalkayy/flow/db/alert_db"
+	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/internal/middleware"
 	"github.com/ibilalkayy/flow/internal/structs"
 	"gopkg.in/gomail.v2"
@@ -16,7 +16,7 @@ func SendAlertEmail(category string) error {
 	myPassword := middleware.LoadEnvVariable("APP_PASSWORD")
 	myUsername := middleware.LoadEnvVariable("USERNAME")
 
-	emailCreds, err := alert_db.ViewAlert(category)
+	emailCreds, err := budget_db.ViewBudget(category)
 	if err != nil {
 		return err
 	}
@@ -31,8 +31,8 @@ func SendAlertEmail(category string) error {
 
 	emailVariables := structs.EmailVariables{
 		Username:       myUsername,
-		Category:       emailCreds[0],
-		CategoryAmount: emailCreds[1],
+		Category:       emailCreds[1],
+		CategoryAmount: emailCreds[2],
 	}
 
 	if err := temp.Execute(body, emailVariables); err != nil {
