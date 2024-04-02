@@ -12,8 +12,8 @@ func HourlyNotification(category string) {
 	defer ticker.Stop()
 	for {
 		<-ticker.C
-		fmt.Println("Next print will be next hour")
 		email.SendAlertEmail(category)
+		fmt.Println("Printed this hour")
 	}
 }
 
@@ -26,6 +26,7 @@ func DailyNotification(hour, min, sec int, category string) {
 	fmt.Printf("Next daily print will be at %s\n", next)
 	time.Sleep(next.Sub(now))
 	email.SendAlertEmail(category)
+	fmt.Println("Printed daily at the specified time")
 }
 
 func WeeklyNotification(weekday time.Weekday, hour, min, sec int, category string) {
@@ -35,6 +36,7 @@ func WeeklyNotification(weekday time.Weekday, hour, min, sec int, category strin
 	fmt.Printf("Next weekly print will be on %s at %s\n", weekday, next)
 	time.Sleep(next.Sub(now))
 	email.SendAlertEmail(category)
+	fmt.Println("Printed weekly on the specified day and time")
 }
 
 func MonthlyNotification(day, hour, min, sec int, category string) {
@@ -47,4 +49,5 @@ func MonthlyNotification(day, hour, min, sec int, category string) {
 	fmt.Printf("Next monthly print will be on the %dth day at %s\n", day, next)
 	time.Sleep(next.Sub(now))
 	email.SendAlertEmail(category)
+	fmt.Println("Printed monthly on the specified day and time")
 }

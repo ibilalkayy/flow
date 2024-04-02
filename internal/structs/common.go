@@ -37,3 +37,9 @@ type EmailVariables struct {
 	Category       string
 	CategoryAmount string
 }
+
+type SpendingVariables struct {
+	Category       string
+	CategoryAmount string
+	SpendingAmount string
+}

@@ -3,76 +3,52 @@ package internal_spending
 import (
 	"errors"
 	"fmt"
-	"strconv"
-	"time"
+	"log"
 
 	"github.com/ibilalkayy/flow/db/alert_db"
+	"github.com/ibilalkayy/flow/db/spend_db"
+	"github.com/ibilalkayy/flow/email"
+	"github.com/ibilalkayy/flow/internal/structs"
 )
 
-func SendAlert(category string) error {
-	value, err := alert_db.ViewAlert(category)
+func InsertSpending(value [3]string, exceeded string) {
+	data := structs.SpendingVariables{
+		Category:       value[0],
+		CategoryAmount: value[1],
+		SpendingAmount: value[2],
+	}
+
+	err := spend_db.CreateSpending(&data, exceeded, "db/migrations/")
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
-
-	day, _ := strconv.Atoi(value[4])
-	hour, _ := strconv.Atoi(value[6])
-	minute, _ := strconv.Atoi(value[7])
-	second, _ := strconv.Atoi(value[8])
-
-	var weekday time.Weekday
-
-	switch value[5] {
-	case "monday":
-		weekday = time.Monday
-	case "tuesday":
-		weekday = time.Tuesday
-	case "wednesday":
-		weekday = time.Wednesday
-	case "thursday":
-		weekday = time.Thursday
-	case "friday":
-		weekday = time.Friday
-	case "saturday":
-		weekday = time.Saturday
-	case "sunday":
-		weekday = time.Sunday
-	default:
-		return errors.New("wrong weekday is selected")
-	}
-
-	switch value[2] {
-	case "email":
-		switch value[3] {
-		case "hourly":
-			HourlyNotification(category)
-		case "daily":
-			DailyNotification(hour, minute, second, category)
-		case "weekly":
-			WeeklyNotification(weekday, hour, minute, second, category)
-		case "monthly":
-			MonthlyNotification(day, hour, minute, second, category)
-		default:
-			return errors.New("wrong or no frequency is selected")
-		}
-	case "cli":
-		return errors.New("you can't spend above your budget limit")
-	}
-	return nil
 }
 
 func SpendMoney(category, spending_amount string) error {
+	var answer string
 	values, err := alert_db.ViewAlert(category)
 	if err != nil {
 		return err
 	}
 
+	value := [3]string{values[0], values[1], spending_amount}
 	if category == values[0] {
 		if spending_amount <= values[1] {
-			fmt.Println("enjoy your spending")
+			InsertSpending(value, "false")
+			fmt.Println("Enjoy your spending!")
 		} else {
-			if err := SendAlert(category); err != nil {
-				return err
+			fmt.Printf("Your spending amount is exceeded. Do you still want to continue? [yes/no]: ")
+			fmt.Scanln(&answer)
+
+			switch answer {
+			case "yes", "y":
+				InsertSpending(value, "true")
+				email.SendAlertEmail(category)
+				fmt.Println("Enjoy your spending!")
+			case "no", "n":
+				fmt.Println("Alright")
+			default:
+				return errors.New("select the right option")
 			}
 		}
 	} else {
