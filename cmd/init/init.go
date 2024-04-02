@@ -1,6 +1,7 @@
 package init
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/ibilalkayy/flow/cmd"
@@ -63,7 +64,7 @@ func initApp(cmd *cobra.Command, args []string) {
 			return
 		}
 	} else {
-		fmt.Println("Please provide all the required flag values")
+		fmt.Println(errors.New("please provide all the required flags"))
 	}
 }
 
@@ -77,7 +78,7 @@ func initializeApplication(authParams *structs.AuthVariables, dbParams *structs.
 	if err != nil {
 		return fmt.Errorf("error connecting to the database: %v", err)
 	}
-	fmt.Println("Successfully connected to the database")
+	fmt.Println("Successfully connected to the database!")
 	return nil
 }
 
@@ -85,7 +86,7 @@ func init() {
 	cmd.RootCmd.AddCommand(InitCmd)
 	InitCmd.Flags().StringP("username", "n", "", "Write your username")
 	InitCmd.Flags().StringP("gmail", "g", "", "Write your Gmail address for alert notifications")
-	InitCmd.Flags().StringP("app_password", "a", "", "Write the App Password of your Gmail account")
+	InitCmd.Flags().StringP("app_password", "a", "", "Write the App Password of your Gmail account. For more info visit: https://support.google.com/accounts/answer/185833")
 	InitCmd.Flags().StringP("host", "o", "", "Write the PostgreSQL host")
 	InitCmd.Flags().StringP("port", "p", "", "Write the PostgreSQL port")
 	InitCmd.Flags().StringP("password", "w", "", "Write the PostgreSQL password")

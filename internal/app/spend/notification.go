@@ -8,7 +8,7 @@ import (
 )
 
 func HourlyNotification(category string) {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Hour)
 	defer ticker.Stop()
 	for {
 		<-ticker.C

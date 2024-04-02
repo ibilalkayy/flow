@@ -44,7 +44,7 @@ func init() {
 	SetupCmd.Flags().StringP("category", "c", "", "Write the category name to take its budget amount")
 	SetupCmd.Flags().StringP("frequency", "f", "", "Write the frequency of notifications (e.g., hourly, daily, weekly, monthly)")
 	SetupCmd.Flags().StringP("method", "t", "", "Write the preferred method of notification [email or CLI] message")
-	SetupCmd.Flags().StringP("day", "d", "", "Write the hour to set the notification")
+	SetupCmd.Flags().StringP("day", "d", "", "Write the day to set the notification")
 	SetupCmd.Flags().StringP("weekday", "w", "", "Write the minute to set the notification")
 	SetupCmd.Flags().StringP("hour", "o", "", "Write the hour to set the notification")
 	SetupCmd.Flags().StringP("minute", "m", "", "Write the minute to set the notification")

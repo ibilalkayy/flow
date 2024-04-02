@@ -55,6 +55,9 @@ To use the application, simply run the `flow` command followed by one of the fol
 Each subcommand has its own set of options and arguments. Here are some examples of how to use the application:
 
 ```bash
+# Initialize the application
+flow init -n username -g gmail-id -a app-password -o postgresql-host -p postgresql-port -u postgresql-user -w postgresql-password -d postgresql-dbname -s sslmode
+
 # Create a budget
 flow budget create --category groceries/utilities --amount 300
 

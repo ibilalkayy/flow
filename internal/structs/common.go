@@ -42,4 +42,5 @@ type SpendingVariables struct {
 	Category       string
 	CategoryAmount string
 	SpendingAmount string
+	AmountExceeded string
 }

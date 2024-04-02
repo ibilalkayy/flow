@@ -37,3 +37,31 @@ func CreateSpending(sv *structs.SpendingVariables, amountExceeded, basePath stri
 	}
 	return nil
 }
+
+func ViewSpending(category string) ([4]string, error) {
+	sv := new(structs.SpendingVariables)
+
+	db, err := db.Connection()
+	if err != nil {
+		return [4]string{}, err
+	}
+
+	query := "SELECT categories, category_amounts, spending_amounts, amount_exceeded FROM Spending WHERE categories=$1"
+	rows, err := db.Query(query, category)
+	if err != nil {
+		return [4]string{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(&sv.Category, &sv.CategoryAmount, &sv.SpendingAmount, &sv.AmountExceeded); err != nil {
+			return [4]string{}, err
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return [4]string{}, err
+	}
+
+	values := [4]string{sv.Category, sv.CategoryAmount, sv.SpendingAmount, sv.AmountExceeded}
+	return values, nil
+}
