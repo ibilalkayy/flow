@@ -3,38 +3,21 @@ package internal_spending
 import (
 	"errors"
 	"fmt"
-	"log"
 
-	"github.com/ibilalkayy/flow/db/alert_db"
-	"github.com/ibilalkayy/flow/db/spend_db"
+	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/email"
-	"github.com/ibilalkayy/flow/internal/structs"
 )
-
-func InsertSpending(value [3]string, exceeded string) {
-	data := structs.SpendingVariables{
-		Category:       value[0],
-		CategoryAmount: value[1],
-		SpendingAmount: value[2],
-	}
-
-	err := spend_db.CreateSpending(&data, exceeded, "db/migrations/")
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 func SpendMoney(category, spending_amount string) error {
 	var answer string
-	values, err := alert_db.ViewAlert(category)
+	values, err := budget_db.ViewBudget(category)
 	if err != nil {
 		return err
 	}
 
-	value := [3]string{values[0], values[1], spending_amount}
-	if category == values[0] {
-		if spending_amount <= values[1] {
-			InsertSpending(value, "false")
+	if category == values[1] {
+		if spending_amount <= values[2] {
+			budget_db.UpdateBudget(category, "", "", spending_amount)
 			fmt.Println("Enjoy your spending!")
 		} else {
 			fmt.Printf("Your spending amount is exceeded. Do you still want to continue? [yes/no]: ")
@@ -42,7 +25,7 @@ func SpendMoney(category, spending_amount string) error {
 
 			switch answer {
 			case "yes", "y":
-				InsertSpending(value, "true")
+				budget_db.UpdateBudget(category, "", "", spending_amount)
 				email.SendAlertEmail(category)
 				fmt.Println("Enjoy your spending!")
 			case "no", "n":

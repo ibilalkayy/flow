@@ -176,7 +176,7 @@ func TestUpdateBudget(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := budget_db.UpdateBudget(tc.oldCategory, tc.newCategory, tc.amount)
+			err := budget_db.UpdateBudget(tc.oldCategory, tc.newCategory, tc.amount, "")
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}

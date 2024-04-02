@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/ibilalkayy/flow/db/alert_db"
-	"github.com/ibilalkayy/flow/db/spend_db"
+	"github.com/ibilalkayy/flow/db/budget_db"
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	internal_spending "github.com/ibilalkayy/flow/internal/app/spend"
 	"github.com/ibilalkayy/flow/internal/structs"
@@ -100,12 +100,12 @@ func SendAlert(category string) error {
 }
 
 func CheckNotification(category string) error {
-	value, err := spend_db.ViewSpending(category)
+	amount, err := budget_db.ViewBudget(category)
 	if err != nil {
 		return err
 	}
 
-	if value[3] == "true" {
+	if amount[3] > amount[2] {
 		SendAlert(category)
 	} else {
 		fmt.Printf("The '%s' category amount is not exceeded", category)

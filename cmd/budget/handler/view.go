@@ -18,7 +18,7 @@ var ViewCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(details)
+		fmt.Println(details[0])
 	},
 }
 

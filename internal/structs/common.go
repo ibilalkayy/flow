@@ -18,6 +18,7 @@ type DatabaseVariables struct {
 type BudgetVariables struct {
 	Category string
 	Amount   string
+	Spent    string
 }
 
 type AlertVariables struct {
@@ -36,11 +37,4 @@ type EmailVariables struct {
 	Username       string
 	Category       string
 	CategoryAmount string
-}
-
-type SpendingVariables struct {
-	Category       string
-	CategoryAmount string
-	SpendingAmount string
-	AmountExceeded string
 }

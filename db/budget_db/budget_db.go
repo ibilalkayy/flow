@@ -19,7 +19,7 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 		return err
 	}
 
-	query := "INSERT INTO Budget(categories, amounts) VALUES($1, $2)"
+	query := "INSERT INTO Budget(categories, amounts, spent, remaining) VALUES($1, $2, $3, $4)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 	defer insert.Close()
 
 	if len(bv.Category) != 0 {
-		_, err = insert.Exec(bv.Category, bv.Amount)
+		_, err = insert.Exec(bv.Category, bv.Amount, 0, 0)
 		if err != nil {
 			return err
 		}
@@ -38,14 +38,14 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 	return nil
 }
 
-func ViewBudget(category string) (string, error) {
+func ViewBudget(category string) ([4]string, error) {
 	// Create a new instance of BudgetVariables to hold the retrieved data
 	bv := new(structs.BudgetVariables)
 
 	// Connect to the database
 	db, err := db.Connection()
 	if err != nil {
-		return "", err
+		return [4]string{}, err
 	}
 	defer db.Close()
 
@@ -59,28 +59,28 @@ func ViewBudget(category string) (string, error) {
 	// Query the database based on the provided category
 	var rows *sql.Rows
 	if len(category) != 0 {
-		query := "SELECT categories, amounts FROM Budget WHERE categories=$1"
+		query := "SELECT categories, amounts, spent FROM Budget WHERE categories=$1"
 		rows, err = db.Query(query, category)
 	} else {
-		query := "SELECT categories, amounts FROM Budget"
+		query := "SELECT categories, amounts, spent FROM Budget"
 		rows, err = db.Query(query)
 	}
 	if err != nil {
-		return "", err
+		return [4]string{}, err
 	}
 	defer rows.Close()
 
 	// Iterate over the rows and add them to the table writer
 	for rows.Next() {
-		if err := rows.Scan(&bv.Category, &bv.Amount); err != nil {
-			return "", err
+		if err := rows.Scan(&bv.Category, &bv.Amount, &bv.Spent); err != nil {
+			return [4]string{}, err
 		}
 		// Check if amount is empty
 		if bv.Amount != "" {
 			// Convert bv.Amount to float64
 			amount, err := strconv.ParseFloat(bv.Amount, 64)
 			if err != nil {
-				return "", err
+				return [4]string{}, err
 			}
 			tw.AppendRow([]interface{}{bv.Category, amount})
 			totalAmount += amount // Accumulate total amount
@@ -93,7 +93,8 @@ func ViewBudget(category string) (string, error) {
 	// Render the table
 	tableRender := "Budget Data\n" + tw.Render()
 
-	return tableRender, nil
+	details := [4]string{tableRender, bv.Category, bv.Amount, bv.Spent}
+	return details, nil
 }
 
 func RemoveBudget(category string) error {
@@ -122,7 +123,7 @@ func RemoveBudget(category string) error {
 	return nil
 }
 
-func UpdateBudget(old, new, amount string) error {
+func UpdateBudget(old, new, amount, spent string) error {
 	var count int
 	var query string
 	var params []interface{}
@@ -152,6 +153,9 @@ func UpdateBudget(old, new, amount string) error {
 	} else if len(amount) != 0 {
 		query = "UPDATE Budget SET amounts=$1 WHERE categories=$2"
 		params = []interface{}{amount, old}
+	} else if len(spent) != 0 {
+		query = "UPDATE Budget SET spent=$1 WHERE categories=$2"
+		params = []interface{}{spent, old}
 	} else {
 		fmt.Println("No field provided to adjust")
 	}

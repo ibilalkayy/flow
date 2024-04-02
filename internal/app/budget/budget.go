@@ -44,19 +44,3 @@ func CategoryAmount(category string) (string, error) {
 
 	return bv.Amount, nil
 }
-
-func IsCategoryPresent(category string) (bool, error) {
-	db, err := db.Connection()
-	if err != nil {
-		return false, err
-	}
-
-	var count int
-	query := "SELECT COUNT(*) FROM Budget WHERE categories=$1"
-	err = db.QueryRow(query, category).Scan(&count)
-	if err != nil {
-		return false, err
-	}
-
-	return count > 0, nil
-}
