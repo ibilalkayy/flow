@@ -123,7 +123,7 @@ func RemoveBudget(category string) error {
 	return nil
 }
 
-func UpdateBudget(old, new, amount, spent string) error {
+func UpdateBudget(old, new, amount, spent, remaining string) error {
 	var count int
 	var query string
 	var params []interface{}
@@ -154,8 +154,8 @@ func UpdateBudget(old, new, amount, spent string) error {
 		query = "UPDATE Budget SET amounts=$1 WHERE categories=$2"
 		params = []interface{}{amount, old}
 	} else if len(spent) != 0 {
-		query = "UPDATE Budget SET spent=$1 WHERE categories=$2"
-		params = []interface{}{spent, old}
+		query = "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
+		params = []interface{}{spent, remaining, old}
 	} else {
 		fmt.Println("No field provided to adjust")
 	}
@@ -164,8 +164,6 @@ func UpdateBudget(old, new, amount, spent string) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("Your budget category is successfully updated!")
 	return nil
 }
 
