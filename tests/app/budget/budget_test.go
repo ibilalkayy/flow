@@ -45,7 +45,7 @@ func TestCreateBudget(t *testing.T) {
 			name: "ValidInput",
 			input: &structs.BudgetVariables{
 				Category: "TestCategory",
-				Amount:   "100",
+				Amount:   100,
 			},
 			expectedMsg: "Created budget for category: TestCategory, amount: 100\n",
 		},
@@ -53,7 +53,7 @@ func TestCreateBudget(t *testing.T) {
 			name: "EmptyCategory",
 			input: &structs.BudgetVariables{
 				Category: "",
-				Amount:   "100",
+				Amount:   100,
 			},
 			expectedMsg: "Created budget for category: , amount: 100\n",
 		},
@@ -61,7 +61,7 @@ func TestCreateBudget(t *testing.T) {
 			name: "EmptyAmount",
 			input: &structs.BudgetVariables{
 				Category: "CategoryTest",
-				Amount:   "",
+				Amount:   0,
 			},
 			expectedMsg: "Created budget for category: TestCategory, amount: \n",
 		},
@@ -176,7 +176,8 @@ func TestUpdateBudget(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := budget_db.UpdateBudget(tc.oldCategory, tc.newCategory, tc.amount, "", "")
+			amount := structs.StringToInt(tc.amount)
+			err := budget_db.UpdateBudget(tc.oldCategory, tc.newCategory, amount, 0, 0)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}

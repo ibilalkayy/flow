@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/ibilalkayy/flow/db"
 	"github.com/ibilalkayy/flow/internal/structs"
@@ -38,14 +37,14 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 	return nil
 }
 
-func ViewBudget(category string) ([4]string, error) {
+func ViewBudget(category string) ([4]interface{}, error) {
 	// Create a new instance of BudgetVariables to hold the retrieved data
 	bv := new(structs.BudgetVariables)
 
 	// Connect to the database
 	db, err := db.Connection()
 	if err != nil {
-		return [4]string{}, err
+		return [4]interface{}{}, err
 	}
 	defer db.Close()
 
@@ -54,7 +53,7 @@ func ViewBudget(category string) ([4]string, error) {
 	tw.AppendHeader(table.Row{"Category", "Amount"})
 
 	// Initialize total amount
-	totalAmount := 0.0
+	totalAmount := 0
 
 	// Query the database based on the provided category
 	var rows *sql.Rows
@@ -66,24 +65,19 @@ func ViewBudget(category string) ([4]string, error) {
 		rows, err = db.Query(query)
 	}
 	if err != nil {
-		return [4]string{}, err
+		return [4]interface{}{}, err
 	}
 	defer rows.Close()
 
 	// Iterate over the rows and add them to the table writer
 	for rows.Next() {
 		if err := rows.Scan(&bv.Category, &bv.Amount, &bv.Spent); err != nil {
-			return [4]string{}, err
+			return [4]interface{}{}, err
 		}
 		// Check if amount is empty
-		if bv.Amount != "" {
-			// Convert bv.Amount to float64
-			amount, err := strconv.ParseFloat(bv.Amount, 64)
-			if err != nil {
-				return [4]string{}, err
-			}
-			tw.AppendRow([]interface{}{bv.Category, amount})
-			totalAmount += amount // Accumulate total amount
+		if bv.Amount != 0 {
+			tw.AppendRow([]interface{}{bv.Category, bv.Amount})
+			totalAmount += bv.Amount
 		}
 	}
 
@@ -93,7 +87,7 @@ func ViewBudget(category string) ([4]string, error) {
 	// Render the table
 	tableRender := "Budget Data\n" + tw.Render()
 
-	details := [4]string{tableRender, bv.Category, bv.Amount, bv.Spent}
+	details := [4]interface{}{tableRender, bv.Category, bv.Amount, bv.Spent}
 	return details, nil
 }
 
@@ -123,7 +117,7 @@ func RemoveBudget(category string) error {
 	return nil
 }
 
-func UpdateBudget(old, new, amount, spent, remaining string) error {
+func UpdateBudget(old, new string, amount, spent, remaining int) error {
 	var count int
 	var query string
 	var params []interface{}
@@ -144,16 +138,16 @@ func UpdateBudget(old, new, amount, spent, remaining string) error {
 		return errors.New("'" + old + "'" + " category does not exist")
 	}
 
-	if len(new) != 0 && len(amount) != 0 {
+	if len(new) != 0 && amount != 0 {
 		query = "UPDATE Budget SET categories=$1, amounts=$2 WHERE categories=$3"
 		params = []interface{}{new, amount, old}
 	} else if len(new) != 0 {
 		query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
 		params = []interface{}{new, old}
-	} else if len(amount) != 0 {
+	} else if amount != 0 {
 		query = "UPDATE Budget SET amounts=$1 WHERE categories=$2"
 		params = []interface{}{amount, old}
-	} else if len(spent) != 0 {
+	} else if spent != 0 {
 		query = "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
 		params = []interface{}{spent, remaining, old}
 	} else {
@@ -199,7 +193,9 @@ func GetBudgetData(filepath, filename string) error {
 			return err
 		}
 
-		data := []string{bv.Category, bv.Amount}
+		var data []string
+		amountStr := structs.IntToString(bv.Amount)
+		data = append(data, bv.Category, amountStr)
 		if err := writer.Write(data); err != nil {
 			return err
 		}

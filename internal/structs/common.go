@@ -1,5 +1,10 @@
 package structs
 
+import (
+	"log"
+	"strconv"
+)
+
 type AuthVariables struct {
 	Username    string
 	Gmail       string
@@ -17,23 +22,39 @@ type DatabaseVariables struct {
 
 type BudgetVariables struct {
 	Category string
-	Amount   string
-	Spent    string
+	Amount   int
+	Spent    int
 }
 
 type AlertVariables struct {
 	Category  string
 	Frequency string
 	Method    string
-	Days      string
+	Days      int
 	Weekdays  string
-	Hours     string
-	Minutes   string
-	Seconds   string
+	Hours     int
+	Minutes   int
+	Seconds   int
 }
 
 type EmailVariables struct {
 	Username       string
 	Category       string
-	CategoryAmount string
+	CategoryAmount int
+}
+
+func IntToString(key int) string {
+	value := strconv.Itoa(key)
+	return value
+}
+
+func StringToInt(key string) int {
+	if key == "" {
+		return 0
+	}
+	value, err := strconv.Atoi(key)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return value
 }

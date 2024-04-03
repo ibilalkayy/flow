@@ -15,7 +15,9 @@ var CreateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
 		amount, _ := cmd.Flags().GetString("amount")
-		bv := structs.BudgetVariables{Category: category, Amount: amount}
+		amountInt := structs.StringToInt(amount)
+
+		bv := structs.BudgetVariables{Category: category, Amount: amountInt}
 		err := budget_db.CreateBudget(&bv, "db/migrations/")
 		if err != nil {
 			log.Fatal(err)

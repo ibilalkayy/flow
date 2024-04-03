@@ -22,15 +22,20 @@ var SetupCmd = &cobra.Command{
 		minute, _ := cmd.Flags().GetString("minute")
 		second, _ := cmd.Flags().GetString("second")
 
+		dayInt := structs.StringToInt(day)
+		hourInt := structs.StringToInt(hour)
+		minuteInt := structs.StringToInt(minute)
+		secondInt := structs.StringToInt(second)
+
 		av := structs.AlertVariables{
 			Category:  category,
 			Frequency: frequency,
 			Method:    method,
-			Days:      day,
+			Days:      dayInt,
 			Weekdays:  weekday,
-			Hours:     hour,
-			Minutes:   minute,
-			Seconds:   second,
+			Hours:     hourInt,
+			Minutes:   minuteInt,
+			Seconds:   secondInt,
 		}
 
 		err := internal_alert.AlertSetup(&av)

@@ -31,30 +31,30 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 	return nil
 }
 
-func ViewAlert(category string) ([9]string, error) {
+func ViewAlert(category string) ([9]interface{}, error) {
 	av := new(structs.AlertVariables)
 
 	db, err := db.Connection()
 	if err != nil {
-		return [9]string{}, err
+		return [9]interface{}{}, err
 	}
 
 	query := "SELECT categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds FROM Alert WHERE categories=$1"
 	rows, err := db.Query(query, category)
 	if err != nil {
-		return [9]string{}, err
+		return [9]interface{}{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&av.Category, &av.Method, &av.Frequency, &av.Days, &av.Weekdays, &av.Hours, &av.Minutes, &av.Seconds); err != nil {
-			return [9]string{}, err
+			return [9]interface{}{}, err
 		}
 	}
 	if err := rows.Err(); err != nil {
-		return [9]string{}, err
+		return [9]interface{}{}, err
 	}
 
-	values := [9]string{av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds}
+	values := [9]interface{}{av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds}
 	return values, nil
 }

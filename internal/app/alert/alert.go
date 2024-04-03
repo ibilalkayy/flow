@@ -3,7 +3,6 @@ package internal_alert
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -32,17 +31,17 @@ func AlertSetup(av *structs.AlertVariables) error {
 			return err
 		}
 
-		if len(categoryAmount) != 0 {
+		if categoryAmount != 0 {
 			err := alert_db.CreateAlert(av, "db/migrations/")
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Alert is set for the '%s' category", av.Category)
+			fmt.Printf("Alert is set for the '%s' category\n", av.Category)
 		} else {
 			return errors.New("category amount is not present")
 		}
 	} else {
-		fmt.Printf("You can't spend more than your '%s' category budget", av.Category)
+		fmt.Printf("You can't spend more than your '%s' category budget\n", av.Category)
 	}
 	return nil
 }
@@ -53,14 +52,20 @@ func SendAlert(category string) error {
 		return err
 	}
 
-	day, _ := strconv.Atoi(value[4])
-	hour, _ := strconv.Atoi(value[6])
-	minute, _ := strconv.Atoi(value[7])
-	second, _ := strconv.Atoi(value[8])
+	method, ok1 := value[2].(string)
+	frequency, ok2 := value[3].(string)
+	day, ok3 := value[4].(int)
+	weekdayStr, ok4 := value[5].(string)
+	hour, ok5 := value[6].(int)
+	minute, ok6 := value[7].(int)
+	second, ok7 := value[8].(int)
+
+	if !ok1 || !ok2 || !ok3 || !ok4 || !ok5 || !ok6 || !ok7 {
+		return errors.New("unable to convert string to int and string")
+	}
 
 	var weekday time.Weekday
-
-	switch value[5] {
+	switch weekdayStr {
 	case "monday":
 		weekday = time.Monday
 	case "tuesday":
@@ -79,9 +84,9 @@ func SendAlert(category string) error {
 		return errors.New("wrong weekday is selected")
 	}
 
-	switch value[2] {
+	switch method {
 	case "email":
-		switch value[3] {
+		switch frequency {
 		case "hourly":
 			internal_spending.HourlyNotification(category)
 		case "daily":
@@ -100,12 +105,19 @@ func SendAlert(category string) error {
 }
 
 func CheckNotification(category string) error {
-	amount, err := budget_db.ViewBudget(category)
+	details, err := budget_db.ViewBudget(category)
 	if err != nil {
 		return err
 	}
 
-	if amount[3] > amount[2] {
+	budgetAmount, ok1 := details[2].(int)
+	spentAmount, ok2 := details[3].(int)
+
+	if !ok1 || !ok2 {
+		return errors.New("unable to convert spent or amount to int")
+	}
+
+	if spentAmount > budgetAmount {
 		SendAlert(category)
 	} else {
 		fmt.Printf("The '%s' category amount is not exceeded", category)

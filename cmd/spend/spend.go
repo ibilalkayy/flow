@@ -7,6 +7,7 @@ import (
 
 	"github.com/ibilalkayy/flow/cmd"
 	internal_spending "github.com/ibilalkayy/flow/internal/app/spend"
+	"github.com/ibilalkayy/flow/internal/structs"
 	"github.com/spf13/cobra"
 )
 
@@ -17,8 +18,10 @@ var SpendCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		categoryName, _ := cmd.Flags().GetString("category")
 		spendingAmount, _ := cmd.Flags().GetString("amount")
-		if len(categoryName) != 0 && len(spendingAmount) != 0 {
-			err := internal_spending.SpendMoney(categoryName, spendingAmount)
+		spendingAmountInt := structs.StringToInt(spendingAmount)
+
+		if len(categoryName) != 0 && spendingAmountInt != 0 {
+			err := internal_spending.SpendMoney(categoryName, spendingAmountInt)
 			if err != nil {
 				log.Fatal(err)
 			}
