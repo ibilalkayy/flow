@@ -10,7 +10,7 @@ import (
 	"github.com/ibilalkayy/flow/db/budget_db"
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	internal_spending "github.com/ibilalkayy/flow/internal/app/spend"
-	"github.com/ibilalkayy/flow/internal/structs"
+	"github.com/ibilalkayy/flow/internal/common/structs"
 )
 
 func AlertSetup(av *structs.AlertVariables) error {

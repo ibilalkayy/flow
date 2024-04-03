@@ -6,7 +6,7 @@ import (
 
 	"github.com/ibilalkayy/flow/db/alert_db"
 	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
-	"github.com/ibilalkayy/flow/internal/structs"
+	"github.com/ibilalkayy/flow/internal/common/structs"
 )
 
 func TestCreateAlert(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/ibilalkayy/flow/db"
-	"github.com/ibilalkayy/flow/internal/structs"
+	"github.com/ibilalkayy/flow/internal/common/structs"
 )
 
 func CategoryAmount(category string) (int, error) {

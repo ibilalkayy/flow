@@ -6,8 +6,8 @@ import (
 	"text/template"
 
 	"github.com/ibilalkayy/flow/db/budget_db"
+	"github.com/ibilalkayy/flow/internal/common/structs"
 	"github.com/ibilalkayy/flow/internal/middleware"
-	"github.com/ibilalkayy/flow/internal/structs"
 	"gopkg.in/gomail.v2"
 )
 

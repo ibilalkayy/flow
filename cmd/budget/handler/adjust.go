@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/ibilalkayy/flow/db/budget_db"
-	"github.com/ibilalkayy/flow/internal/structs"
+	"github.com/ibilalkayy/flow/internal/common/functions"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +17,7 @@ var AdjustCmd = &cobra.Command{
 		oldCategory, _ := cmd.Flags().GetString("oldcategory")
 		newCategory, _ := cmd.Flags().GetString("newcategory")
 		amount, _ := cmd.Flags().GetString("amount")
-		newAmount := structs.StringToInt(amount)
+		newAmount := functions.StringToInt(amount)
 
 		err := budget_db.UpdateBudget(oldCategory, newCategory, newAmount, 0, 0)
 		if err != nil {

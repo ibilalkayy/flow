@@ -4,7 +4,8 @@ import (
 	"log"
 
 	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
-	"github.com/ibilalkayy/flow/internal/structs"
+	"github.com/ibilalkayy/flow/internal/common/functions"
+	"github.com/ibilalkayy/flow/internal/common/structs"
 	"github.com/spf13/cobra"
 )
 
@@ -22,10 +23,10 @@ var SetupCmd = &cobra.Command{
 		minute, _ := cmd.Flags().GetString("minute")
 		second, _ := cmd.Flags().GetString("second")
 
-		dayInt := structs.StringToInt(day)
-		hourInt := structs.StringToInt(hour)
-		minuteInt := structs.StringToInt(minute)
-		secondInt := structs.StringToInt(second)
+		dayInt := functions.StringToInt(day)
+		hourInt := functions.StringToInt(hour)
+		minuteInt := functions.StringToInt(minute)
+		secondInt := functions.StringToInt(second)
 
 		av := structs.AlertVariables{
 			Category:  category,

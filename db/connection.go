@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ibilalkayy/flow/internal/common/structs"
 	"github.com/ibilalkayy/flow/internal/middleware"
-	"github.com/ibilalkayy/flow/internal/structs"
 	_ "github.com/lib/pq"
 )
 

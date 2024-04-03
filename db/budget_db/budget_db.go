@@ -8,7 +8,8 @@ import (
 	"os"
 
 	"github.com/ibilalkayy/flow/db"
-	"github.com/ibilalkayy/flow/internal/structs"
+	"github.com/ibilalkayy/flow/internal/common/functions"
+	"github.com/ibilalkayy/flow/internal/common/structs"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
@@ -194,7 +195,7 @@ func GetBudgetData(filepath, filename string) error {
 		}
 
 		var data []string
-		amountStr := structs.IntToString(bv.Amount)
+		amountStr := functions.IntToString(bv.Amount)
 		data = append(data, bv.Category, amountStr)
 		if err := writer.Write(data); err != nil {
 			return err

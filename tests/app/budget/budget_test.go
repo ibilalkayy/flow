@@ -6,7 +6,8 @@ import (
 
 	"github.com/ibilalkayy/flow/db/budget_db"
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
-	"github.com/ibilalkayy/flow/internal/structs"
+	"github.com/ibilalkayy/flow/internal/common/functions"
+	"github.com/ibilalkayy/flow/internal/common/structs"
 )
 
 type mockDB struct{}
@@ -176,7 +177,7 @@ func TestUpdateBudget(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			amount := structs.StringToInt(tc.amount)
+			amount := functions.StringToInt(tc.amount)
 			err := budget_db.UpdateBudget(tc.oldCategory, tc.newCategory, amount, 0, 0)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)

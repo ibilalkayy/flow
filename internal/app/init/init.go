@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ibilalkayy/flow/internal/structs"
+	"github.com/ibilalkayy/flow/internal/common/structs"
 )
 
 func WriteEnvFile(av *structs.AuthVariables, dv *structs.DatabaseVariables) error {
