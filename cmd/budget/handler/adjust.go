@@ -19,7 +19,7 @@ var AdjustCmd = &cobra.Command{
 		amount, _ := cmd.Flags().GetString("amount")
 		newAmount := functions.StringToInt(amount)
 
-		err := budget_db.UpdateBudget(oldCategory, newCategory, newAmount, 0, 0)
+		err := budget_db.UpdateBudget(oldCategory, newCategory, newAmount)
 		if err != nil {
 			log.Fatal(err)
 		}

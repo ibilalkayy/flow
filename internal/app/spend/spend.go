@@ -22,8 +22,10 @@ func SpendMoney(category string, spending_amount int) error {
 
 	if category == values[1] {
 		if spending_amount <= budgetAmount {
-			budget_db.UpdateBudget(category, "", 0, spending_amount, budgetAmount-spending_amount)
-			fmt.Println("Enjoy your spending!")
+			err := budget_db.AddExpenditure(spending_amount, category)
+			if err != nil {
+				return err
+			}
 		} else {
 			fmt.Printf("Your spending amount is exceeded. Do you still want to continue? [yes/no]: ")
 			fmt.Scanln(&answer)
@@ -31,8 +33,10 @@ func SpendMoney(category string, spending_amount int) error {
 			switch answer {
 			case "yes", "y":
 				email.SendAlertEmail(category)
-				budget_db.UpdateBudget(category, "", 0, spending_amount, budgetAmount-spending_amount)
-				fmt.Println("Enjoy your spending!")
+				err := budget_db.AddExpenditure(spending_amount, category)
+				if err != nil {
+					return err
+				}
 			case "no", "n":
 				fmt.Println("Alright")
 			default:

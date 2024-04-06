@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"math"
 	"os"
 
 	"github.com/ibilalkayy/flow/db"
@@ -38,20 +39,20 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 	return nil
 }
 
-func ViewBudget(category string) ([4]interface{}, error) {
+func ViewBudget(category string) ([5]interface{}, error) {
 	// Create a new instance of BudgetVariables to hold the retrieved data
 	bv := new(structs.BudgetVariables)
 
 	// Connect to the database
 	db, err := db.Connection()
 	if err != nil {
-		return [4]interface{}{}, err
+		return [5]interface{}{}, err
 	}
 	defer db.Close()
 
 	// Prepare the table writer
 	tw := table.NewWriter()
-	tw.AppendHeader(table.Row{"Category", "Amount"})
+	tw.AppendHeader(table.Row{"Category", "Amount", "Spent", "Remaining"})
 
 	// Initialize total amount
 	totalAmount := 0
@@ -59,25 +60,26 @@ func ViewBudget(category string) ([4]interface{}, error) {
 	// Query the database based on the provided category
 	var rows *sql.Rows
 	if len(category) != 0 {
-		query := "SELECT categories, amounts, spent FROM Budget WHERE categories=$1"
+		query := "SELECT categories, amounts, spent, remaining FROM Budget WHERE categories=$1"
 		rows, err = db.Query(query, category)
 	} else {
-		query := "SELECT categories, amounts, spent FROM Budget"
+		query := "SELECT categories, amounts, spent, remaining FROM Budget"
 		rows, err = db.Query(query)
 	}
 	if err != nil {
-		return [4]interface{}{}, err
+		return [5]interface{}{}, err
 	}
 	defer rows.Close()
 
 	// Iterate over the rows and add them to the table writer
 	for rows.Next() {
-		if err := rows.Scan(&bv.Category, &bv.Amount, &bv.Spent); err != nil {
-			return [4]interface{}{}, err
+		if err := rows.Scan(&bv.Category, &bv.Amount, &bv.Spent, &bv.Remaining); err != nil {
+			return [5]interface{}{}, err
 		}
 		// Check if amount is empty
 		if bv.Amount != 0 {
-			tw.AppendRow([]interface{}{bv.Category, bv.Amount})
+			tw.AppendRow([]interface{}{bv.Category, bv.Amount, bv.Spent, bv.Remaining})
+			tw.AppendSeparator()
 			totalAmount += bv.Amount
 		}
 	}
@@ -88,7 +90,7 @@ func ViewBudget(category string) ([4]interface{}, error) {
 	// Render the table
 	tableRender := "Budget Data\n" + tw.Render()
 
-	details := [4]interface{}{tableRender, bv.Category, bv.Amount, bv.Spent}
+	details := [5]interface{}{tableRender, bv.Category, bv.Amount, bv.Spent, bv.Remaining}
 	return details, nil
 }
 
@@ -118,7 +120,7 @@ func RemoveBudget(category string) error {
 	return nil
 }
 
-func UpdateBudget(old, new string, amount, spent, remaining int) error {
+func UpdateBudget(old, new string, amount int) error {
 	var count int
 	var query string
 	var params []interface{}
@@ -134,7 +136,6 @@ func UpdateBudget(old, new string, amount, spent, remaining int) error {
 		return err
 	}
 
-	// If the old category does not exist, return an error
 	if count == 0 {
 		return errors.New("'" + old + "'" + " category does not exist")
 	}
@@ -148,9 +149,6 @@ func UpdateBudget(old, new string, amount, spent, remaining int) error {
 	} else if amount != 0 {
 		query = "UPDATE Budget SET amounts=$1 WHERE categories=$2"
 		params = []interface{}{amount, old}
-	} else if spent != 0 {
-		query = "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
-		params = []interface{}{spent, remaining, old}
 	} else {
 		fmt.Println("No field provided to adjust")
 	}
@@ -158,6 +156,53 @@ func UpdateBudget(old, new string, amount, spent, remaining int) error {
 	_, err = db.Exec(query, params...)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func AddExpenditure(spent int, category string) error {
+	db, err := db.Connection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	var savedSpent, savedRemaining, totalAmount int
+	if len(category) != 0 {
+		query := "SELECT amounts, spent, remaining FROM Budget WHERE categories = $1"
+		err := db.QueryRow(query, category).Scan(&totalAmount, &savedSpent, &savedRemaining)
+		if err != nil {
+			return err
+		}
+	} else {
+		return errors.New("category is not present")
+	}
+
+	totalSpent := spent + savedSpent
+	remainingBalance := totalAmount - totalSpent
+
+	if savedSpent == 0 || (savedRemaining == 0 && spent <= savedRemaining) {
+		query := "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
+		_, err = db.Exec(query, totalSpent, remainingBalance, category)
+		if err != nil {
+			return err
+		}
+		fmt.Println("Enjoy your spending!")
+	} else if savedRemaining != 0 && spent <= savedRemaining {
+		query := "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
+		_, err = db.Exec(query, totalSpent, savedRemaining-spent, category)
+		if err != nil {
+			return err
+		}
+		fmt.Println("Enjoy your spending!")
+	} else {
+		query := "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
+		_, err = db.Exec(query, totalSpent, savedRemaining-spent, category)
+		if err != nil {
+			return err
+		}
+		overAmount := math.Abs(float64(savedRemaining - spent))
+		fmt.Printf("You have spent %d more than your set budget", int(overAmount))
 	}
 	return nil
 }

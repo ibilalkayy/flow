@@ -65,7 +65,7 @@ flow budget create --category groceries/utilities --amount 300
 flow budget view
 ```
 
-## Clonning
+## Cloning
 
 Clone the repository:
 

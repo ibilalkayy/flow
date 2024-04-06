@@ -16,9 +16,10 @@ type DatabaseVariables struct {
 }
 
 type BudgetVariables struct {
-	Category string
-	Amount   int
-	Spent    int
+	Category  string
+	Amount    int
+	Spent     int
+	Remaining int
 }
 
 type AlertVariables struct {
