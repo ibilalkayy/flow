@@ -16,20 +16,28 @@ func SpendMoney(category string, spending_amount int) error {
 	}
 
 	categoryName, ok1 := values[1].(string)
-	remainingAmount, ok2 := values[4].(int)
+	totalAmount, ok2 := values[2].(int)
+	spentAmount, ok3 := values[3].(int)
+	remainingAmount, ok4 := values[4].(int)
 
-	if !ok1 || !ok2 {
+	if !ok1 || !ok2 || !ok3 || !ok4 {
 		return errors.New("unable to convert budget amount to int or string")
 	}
 
+	totalSpent := spending_amount + spentAmount
 	if category == categoryName {
-		if spending_amount <= remainingAmount {
+		if totalSpent <= totalAmount {
+			err := budget_db.AddExpenditure(spending_amount, category)
+			if err != nil {
+				return err
+			}
+		} else if spending_amount <= remainingAmount {
 			err := budget_db.AddExpenditure(spending_amount, category)
 			if err != nil {
 				return err
 			}
 		} else {
-			fmt.Printf("You have spent %d more than your set budget\n", remainingAmount)
+			fmt.Printf("Your set budget is %d. You have %d remaining but you spent %d.\n", totalAmount, remainingAmount, spentAmount)
 			fmt.Printf("Do you still want to spend? [yes/no]: ")
 			fmt.Scanln(&answer)
 

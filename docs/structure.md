@@ -41,11 +41,15 @@
     │   │   ├── init
     │   │   │   └── init.go
     │   │   └── spend
+    │   │       ├── notification.go
     │   │       └── spend.go
     │   ├── middleware
     │   │   └── env.go
-    │   └── structs
-    │       └── common.go
+    │   └── common
+    │       ├── functions
+    │       │   └── functions.go
+    │       └── structs
+    │           └── structs.go
     ├── tests
     │   └── app
     │       ├── alert
@@ -81,6 +85,7 @@
 - **cmd/spend/spend.go:** Spending money on various categories.
 
 ### Database files
+
 - **db/connection.go:** Database connection setup.
 - **db/migrations/001_create_budget_table.sql:** SQL script for creating budget table.
 - **db/migrations/002_create_alert_table.sql:** SQL script for creating alert table.
@@ -103,6 +108,9 @@
 - **internal/app/budget/budget.go:** Logic for budget management functionality.
 - **internal/app/init/init.go:** Logic for init functionality.
 - **internal/app/spend/spend.go:** Logic for transaction functionality.
+- **internal/app/spend/notification.go:** Functions for setting the hourly, daily and more notifications.
+- **internal/common/functions/functions.go:** Contains functions that are not directly attached to a file structure.
+- **internal/common/structs/structs.go:** Contains type structures for various functions.
 - **internal/middleware/env.go:** Environment middleware for handling environment variables.
 
 ### Testing files
