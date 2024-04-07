@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
-	"math"
 	"os"
 
 	"github.com/ibilalkayy/flow/db"
@@ -201,8 +200,6 @@ func AddExpenditure(spent int, category string) error {
 		if err != nil {
 			return err
 		}
-		overAmount := math.Abs(float64(savedRemaining - spent))
-		fmt.Printf("You have spent %d more than your set budget", int(overAmount))
 	}
 	return nil
 }
