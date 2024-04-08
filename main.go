@@ -5,6 +5,7 @@ import (
 	_ "github.com/ibilalkayy/flow/cmd/budget"
 	_ "github.com/ibilalkayy/flow/cmd/init"
 	_ "github.com/ibilalkayy/flow/cmd/spend"
+	_ "github.com/ibilalkayy/flow/cmd/total_amount"
 )
 
 func main() {

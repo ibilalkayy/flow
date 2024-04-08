@@ -1,4 +1,4 @@
-package handler
+package budget_handler
 
 import (
 	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"

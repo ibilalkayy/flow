@@ -1,4 +1,4 @@
-package handler
+package budget_handler
 
 import (
 	"log"
