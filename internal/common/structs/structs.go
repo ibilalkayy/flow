@@ -38,3 +38,10 @@ type EmailVariables struct {
 	Category       string
 	CategoryAmount int
 }
+
+type TotalAmountVariables struct {
+	Amount   int
+	Included string
+	Excluded string
+	Label    string
+}

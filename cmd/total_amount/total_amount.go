@@ -12,7 +12,7 @@ import (
 var TotalAmountCmd = &cobra.Command{
 	Use:   "total-amount",
 	Short: "Manage your total amount",
-	Long: `total-amount allows you to manage your total amount by setting, view, removing
+	Long: `This command allows you to manage your total amount by setting, view, removing
 doing category selection, excluding categories, etc`,
 	Run: func(cmd *cobra.Command, args []string) {
 		active, _ := cmd.Flags().GetString("active")
@@ -24,7 +24,7 @@ doing category selection, excluding categories, etc`,
 
 func init() {
 	cmd.RootCmd.AddCommand(TotalAmountCmd)
-	// Added Subcommands
+	// Subcommands
 	TotalAmountCmd.AddCommand(total_amount_handler.SetCmd)
 	TotalAmountCmd.AddCommand(total_amount_handler.UpdateCmd)
 	TotalAmountCmd.AddCommand(total_amount_handler.ViewCmd)

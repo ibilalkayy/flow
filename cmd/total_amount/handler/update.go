@@ -1,20 +1,31 @@
 package total_amount_handler
 
 import (
-	"fmt"
+	"log"
 
+	"github.com/ibilalkayy/flow/db/total_amount_db"
+	"github.com/ibilalkayy/flow/internal/common/functions"
+	"github.com/ibilalkayy/flow/internal/common/structs"
 	"github.com/spf13/cobra"
 )
 
 // UpdateCmd represents the update command
 var UpdateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "A brief description of your command",
+	Short: "Update the total amount data",
 	Run: func(cmd *cobra.Command, args []string) {
 		amount, _ := cmd.Flags().GetString("amount")
 		label, _ := cmd.Flags().GetString("label")
-		fmt.Println(amount)
-		fmt.Println(label)
+		totalAmount := functions.StringToInt(amount)
+
+		tv := structs.TotalAmountVariables{
+			Amount: totalAmount,
+			Label:  label,
+		}
+		err := total_amount_db.UpdateTotalAmount(&tv)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 

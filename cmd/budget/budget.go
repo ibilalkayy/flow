@@ -23,7 +23,7 @@ and adjust their budgets to effectively track and control their expenses.`,
 
 func init() {
 	cmd.RootCmd.AddCommand(budgetCmd)
-	// Added subcommands
+	// Subcommands
 	budgetCmd.AddCommand(budget_handler.CreateCmd)
 	budgetCmd.AddCommand(budget_handler.ViewCmd)
 	budgetCmd.AddCommand(budget_handler.AdjustCmd)
