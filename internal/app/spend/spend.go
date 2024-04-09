@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/db/budget_db"
+	"github.com/ibilalkayy/flow/db/total_amount_db"
 	"github.com/ibilalkayy/flow/email"
 )
 
@@ -15,12 +16,18 @@ func SpendMoney(category string, spending_amount int) error {
 		return err
 	}
 
+	value, err := total_amount_db.ViewTotalAmount()
+	if err != nil {
+		return err
+	}
+
 	categoryName, ok1 := values[1].(string)
 	totalAmount, ok2 := values[2].(int)
 	spentAmount, ok3 := values[3].(int)
 	remainingAmount, ok4 := values[4].(int)
+	totalAllocatedAmount, ok5 := value[1].(int)
 
-	if !ok1 || !ok2 || !ok3 || !ok4 {
+	if !ok1 || !ok2 || !ok3 || !ok4 || !ok5 {
 		return errors.New("unable to convert budget amount to int or string")
 	}
 
@@ -36,7 +43,7 @@ func SpendMoney(category string, spending_amount int) error {
 			if err != nil {
 				return err
 			}
-		} else {
+		} else if spending_amount > remainingAmount && spending_amount <= totalAllocatedAmount && spentAmount <= totalAllocatedAmount {
 			fmt.Printf("Your set budget is %d. You have %d remaining but you spent %d.\n", totalAmount, remainingAmount, spentAmount)
 			fmt.Printf("Do you still want to spend? [yes/no]: ")
 			fmt.Scanln(&answer)
@@ -54,6 +61,8 @@ func SpendMoney(category string, spending_amount int) error {
 			default:
 				return errors.New("select the right option")
 			}
+		} else {
+			return errors.New("you have exceeded total amount logic")
 		}
 	} else {
 		return errors.New("category is not found. first setup the alert. see 'flow budget alert setup -h'")

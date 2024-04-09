@@ -11,13 +11,13 @@ import (
 // ViewCmd represents the view command
 var ViewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "A brief description of your command",
+	Short: "View total amount data",
 	Run: func(cmd *cobra.Command, args []string) {
 		table, err := total_amount_db.ViewTotalAmount()
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(table)
+		fmt.Println(table[0])
 	},
 }
 
