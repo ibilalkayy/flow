@@ -36,12 +36,12 @@ func SetTotalAmount(tv *structs.TotalAmountVariables, basepath string) error {
 	return nil
 }
 
-func ViewTotalAmount() ([2]interface{}, error) {
+func ViewTotalAmount() ([3]interface{}, error) {
 	tv := new(structs.TotalAmountVariables)
 
 	db, err := db.Connection()
 	if err != nil {
-		return [2]interface{}{}, err
+		return [3]interface{}{}, err
 	}
 	defer db.Close()
 
@@ -52,20 +52,20 @@ func ViewTotalAmount() ([2]interface{}, error) {
 	query := "SELECT amount, included_category, excluded_category, label FROM TotalAmount"
 	rows, err = db.Query(query)
 	if err != nil {
-		return [2]interface{}{}, err
+		return [3]interface{}{}, err
 	}
 
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&tv.Amount, &tv.Included, &tv.Excluded, &tv.Label); err != nil {
-			return [2]interface{}{}, nil
+			return [3]interface{}{}, nil
 		}
 	}
 	// Append data to the table inside the loop
 	tw.AppendRow([]interface{}{tv.Amount, tv.Included, tv.Excluded, tv.Label})
 	tableRender := "Total Amount\n" + tw.Render()
-	details := [2]interface{}{tableRender, tv.Amount}
+	details := [3]interface{}{tableRender, tv.Included, tv.Amount}
 	return details, nil
 }
 

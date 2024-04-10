@@ -25,14 +25,15 @@ func SpendMoney(category string, spending_amount int) error {
 	totalAmount, ok2 := values[2].(int)
 	spentAmount, ok3 := values[3].(int)
 	remainingAmount, ok4 := values[4].(int)
-	totalAllocatedAmount, ok5 := value[1].(int)
+	totalAmountIncludedCategory, ok5 := value[1].(string)
+	totalAllocatedAmount, ok6 := value[2].(int)
 
-	if !ok1 || !ok2 || !ok3 || !ok4 || !ok5 {
+	if !ok1 || !ok2 || !ok3 || !ok4 || !ok5 || !ok6 {
 		return errors.New("unable to convert budget amount to int or string")
 	}
 
 	totalSpent := spending_amount + spentAmount
-	if category == categoryName {
+	if category == categoryName && category == totalAmountIncludedCategory {
 		if totalSpent <= totalAmount {
 			err := budget_db.AddExpenditure(spending_amount, category)
 			if err != nil {
@@ -65,7 +66,7 @@ func SpendMoney(category string, spending_amount int) error {
 			return errors.New("you have exceeded total amount logic")
 		}
 	} else {
-		return errors.New("category is not found. first setup the alert. see 'flow budget alert setup -h'")
+		return errors.New("category is not found. setup the alert 'flow budget alert setup -h' or include the category in your total amount by writing 'flow total-amount set -h'")
 	}
 	return nil
 }
