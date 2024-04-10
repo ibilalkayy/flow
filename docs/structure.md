@@ -1,26 +1,37 @@
     ./
+    ├── .github
+    │   └── funding.yml
     ├── cmd
     │   ├── budget
     │   │   ├── budget.go
-    │   │   └── handler
-    │   │       ├── adjust.go
-    │   │       ├── alert.go
-    │   │       ├── create.go
-    │   │       ├── get.go
-    │   │       ├── msg.go
-    │   │       ├── remove.go
-    │   │       ├── setup.go     
-    │   │       └── view.go
+    │   │   ├── handler
+    │   │   │   ├── adjust.go
+    │   │   │   ├── alert.go
+    │   │   │   ├── create.go
+    │   │   │   ├── get.go
+    │   │   │   ├── msg.go
+    │   │   │   ├── remove.go
+    │   │   │   ├── setup.go     
+    │   │   │   └── view.go
     │   ├── init
     │   │   └── init.go
     │   ├── spend
     │   │   └── spend.go
+    │   ├── total_amount
+    │   │   ├── total_amount.go
+    │   │   └── handler
+    │   │       ├── remove.go
+    │   │       ├── set.go
+    │   │       ├── update.go
+    │   │       └── view.go
     │   └── root.go
     ├── db
     │   ├── alert_db
     │   │   └── alert_db.go   
     │   ├── budget_db
     │   │   └── budget_db.go
+    │   ├── total_amount_db
+    │   │   └── total_amount_db.go
     │   ├── migrations
     │   │   ├── 001_create_budget_table.sql
     │   │   └── 002_create_alert_table.sql

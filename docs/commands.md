@@ -146,3 +146,34 @@ Sure, let's break down each command along with its structure for better understa
   - `-a, --amount string`: Write the spending amount for a category
   - `-c, --category string`: Write the category name to spend the money on
   - `-h, --help`: Display help for spend
+
+### 15. `flow total-amount`
+- **Description**: Manage your total amount.
+- **Usage**: `flow total-amount [flags]`
+- **Available Commands**:
+  - `set`: Set the total amount data
+  - `remove`: Remove the total amount data
+  - `update`: Update the total amount data
+  - `view`: View the total amount data
+- **Flags**:
+  - `-a, --active string`: Make the total amount active
+  - `-h, --help`: help for total-amount
+  - `-i, --inactive string`: Make the total amount inactive
+
+### 16. `flow total-amount set`
+- **Description**: Set the total amount data.
+- **Usage**: `flow total-amount set [flags]`
+- **Flags**:
+  - `-a, --amount string`: Write the total amount that you want to set
+  - `-e, --exclude string`: Specify a category to exclude from the total amount
+  - `-i, --include string`: Specify a category to include in the total amount
+  - `-l, --label string`: Provide a label for setting up your total amount
+  - `-h, --help`: help for set
+
+### 17. `flow total-amount update`
+- **Description**: Update the total amount data.
+- **Usage**: `flow total-amount update [flags]`
+- **Flags**:
+  - `-a, --amount string`: Write the total amount that you want to update
+  - `-l, --label string`: Write the label that you want to update
+  - `-h, --help`: help for set

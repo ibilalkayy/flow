@@ -11,7 +11,7 @@ import (
 // ViewCmd represents the view command
 var ViewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "View total amount data",
+	Short: "View the total amount data",
 	Run: func(cmd *cobra.Command, args []string) {
 		table, err := total_amount_db.ViewTotalAmount()
 		if err != nil {

@@ -31,5 +31,5 @@ var UpdateCmd = &cobra.Command{
 
 func init() {
 	UpdateCmd.Flags().StringP("amount", "a", "", "Write the total amount that you want to update")
-	UpdateCmd.Flags().StringP("label", "l", "", "Write the total amount that you want to update")
+	UpdateCmd.Flags().StringP("label", "l", "", "Write the label that you want to update")
 }
