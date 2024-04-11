@@ -24,8 +24,8 @@ type BudgetVariables struct {
 
 type AlertVariables struct {
 	Category  string
-	Frequency string
 	Method    string
+	Frequency string
 	Days      int
 	Weekdays  string
 	Hours     int

@@ -3,6 +3,9 @@ package alert_db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/ibilalkayy/flow/db"
 	"github.com/ibilalkayy/flow/internal/common/structs"
@@ -73,4 +76,106 @@ func ViewAlert(category string) ([9]interface{}, error) {
 
 	values := [9]interface{}{tableRender, av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds}
 	return values, nil
+}
+
+func RemoveAlert(category string) error {
+	db, err := db.Connection()
+	if err != nil {
+		return err
+	}
+
+	query := "DELETE FROM Alert WHERE categories=$1"
+	remove, err := db.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer remove.Close()
+
+	if len(category) != 0 {
+		_, err = remove.Exec(category)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("Alert values of '%s' category is successfully removed", category)
+	} else {
+		return errors.New("category is not present")
+	}
+	return nil
+}
+
+func UpdateAlert(av *structs.AlertVariables) error {
+	db, err := db.Connection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	var count int
+	err = db.QueryRow("SELECT COUNT(*) FROM Alert WHERE categories = $1", av.Category).Scan(&count)
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return errors.New("'" + av.Category + "'" + " category does not exist")
+	}
+
+	var params []interface{}
+	query := "UPDATE Alert SET "
+	paramCount := 1 // Start with $1 for the first parameter
+
+	if len(av.Category) != 0 {
+		query += "categories=$" + strconv.Itoa(paramCount) + ", "
+		params = append(params, av.Category)
+		paramCount++
+	}
+	if len(av.Method) != 0 {
+		query += "alert_methods=$" + strconv.Itoa(paramCount) + ", "
+		params = append(params, av.Method)
+		paramCount++
+	}
+	if len(av.Frequency) != 0 {
+		query += "alert_frequencies=$" + strconv.Itoa(paramCount) + ", "
+		params = append(params, av.Frequency)
+		paramCount++
+	}
+	if av.Days != 0 {
+		query += "alert_days=$" + strconv.Itoa(paramCount) + ", "
+		params = append(params, av.Days)
+		paramCount++
+	}
+	if len(av.Weekdays) != 0 {
+		query += "alert_weekdays=$" + strconv.Itoa(paramCount) + ", "
+		params = append(params, av.Weekdays)
+		paramCount++
+	}
+	if av.Hours != 0 {
+		query += "alert_hours=$" + strconv.Itoa(paramCount) + ", "
+		params = append(params, av.Hours)
+		paramCount++
+	}
+	if av.Minutes != 0 {
+		query += "alert_minutes=$" + strconv.Itoa(paramCount) + ", "
+		params = append(params, av.Minutes)
+		paramCount++
+	}
+	if av.Seconds != 0 {
+		query += "alert_seconds=$" + strconv.Itoa(paramCount) + ", "
+		params = append(params, av.Seconds)
+		paramCount++
+	}
+
+	// Remove the trailing comma and space
+	query = strings.TrimSuffix(query, ", ")
+
+	query += " WHERE categories=$" + strconv.Itoa(paramCount)
+	params = append(params, av.Category)
+
+	_, err = db.Exec(query, params...)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Alert updated successfully!")
+	return nil
 }

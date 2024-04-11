@@ -15,8 +15,8 @@ var SetupCmd = &cobra.Command{
 	Short: "Set the alert notification",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		frequency, _ := cmd.Flags().GetString("frequency")
 		method, _ := cmd.Flags().GetString("method")
+		frequency, _ := cmd.Flags().GetString("frequency")
 		day, _ := cmd.Flags().GetString("day")
 		weekday, _ := cmd.Flags().GetString("weekday")
 		hour, _ := cmd.Flags().GetString("hour")
@@ -30,8 +30,8 @@ var SetupCmd = &cobra.Command{
 
 		av := structs.AlertVariables{
 			Category:  category,
-			Frequency: frequency,
 			Method:    method,
+			Frequency: frequency,
 			Days:      dayInt,
 			Weekdays:  weekday,
 			Hours:     hourInt,

@@ -1,25 +1,25 @@
 package budget_subhandler
 
 import (
-	"fmt"
+	"log"
 
+	"github.com/ibilalkayy/flow/db/alert_db"
 	"github.com/spf13/cobra"
 )
 
 // RemoveCmd represents the remove command
 var RemoveCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Remove the alert values",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("remove called")
+		category, _ := cmd.Flags().GetString("category")
+		err := alert_db.RemoveAlert(category)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
 func init() {
+	RemoveCmd.Flags().StringP("category", "c", "", "Write the category to remove the alert notification values")
 }
