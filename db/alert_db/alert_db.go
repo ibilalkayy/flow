@@ -1,10 +1,12 @@
 package alert_db
 
 import (
+	"database/sql"
 	"errors"
 
 	"github.com/ibilalkayy/flow/db"
 	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 func CreateAlert(av *structs.AlertVariables, basePath string) error {
@@ -39,8 +41,17 @@ func ViewAlert(category string) ([9]interface{}, error) {
 		return [9]interface{}{}, err
 	}
 
-	query := "SELECT categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds FROM Alert WHERE categories=$1"
-	rows, err := db.Query(query, category)
+	tw := table.NewWriter()
+	tw.AppendHeader(table.Row{"Categories", "Methods", "Frequencies", "Days", "Weekdays", "Hours", "Minutes", "Seconds"})
+
+	var rows *sql.Rows
+	if len(category) != 0 {
+		query := "SELECT categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds FROM Alert WHERE categories=$1"
+		rows, err = db.Query(query, category)
+	} else {
+		query := "SELECT categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds FROM Alert"
+		rows, err = db.Query(query)
+	}
 	if err != nil {
 		return [9]interface{}{}, err
 	}
@@ -50,11 +61,16 @@ func ViewAlert(category string) ([9]interface{}, error) {
 		if err := rows.Scan(&av.Category, &av.Method, &av.Frequency, &av.Days, &av.Weekdays, &av.Hours, &av.Minutes, &av.Seconds); err != nil {
 			return [9]interface{}{}, err
 		}
+
+		tw.AppendRow([]interface{}{av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds})
+		tw.AppendSeparator()
 	}
 	if err := rows.Err(); err != nil {
 		return [9]interface{}{}, err
 	}
 
-	values := [9]interface{}{av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds}
+	tableRender := "Alert Info\n" + tw.Render()
+
+	values := [9]interface{}{tableRender, av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds}
 	return values, nil
 }

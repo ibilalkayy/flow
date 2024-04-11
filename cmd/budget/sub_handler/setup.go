@@ -1,4 +1,4 @@
-package budget_handler
+package budget_subhandler
 
 import (
 	"log"
@@ -12,7 +12,7 @@ import (
 // SetupCmd represents the setup command
 var SetupCmd = &cobra.Command{
 	Use:   "setup",
-	Short: "Setup for alert notification",
+	Short: "Set the alert notification",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
 		frequency, _ := cmd.Flags().GetString("frequency")
