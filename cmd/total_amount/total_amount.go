@@ -15,10 +15,7 @@ var TotalAmountCmd = &cobra.Command{
 	Long: `This command allows you to manage your total amount by setting, view, removing
 doing category selection, excluding categories, etc`,
 	Run: func(cmd *cobra.Command, args []string) {
-		active, _ := cmd.Flags().GetString("active")
-		inactive, _ := cmd.Flags().GetString("inactive")
-		fmt.Println(active)
-		fmt.Println(inactive)
+		fmt.Println("no proper command is given. see 'flow total-amount -h'")
 	},
 }
 
@@ -29,7 +26,6 @@ func init() {
 	TotalAmountCmd.AddCommand(total_amount_handler.UpdateCmd)
 	TotalAmountCmd.AddCommand(total_amount_handler.ViewCmd)
 	TotalAmountCmd.AddCommand(total_amount_handler.RemoveCmd)
-	// Flags
-	TotalAmountCmd.Flags().StringP("active", "a", "", "Make the total amount active")
-	TotalAmountCmd.Flags().StringP("inactive", "i", "", "Make the total amount inactive")
+	TotalAmountCmd.AddCommand(total_amount_handler.ActiveCmd)
+	TotalAmountCmd.AddCommand(total_amount_handler.InactiveCmd)
 }

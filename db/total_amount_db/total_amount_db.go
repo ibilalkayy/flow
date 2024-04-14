@@ -16,7 +16,7 @@ func SetTotalAmount(tv *structs.TotalAmountVariables, basepath string) error {
 		return err
 	}
 
-	query := "INSERT INTO TotalAmount(amount, included_category, excluded_category, label) VALUES($1, $2, $3, $4)"
+	query := "INSERT INTO TotalAmount(amount, included_category, excluded_category, label, statuss) VALUES($1, $2, $3, $4, $5)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
@@ -25,7 +25,7 @@ func SetTotalAmount(tv *structs.TotalAmountVariables, basepath string) error {
 	defer insert.Close()
 
 	if tv.Amount != 0 {
-		_, err = insert.Exec(tv.Amount, tv.Included, tv.Excluded, tv.Label)
+		_, err = insert.Exec(tv.Amount, tv.Included, tv.Excluded, tv.Label, tv.Status)
 		if err != nil {
 			return err
 		}
@@ -36,36 +36,36 @@ func SetTotalAmount(tv *structs.TotalAmountVariables, basepath string) error {
 	return nil
 }
 
-func ViewTotalAmount() ([3]interface{}, error) {
+func ViewTotalAmount() ([4]interface{}, error) {
 	tv := new(structs.TotalAmountVariables)
 
 	db, err := db.Connection()
 	if err != nil {
-		return [3]interface{}{}, err
+		return [4]interface{}{}, err
 	}
 	defer db.Close()
 
 	tw := table.NewWriter()
-	tw.AppendHeader(table.Row{"Total Amount", "Included Category", "Excluded Category", "Label"})
+	tw.AppendHeader(table.Row{"Total Amount", "Included Category", "Excluded Category", "Label", "Status"})
 
 	var rows *sql.Rows
-	query := "SELECT amount, included_category, excluded_category, label FROM TotalAmount"
+	query := "SELECT amount, included_category, excluded_category, label, statuss FROM TotalAmount"
 	rows, err = db.Query(query)
 	if err != nil {
-		return [3]interface{}{}, err
+		return [4]interface{}{}, err
 	}
 
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&tv.Amount, &tv.Included, &tv.Excluded, &tv.Label); err != nil {
-			return [3]interface{}{}, nil
+		if err := rows.Scan(&tv.Amount, &tv.Included, &tv.Excluded, &tv.Label, &tv.Status); err != nil {
+			return [4]interface{}{}, nil
 		}
 	}
 	// Append data to the table inside the loop
-	tw.AppendRow([]interface{}{tv.Amount, tv.Included, tv.Excluded, tv.Label})
+	tw.AppendRow([]interface{}{tv.Amount, tv.Included, tv.Excluded, tv.Label, tv.Status})
 	tableRender := "Total Amount\n" + tw.Render()
-	details := [3]interface{}{tableRender, tv.Included, tv.Amount}
+	details := [4]interface{}{tableRender, tv.Included, tv.Amount, tv.Status}
 	return details, nil
 }
 
@@ -100,8 +100,10 @@ func UpdateTotalAmount(tv *structs.TotalAmountVariables) error {
 	if err != nil {
 		return err
 	}
-
-	if tv.Amount != 0 {
+	if tv.Amount != 0 && len(tv.Label) != 0 {
+		query = "UPDATE TotalAmount SET amount=$1, label=$2"
+		params = []interface{}{tv.Amount, tv.Label}
+	} else if tv.Amount != 0 {
 		query = "UPDATE TotalAmount SET amount=$1"
 		params = []interface{}{tv.Amount}
 	} else if len(tv.Label) != 0 {
@@ -116,5 +118,29 @@ func UpdateTotalAmount(tv *structs.TotalAmountVariables) error {
 		return err
 	}
 	fmt.Println("Total amount data is successfully updated!")
+	return nil
+}
+
+func UpdateStatus(tv *structs.TotalAmountVariables) error {
+	db, err := db.Connection()
+	if err != nil {
+		return err
+	}
+
+	if len(tv.Status) != 0 && tv.Status == "Active" {
+		query := "UPDATE TotalAmount SET statuss=$1"
+		_, err = db.Exec(query, "active")
+		if err != nil {
+			return err
+		}
+		fmt.Println("Total amount is actived")
+	} else {
+		query := "UPDATE TotalAmount SET statuss=$1"
+		_, err = db.Exec(query, "inactive")
+		if err != nil {
+			return err
+		}
+		fmt.Println("Total amount is inactived")
+	}
 	return nil
 }

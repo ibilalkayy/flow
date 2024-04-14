@@ -44,4 +44,5 @@ type TotalAmountVariables struct {
 	Included string
 	Excluded string
 	Label    string
+	Status   string
 }

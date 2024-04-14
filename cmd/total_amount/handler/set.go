@@ -25,6 +25,7 @@ var SetCmd = &cobra.Command{
 			Included: include_category,
 			Excluded: exclude_category,
 			Label:    label,
+			Status:   "inactive",
 		}
 
 		err := total_amount_db.SetTotalAmount(&tv, "db/migrations/")

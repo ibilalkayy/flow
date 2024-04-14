@@ -180,7 +180,7 @@ func AddExpenditure(spent int, category string) error {
 	totalSpent := spent + savedSpent
 	remainingBalance := totalAmount - totalSpent
 
-	if savedSpent == 0 || (savedRemaining == 0 && spent <= savedRemaining) {
+	if savedSpent == 0 || savedRemaining == 0 {
 		query := "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
 		_, err = db.Exec(query, totalSpent, remainingBalance, category)
 		if err != nil {
