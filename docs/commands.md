@@ -160,7 +160,15 @@ Sure, let's break down each command along with its structure for better understa
   - `-h, --help`: help for total-amount
   - `-i, --inactive string`: Make the total amount inactive
 
-### 16. `flow total-amount set`
+### 16. `flow total-amount active`
+- **Description**: Make the total amount active.
+- **Usage**: `flow total-amount active [flags]`
+
+### 17. `flow total-amount inactive`
+- **Description**: Make the total amount inactive.
+- **Usage**: `flow total-amount inactive [flags]`
+
+### 18. `flow total-amount set`
 - **Description**: Set the total amount data.
 - **Usage**: `flow total-amount set [flags]`
 - **Flags**:
@@ -170,10 +178,18 @@ Sure, let's break down each command along with its structure for better understa
   - `-l, --label string`: Provide a label for setting up your total amount
   - `-h, --help`: help for set
 
-### 17. `flow total-amount update`
+### 19. `flow total-amount update`
 - **Description**: Update the total amount data.
 - **Usage**: `flow total-amount update [flags]`
 - **Flags**:
   - `-a, --amount string`: Write the total amount that you want to update
   - `-l, --label string`: Write the label that you want to update
   - `-h, --help`: help for set
+
+### 20. `flow total-amount remove`
+- **Description**: Remove the total amount data.
+- **Usage**: `flow total-amount remove [flags]`
+
+### 21. `flow total-amount view`
+- **Description**: View the total amount data.
+- **Usage**: `flow total-amount view [flags]`

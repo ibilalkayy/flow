@@ -186,14 +186,12 @@ func AddExpenditure(spent int, category string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println("Enjoy your spending!")
 	} else if savedRemaining != 0 && (spent <= savedRemaining || spent > savedRemaining) {
 		query := "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
 		_, err = db.Exec(query, totalSpent, savedRemaining-spent, category)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Enjoy your spending!")
 	}
 	return nil
 }
