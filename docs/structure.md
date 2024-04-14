@@ -9,9 +9,13 @@
     │   │   │   ├── alert.go
     │   │   │   ├── create.go
     │   │   │   ├── get.go
+    │   │   │   ├── remove.go    
+    │   │   │   └── view.go
+    │   │   ├── sub_handler
     │   │   │   ├── msg.go
     │   │   │   ├── remove.go
-    │   │   │   ├── setup.go     
+    │   │   │   ├── setup.go
+    │   │   │   ├── update.go
     │   │   │   └── view.go
     │   ├── init
     │   │   └── init.go
@@ -20,6 +24,8 @@
     │   ├── total_amount
     │   │   ├── total_amount.go
     │   │   └── handler
+    │   │       ├── active.go
+    │   │       ├── inactive.go
     │   │       ├── remove.go
     │   │       ├── set.go
     │   │       ├── update.go
@@ -81,17 +87,36 @@
 
 ## **File Details:**
 
-### Command files
+### Budget command files
 
 - **cmd/budget/budget.go:** Budget service entry point.
 - **cmd/budget/handler/adjust.go:** Handler for adjusting budget.
 - **cmd/budget/handler/alert.go:** Handler for alerting.
 - **cmd/budget/handler/create.go:** Handler for creating budget.
 - **cmd/budget/handler/get.go:** Handler for getting budget.
-- **cmd/budget/handler/msg.go:** Handler for showing the alert messages.
 - **cmd/budget/handler/remove.go:** Handler for removing budget.
-- **cmd/budget/handler/setup.go:** Handler for setting up the alert when the limitation is passed.
 - **cmd/budget/handler/view.go:** Handler for viewing budget.
+
+### Budget subcommand files
+
+- **cmd/budget/sub_handler/msg.go:** Handler for showing the alert messages.
+- **cmd/budget/sub_handler/setup.go:** Handler for setting up the alert values.
+- **cmd/budget/sub_handler/remove.go:** Handler for removing the alert values.
+- **cmd/budget/sub_handler/update.go:** Handler for updating the alert values.
+- **cmd/budget/sub_handler/view.go:** Handler for viewing the alert values.
+
+### Total amount command files
+
+- **cmd/total_amount/total_amount.go:** The management of the total amount to set the target.
+- **cmd/total_amount/handler/active.go:** Handler for making the total amount status active.
+- **cmd/total_amount/handler/inactive.go:** Handler for making the total amount status inactive.
+- **cmd/total_amount/handler/remove.go:** Handler for removing the total amount data.
+- **cmd/total_amount/handler/set.go:** Handler for setting up the total amount.
+- **cmd/total_amount/handler/update.go:** Handler for updating the total amount data.
+- **cmd/total_amount/handler/view.go:** Handler for viewing the total amount data.
+
+### Other command files
+
 - **cmd/init/init.go:** Flow initialization functionality.
 - **cmd/spend/spend.go:** Spending money on various categories.
 
@@ -102,6 +127,7 @@
 - **db/migrations/002_create_alert_table.sql:** SQL script for creating alert table.
 - **db/alert_db/alert_db.go:** CRUD operation for the alert functionanlity.
 - **db/budget_db/budget_db.go:** CRUD operation for the budget functionanlity.
+- **db/total_amount_db/total_amount_db.go:** CRUD operation for the total amount functionanlity.
 
 ### Documentation files
 
