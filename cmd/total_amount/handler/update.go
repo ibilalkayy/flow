@@ -19,8 +19,8 @@ var UpdateCmd = &cobra.Command{
 		totalAmount := functions.StringToInt(amount)
 
 		tv := structs.TotalAmountVariables{
-			Amount: totalAmount,
-			Label:  label,
+			TotalAmount: totalAmount,
+			Label:       label,
 		}
 		err := total_amount_db.UpdateTotalAmount(&tv)
 		if err != nil {

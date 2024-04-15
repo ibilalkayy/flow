@@ -40,9 +40,9 @@ type EmailVariables struct {
 }
 
 type TotalAmountVariables struct {
-	Amount   int
-	Included string
-	Excluded string
-	Label    string
-	Status   string
+	TotalAmount     int
+	RemainingAmount int
+	Included        string
+	Label           string
+	Status          string
 }

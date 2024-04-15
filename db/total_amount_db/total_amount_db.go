@@ -16,7 +16,7 @@ func SetTotalAmount(tv *structs.TotalAmountVariables, basepath string) error {
 		return err
 	}
 
-	query := "INSERT INTO TotalAmount(amount, included_category, excluded_category, label, statuss) VALUES($1, $2, $3, $4, $5)"
+	query := "INSERT INTO TotalAmount(total_amount, remaining_amount, included_category, label, statuss) VALUES($1, $2, $3, $4, $5)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
@@ -24,14 +24,14 @@ func SetTotalAmount(tv *structs.TotalAmountVariables, basepath string) error {
 
 	defer insert.Close()
 
-	if tv.Amount != 0 {
-		_, err = insert.Exec(tv.Amount, tv.Included, tv.Excluded, tv.Label, tv.Status)
+	if tv.TotalAmount != 0 && len(tv.Included) != 0 {
+		_, err = insert.Exec(tv.TotalAmount, tv.RemainingAmount, tv.Included, tv.Label, tv.Status)
 		if err != nil {
 			return err
 		}
 		fmt.Println("Total amount data is successfully inserted!")
 	} else {
-		return errors.New("total amount can't be empty")
+		return errors.New("write total amount and category. see 'flow total-amount set -h'")
 	}
 	return nil
 }
@@ -46,10 +46,10 @@ func ViewTotalAmount() ([4]interface{}, error) {
 	defer db.Close()
 
 	tw := table.NewWriter()
-	tw.AppendHeader(table.Row{"Total Amount", "Included Category", "Excluded Category", "Label", "Status"})
+	tw.AppendHeader(table.Row{"Total Amount", "Remaining Amount", "Included Category", "Label", "Status"})
 
 	var rows *sql.Rows
-	query := "SELECT amount, included_category, excluded_category, label, statuss FROM TotalAmount"
+	query := "SELECT total_amount, remaining_amount, included_category, label, statuss FROM TotalAmount"
 	rows, err = db.Query(query)
 	if err != nil {
 		return [4]interface{}{}, err
@@ -58,14 +58,14 @@ func ViewTotalAmount() ([4]interface{}, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&tv.Amount, &tv.Included, &tv.Excluded, &tv.Label, &tv.Status); err != nil {
+		if err := rows.Scan(&tv.TotalAmount, &tv.RemainingAmount, &tv.Included, &tv.Label, &tv.Status); err != nil {
 			return [4]interface{}{}, nil
 		}
 	}
 	// Append data to the table inside the loop
-	tw.AppendRow([]interface{}{tv.Amount, tv.Included, tv.Excluded, tv.Label, tv.Status})
+	tw.AppendRow([]interface{}{tv.TotalAmount, tv.RemainingAmount, tv.Included, tv.Label, tv.Status})
 	tableRender := "Total Amount\n" + tw.Render()
-	details := [4]interface{}{tableRender, tv.Included, tv.Amount, tv.Status}
+	details := [4]interface{}{tableRender, tv.Included, tv.TotalAmount, tv.Status}
 	return details, nil
 }
 
@@ -100,12 +100,12 @@ func UpdateTotalAmount(tv *structs.TotalAmountVariables) error {
 	if err != nil {
 		return err
 	}
-	if tv.Amount != 0 && len(tv.Label) != 0 {
-		query = "UPDATE TotalAmount SET amount=$1, label=$2"
-		params = []interface{}{tv.Amount, tv.Label}
-	} else if tv.Amount != 0 {
-		query = "UPDATE TotalAmount SET amount=$1"
-		params = []interface{}{tv.Amount}
+	if tv.TotalAmount != 0 && len(tv.Label) != 0 {
+		query = "UPDATE TotalAmount SET total_amount=$1, label=$2"
+		params = []interface{}{tv.TotalAmount, tv.Label}
+	} else if tv.TotalAmount != 0 {
+		query = "UPDATE TotalAmount SET total_amount=$1"
+		params = []interface{}{tv.TotalAmount}
 	} else if len(tv.Label) != 0 {
 		query = "UPDATE TotalAmount SET label=$1"
 		params = []interface{}{tv.Label}
@@ -141,6 +141,46 @@ func UpdateStatus(tv *structs.TotalAmountVariables) error {
 			return err
 		}
 		fmt.Println("Total amount is inactived")
+	}
+	return nil
+}
+
+func CalculateRemaining(category string) error {
+	db, err := db.Connection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Find the total amount data
+	var totalAmount int
+	if len(category) != 0 {
+		query := "SELECT total_amount FROM TotalAmount WHERE included_category=$1"
+		err := db.QueryRow(query, category).Scan(&totalAmount)
+		if err != nil {
+			return err
+		}
+	} else {
+		return errors.New("category is not present")
+	}
+
+	// Find the budget amount data
+	var savedSpent int
+	if len(category) != 0 {
+		query := "SELECT spent FROM Budget WHERE categories = $1"
+		err := db.QueryRow(query, category).Scan(&savedSpent)
+		if err != nil {
+			return err
+		}
+	} else {
+		return errors.New("category is not present")
+	}
+
+	remainingBalance := totalAmount - savedSpent
+	query := "UPDATE TotalAmount SET remaining_amount=$1 WHERE included_category=$2"
+	_, err = db.Exec(query, remainingBalance, category)
+	if err != nil {
+		return err
 	}
 	return nil
 }
