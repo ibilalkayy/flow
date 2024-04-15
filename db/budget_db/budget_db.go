@@ -26,7 +26,12 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 	}
 	defer insert.Close()
 
-	if len(bv.Category) != 0 {
+	includedCategory, totalAmount, _, err := functions.TotalAmountValues()
+	if err != nil {
+		return err
+	}
+
+	if len(bv.Category) != 0 && len(includedCategory) != 0 && totalAmount != 0 {
 		_, err = insert.Exec(bv.Category, bv.Amount, 0, 0)
 		if err != nil {
 			return err
@@ -139,22 +144,31 @@ func UpdateBudget(old, new string, amount int) error {
 		return errors.New("'" + old + "'" + " category does not exist")
 	}
 
-	if len(new) != 0 && amount != 0 {
-		query = "UPDATE Budget SET categories=$1, amounts=$2 WHERE categories=$3"
-		params = []interface{}{new, amount, old}
-	} else if len(new) != 0 {
-		query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
-		params = []interface{}{new, old}
-	} else if amount != 0 {
-		query = "UPDATE Budget SET amounts=$1 WHERE categories=$2"
-		params = []interface{}{amount, old}
-	} else {
-		fmt.Println("No field provided to adjust")
-	}
-
-	_, err = db.Exec(query, params...)
+	includedCategory, totalAmount, _, err := functions.TotalAmountValues()
 	if err != nil {
 		return err
+	}
+
+	if len(includedCategory) != 0 && totalAmount != 0 {
+		if len(new) != 0 && amount != 0 {
+			query = "UPDATE Budget SET categories=$1, amounts=$2 WHERE categories=$3"
+			params = []interface{}{new, amount, old}
+		} else if len(new) != 0 {
+			query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
+			params = []interface{}{new, old}
+		} else if amount != 0 {
+			query = "UPDATE Budget SET amounts=$1 WHERE categories=$2"
+			params = []interface{}{amount, old}
+		} else {
+			fmt.Println("No field provided to adjust")
+		}
+
+		_, err = db.Exec(query, params...)
+		if err != nil {
+			return err
+		}
+	} else {
+		return errors.New("first enter the total amount. see 'flow total-amount -h'")
 	}
 	return nil
 }
@@ -180,18 +194,27 @@ func AddExpenditure(spent int, category string) error {
 	totalSpent := spent + savedSpent
 	remainingBalance := totalAmount - totalSpent
 
-	if savedSpent == 0 || savedRemaining == 0 {
-		query := "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
-		_, err = db.Exec(query, totalSpent, remainingBalance, category)
-		if err != nil {
-			return err
+	includedCategory, totalAmount, _, err := functions.TotalAmountValues()
+	if err != nil {
+		return err
+	}
+
+	if len(includedCategory) != 0 && totalAmount != 0 {
+		if savedSpent == 0 || savedRemaining == 0 {
+			query := "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
+			_, err = db.Exec(query, totalSpent, remainingBalance, category)
+			if err != nil {
+				return err
+			}
+		} else if savedRemaining != 0 && (spent <= savedRemaining || spent > savedRemaining) {
+			query := "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
+			_, err = db.Exec(query, totalSpent, savedRemaining-spent, category)
+			if err != nil {
+				return err
+			}
 		}
-	} else if savedRemaining != 0 && (spent <= savedRemaining || spent > savedRemaining) {
-		query := "UPDATE Budget SET spent=$1, remaining=$2 WHERE categories=$3"
-		_, err = db.Exec(query, totalSpent, savedRemaining-spent, category)
-		if err != nil {
-			return err
-		}
+	} else {
+		return errors.New("first enter the total amount. see 'flow total-amount -h'")
 	}
 	return nil
 }

@@ -1,8 +1,11 @@
 package functions
 
 import (
+	"errors"
 	"log"
 	"strconv"
+
+	"github.com/ibilalkayy/flow/db/total_amount_db"
 )
 
 func IntToString(key int) string {
@@ -19,4 +22,21 @@ func StringToInt(key string) int {
 		log.Fatal(err)
 	}
 	return value
+}
+
+func TotalAmountValues() (string, int, string, error) {
+	values, err := total_amount_db.ViewTotalAmount()
+	if err != nil {
+		return "", 0, "", err
+	}
+
+	includedCategory, ok1 := values[1].(string)
+	totalAmount, ok2 := values[2].(int)
+	status, ok3 := values[3].(string)
+
+	if !ok1 || !ok2 || !ok3 {
+		return "", 0, "", errors.New("unable to convert to int or string")
+	}
+
+	return includedCategory, totalAmount, status, nil
 }

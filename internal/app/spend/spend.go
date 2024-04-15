@@ -7,6 +7,7 @@ import (
 	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/db/total_amount_db"
 	"github.com/ibilalkayy/flow/email"
+	"github.com/ibilalkayy/flow/internal/common/functions"
 )
 
 func SpendMoney(category string, spending_amount int) error {
@@ -16,20 +17,16 @@ func SpendMoney(category string, spending_amount int) error {
 		return err
 	}
 
-	value, err := total_amount_db.ViewTotalAmount()
-	if err != nil {
-		return err
-	}
-
 	categoryName, ok1 := values[1].(string)
 	totalAmount, ok2 := values[2].(int)
 	spentAmount, ok3 := values[3].(int)
 	remainingAmount, ok4 := values[4].(int)
-	totalAmountIncludedCategory, ok5 := value[1].(string)
-	totalAllocatedAmount, ok6 := value[2].(int)
-	totalAmountStatus, ok7 := value[3].(string)
+	totalAmountIncludedCategory, totalAllocatedAmount, totalAmountStatus, err := functions.TotalAmountValues()
+	if err != nil {
+		return err
+	}
 
-	if !ok1 || !ok2 || !ok3 || !ok4 || !ok5 || !ok6 || !ok7 {
+	if !ok1 || !ok2 || !ok3 || !ok4 {
 		return errors.New("unable to convert budget amount to int or string")
 	}
 
@@ -82,7 +79,7 @@ func SpendMoney(category string, spending_amount int) error {
 				return errors.New("you have exceeded the total amount")
 			}
 		} else {
-			return errors.New("category is not found. setup the alert 'flow budget alert setup -h' or include the category in your total amount by writing 'flow total-amount set -h'")
+			return errors.New("category is not found. setup the alert 'flow budget alert setup -h' or include the category in your total amount 'flow total-amount set -h'")
 		}
 	} else {
 		return errors.New("make your total amount status active. see 'flow total-amount -h'")
