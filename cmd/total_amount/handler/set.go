@@ -37,5 +37,5 @@ var SetCmd = &cobra.Command{
 func init() {
 	SetCmd.Flags().StringP("amount", "a", "", "Write the total amount that you want to set")
 	SetCmd.Flags().StringP("include", "i", "", "Specify a category to include in the total amount")
-	SetCmd.Flags().StringP("label", "l", "", "Provide a label for setting up your total amount")
+	SetCmd.Flags().StringP("label", "l", "", "Provide a label for setting up your total amount. Write label b/w commas")
 }
