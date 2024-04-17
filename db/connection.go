@@ -64,3 +64,24 @@ func Table(basePath, filename string, number int) (*sql.DB, error) {
 	}
 	return db, nil
 }
+
+func TableExists(tableName string) (bool, error) {
+	db, err := Connection()
+	if err != nil {
+		return false, err
+	}
+
+	var exists bool
+	query := `SELECT EXISTS (
+		SELECT FROM information_schema.tables 
+		WHERE table_schema = 'public' 
+		AND table_name = $1
+	)`
+
+	err = db.QueryRow(query, tableName).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}

@@ -26,6 +26,5 @@ func init() {
 	TotalAmountCmd.AddCommand(total_amount_handler.UpdateCmd)
 	TotalAmountCmd.AddCommand(total_amount_handler.ViewCmd)
 	TotalAmountCmd.AddCommand(total_amount_handler.RemoveCmd)
-	TotalAmountCmd.AddCommand(total_amount_handler.ActiveCmd)
-	TotalAmountCmd.AddCommand(total_amount_handler.InactiveCmd)
+	TotalAmountCmd.AddCommand(total_amount_handler.StatusCmd)
 }

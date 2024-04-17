@@ -17,6 +17,3 @@ var ActiveCmd = &cobra.Command{
 		total_amount_db.UpdateStatus(&status)
 	},
 }
-
-func init() {
-}

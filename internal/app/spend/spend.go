@@ -32,35 +32,9 @@ func SpendMoney(category string, spending_amount int) error {
 
 	if totalAmountStatus == "active" {
 		totalSpent := spending_amount + spentAmount
-		if category == categoryName && category == totalAmountIncludedCategory {
-			if totalSpent <= totalAmount {
-				err := budget_db.AddExpenditure(spending_amount, category)
-				if err != nil {
-					return err
-				}
-				err = total_amount_db.CalculateRemaining(category)
-				if err != nil {
-					return err
-				}
-				fmt.Println("Enjoy your spending!")
-			} else if spending_amount <= remainingAmount {
-				err := budget_db.AddExpenditure(spending_amount, category)
-				if err != nil {
-					return err
-				}
-				err = total_amount_db.CalculateRemaining(category)
-				if err != nil {
-					return err
-				}
-				fmt.Println("Enjoy your spending!")
-			} else if spending_amount > remainingAmount && spending_amount <= totalAllocatedAmount && spentAmount <= totalAllocatedAmount && totalSpent <= totalAllocatedAmount {
-				fmt.Printf("Your set budget is %d. You have %d remaining but you spent %d.\n", totalAmount, remainingAmount, spentAmount)
-				fmt.Printf("Do you still want to spend? [yes/no]: ")
-				fmt.Scanln(&answer)
-
-				switch answer {
-				case "yes", "y":
-					email.SendAlertEmail(category)
+		for _, list := range totalAmountIncludedCategory {
+			if category == categoryName && category == list[0] {
+				if totalSpent <= totalAmount {
 					err := budget_db.AddExpenditure(spending_amount, category)
 					if err != nil {
 						return err
@@ -70,16 +44,45 @@ func SpendMoney(category string, spending_amount int) error {
 						return err
 					}
 					fmt.Println("Enjoy your spending!")
-				case "no", "n":
-					fmt.Println("Alright")
-				default:
-					return errors.New("select the right option")
+				} else if spending_amount <= remainingAmount {
+					err := budget_db.AddExpenditure(spending_amount, category)
+					if err != nil {
+						return err
+					}
+					err = total_amount_db.CalculateRemaining(category)
+					if err != nil {
+						return err
+					}
+					fmt.Println("Enjoy your spending!")
+				} else if spending_amount > remainingAmount && spending_amount <= totalAllocatedAmount && spentAmount <= totalAllocatedAmount && totalSpent <= totalAllocatedAmount {
+					fmt.Printf("Your set budget is %d. You have %d remaining but you spent %d.\n", totalAmount, remainingAmount, spentAmount)
+					fmt.Printf("Do you still want to spend? [yes/no]: ")
+					fmt.Scanln(&answer)
+
+					switch answer {
+					case "yes", "y":
+						email.SendAlertEmail(category)
+						err := budget_db.AddExpenditure(spending_amount, category)
+						if err != nil {
+							return err
+						}
+						err = total_amount_db.CalculateRemaining(category)
+						if err != nil {
+							return err
+						}
+						fmt.Println("Enjoy your spending!")
+					case "no", "n":
+						fmt.Println("Alright")
+					default:
+						return errors.New("select the right option")
+					}
+				} else {
+					return errors.New("you have exceeded the total amount")
 				}
+				break
 			} else {
-				return errors.New("you have exceeded the total amount")
+				return errors.New("category is not found. setup the alert 'flow budget alert setup -h' or include the category in your total amount 'flow total-amount set -h'")
 			}
-		} else {
-			return errors.New("category is not found. setup the alert 'flow budget alert setup -h' or include the category in your total amount 'flow total-amount set -h'")
 		}
 	} else {
 		return errors.New("make your total amount status active. see 'flow total-amount -h'")

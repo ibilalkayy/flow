@@ -3,9 +3,8 @@ package total_amount_handler
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/db/total_amount_db"
+	internal_total_amount "github.com/ibilalkayy/flow/internal/app/total_amount"
 	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/common/structs"
 	"github.com/spf13/cobra"
 )
 
@@ -19,15 +18,7 @@ var SetCmd = &cobra.Command{
 		label, _ := cmd.Flags().GetString("label")
 		totalAmount := functions.StringToInt(amount)
 
-		tv := structs.TotalAmountVariables{
-			TotalAmount:     totalAmount,
-			RemainingAmount: 0,
-			Included:        include_category,
-			Label:           label,
-			Status:          "inactive",
-		}
-
-		err := total_amount_db.SetTotalAmount(&tv, "db/migrations/")
+		err := internal_total_amount.SetTotalAmount(totalAmount, include_category, label)
 		if err != nil {
 			log.Fatal(err)
 		}
