@@ -17,6 +17,7 @@ var StatusCmd = &cobra.Command{
 }
 
 func init() {
+	StatusCmd.AddCommand(total_amount_subhandler.CheckCmd)
 	StatusCmd.AddCommand(total_amount_subhandler.ActiveCmd)
 	StatusCmd.AddCommand(total_amount_subhandler.InactiveCmd)
 }
