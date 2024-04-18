@@ -1,4 +1,4 @@
-package total_amount_handler
+package total_amount_subhandler
 
 import (
 	"fmt"

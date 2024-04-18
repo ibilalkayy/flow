@@ -2,6 +2,7 @@ package internal_total_amount
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/ibilalkayy/flow/db"
 	"github.com/ibilalkayy/flow/db/total_amount_db"
@@ -80,6 +81,8 @@ func handleExistingTables(totalAmount int, tav, tacv structs.TotalAmountVariable
 					if err != nil {
 						return err
 					}
+					fmt.Println("Category and label is successfully included!")
+					break
 				}
 			}
 		}

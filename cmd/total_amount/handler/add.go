@@ -8,10 +8,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// SetCmd represents the set command
-var SetCmd = &cobra.Command{
-	Use:   "set",
-	Short: "Set the total amount data",
+// AddCmd represents the set command
+var AddCmd = &cobra.Command{
+	Use:   "add",
+	Short: "Add the total amount data",
 	Run: func(cmd *cobra.Command, args []string) {
 		amount, _ := cmd.Flags().GetString("amount")
 		include_category, _ := cmd.Flags().GetString("include")
@@ -26,7 +26,7 @@ var SetCmd = &cobra.Command{
 }
 
 func init() {
-	SetCmd.Flags().StringP("amount", "a", "", "Write the total amount that you want to set")
-	SetCmd.Flags().StringP("include", "i", "", "Specify a category to include in the total amount")
-	SetCmd.Flags().StringP("label", "l", "", "Provide a label for setting up your total amount. Write label b/w commas")
+	AddCmd.Flags().StringP("amount", "a", "", "Write the total amount that you want to add")
+	AddCmd.Flags().StringP("include", "i", "", "Specify a category to include in the total amount")
+	AddCmd.Flags().StringP("label", "l", "", "Provide a label for setting up your total amount. Write label b/w commas")
 }

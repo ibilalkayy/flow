@@ -1,4 +1,4 @@
-package total_amount_handler
+package total_amount_subhandler
 
 import (
 	"github.com/ibilalkayy/flow/db/total_amount_db"
@@ -6,13 +6,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ActiveCmd represents the active command
-var ActiveCmd = &cobra.Command{
-	Use:   "active",
-	Short: "Make the total amount active",
+// InactiveCmd represents the inactive command
+var InactiveCmd = &cobra.Command{
+	Use:   "inactive",
+	Short: "Make the total amount inactive",
 	Run: func(cmd *cobra.Command, args []string) {
 		status := structs.TotalAmountVariables{
-			Status: "Active",
+			Status: "Inactive",
 		}
 		total_amount_db.UpdateStatus(&status)
 	},

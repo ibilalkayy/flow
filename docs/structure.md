@@ -23,13 +23,17 @@
     │   │   └── spend.go
     │   ├── total_amount
     │   │   ├── total_amount.go
-    │   │   └── handler
+    │   │   ├── handler
+    │   │   │   ├── add.go
+    │   │   │   ├── remove.go
+    │   │   │   ├── status.go
+    │   │   │   ├── update.go
+    │   │   │   └── view.go
+    │   │   └── sub_handler
     │   │       ├── active.go
     │   │       ├── inactive.go
-    │   │       ├── remove.go
-    │   │       ├── set.go
-    │   │       ├── update.go
-    │   │       └── view.go
+    │   │       ├── categories.go
+    │   │       └── amount.go
     │   └── root.go
     ├── db
     │   ├── alert_db
@@ -37,10 +41,12 @@
     │   ├── budget_db
     │   │   └── budget_db.go
     │   ├── total_amount_db
-    │   │   └── total_amount_db.go
+    │   │   ├── total_amount_db.go
+    │   │   └── total_amount_category.go
     │   ├── migrations
     │   │   ├── 001_create_budget_table.sql
-    │   │   └── 002_create_alert_table.sql
+    │   │   ├── 002_create_alert_table.sql
+    │   │   └── 003_create_total_amount_table.sql
     │   └── connection.go
     ├── docs
     │   ├── commands.md
@@ -57,9 +63,11 @@
     │   │   │   └── budget.go
     │   │   ├── init
     │   │   │   └── init.go
-    │   │   └── spend
-    │   │       ├── notification.go
-    │   │       └── spend.go
+    │   │   ├── spend
+    │   │   │   ├── notification.go
+    │   │   │   └── spend.go
+    │   │   └── total_amount
+    │   │       └── total_amount.go
     │   ├── middleware
     │   │   └── env.go
     │   └── common
@@ -108,12 +116,18 @@
 ### Total amount command files
 
 - **cmd/total_amount/total_amount.go:** The management of the total amount to set the target.
-- **cmd/total_amount/handler/active.go:** Handler for making the total amount status active.
-- **cmd/total_amount/handler/inactive.go:** Handler for making the total amount status inactive.
+- **cmd/total_amount/handler/add.go:** Handler for adding the total amount.
 - **cmd/total_amount/handler/remove.go:** Handler for removing the total amount data.
-- **cmd/total_amount/handler/set.go:** Handler for setting up the total amount.
+- **cmd/total_amount/handler/status.go:** Handler for handling the total amount's status.
 - **cmd/total_amount/handler/update.go:** Handler for updating the total amount data.
 - **cmd/total_amount/handler/view.go:** Handler for viewing the total amount data.
+
+### Total amount subcommand files
+
+- **cmd/total_amount/sub_handler/active.go:** Handler for making the total amount status active.
+- **cmd/total_amount/sub_handler/inactive.go:** Handler for making the total amount status inactive.
+- **cmd/total_amount/sub_handler/categories.go:** Handler for making the total amount status active.
+- **cmd/total_amount/sub_handler/amount.go:** Handler for making the total amount status inactive.
 
 ### Other command files
 
@@ -146,6 +160,7 @@
 - **internal/app/init/init.go:** Logic for init functionality.
 - **internal/app/spend/spend.go:** Logic for transaction functionality.
 - **internal/app/spend/notification.go:** Functions for setting the hourly, daily and more notifications.
+- **internal/app/total_amount/total_amount.go:** Logic for handling the total amount data.
 - **internal/common/functions/functions.go:** Contains functions that are not directly attached to a file structure.
 - **internal/common/structs/structs.go:** Contains type structures for various functions.
 - **internal/middleware/env.go:** Environment middleware for handling environment variables.

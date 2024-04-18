@@ -151,26 +151,22 @@ Sure, let's break down each command along with its structure for better understa
 - **Description**: Manage your total amount.
 - **Usage**: `flow total-amount [flags]`
 - **Available Commands**:
-  - `set`: Set the total amount data
+  - `add`: Add the total amount data
   - `remove`: Remove the total amount data
+  - `status`: Get teh status of the total amount
   - `update`: Update the total amount data
   - `view`: View the total amount data
-- **Flags**:
-  - `-a, --active string`: Make the total amount active
-  - `-h, --help`: help for total-amount
-  - `-i, --inactive string`: Make the total amount inactive
 
-### 16. `flow total-amount active`
-- **Description**: Make the total amount active.
-- **Usage**: `flow total-amount active [flags]`
+### 16. `flow total-amount status`
+- **Description**: Handle the total amount status.
+- **Usage**: `flow total-amount status [flags]`
+- **Available Commands**:
+  - `active`: Make the total amount active
+  - `inactive`: Make the total amount inactive
 
-### 17. `flow total-amount inactive`
-- **Description**: Make the total amount inactive.
-- **Usage**: `flow total-amount inactive [flags]`
-
-### 18. `flow total-amount set`
-- **Description**: Set the total amount data.
-- **Usage**: `flow total-amount set [flags]`
+### 17. `flow total-amount add`
+- **Description**: Add the total amount data.
+- **Usage**: `flow total-amount add [flags]`
 - **Flags**:
   - `-a, --amount string`: Write the total amount that you want to set
   - `-e, --exclude string`: Specify a category to exclude from the total amount
@@ -178,7 +174,7 @@ Sure, let's break down each command along with its structure for better understa
   - `-l, --label string`: Provide a label for setting up your total amount
   - `-h, --help`: help for set
 
-### 19. `flow total-amount update`
+### 18. `flow total-amount update`
 - **Description**: Update the total amount data.
 - **Usage**: `flow total-amount update [flags]`
 - **Flags**:
@@ -186,10 +182,13 @@ Sure, let's break down each command along with its structure for better understa
   - `-l, --label string`: Write the label that you want to update
   - `-h, --help`: help for set
 
-### 20. `flow total-amount remove`
+### 19. `flow total-amount remove`
 - **Description**: Remove the total amount data.
 - **Usage**: `flow total-amount remove [flags]`
 
-### 21. `flow total-amount view`
+### 20. `flow total-amount view`
 - **Description**: View the total amount data.
 - **Usage**: `flow total-amount view [flags]`
+- **Available Commands**:
+  - `amount`: View the total amount
+  - `categories`: View the categories in total amount

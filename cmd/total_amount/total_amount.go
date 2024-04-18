@@ -22,7 +22,7 @@ doing category selection, excluding categories, etc`,
 func init() {
 	cmd.RootCmd.AddCommand(TotalAmountCmd)
 	// Subcommands
-	TotalAmountCmd.AddCommand(total_amount_handler.SetCmd)
+	TotalAmountCmd.AddCommand(total_amount_handler.AddCmd)
 	TotalAmountCmd.AddCommand(total_amount_handler.UpdateCmd)
 	TotalAmountCmd.AddCommand(total_amount_handler.ViewCmd)
 	TotalAmountCmd.AddCommand(total_amount_handler.RemoveCmd)

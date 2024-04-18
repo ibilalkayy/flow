@@ -3,6 +3,7 @@ package total_amount_handler
 import (
 	"fmt"
 
+	total_amount_subhandler "github.com/ibilalkayy/flow/cmd/total_amount/sub_handler"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +17,6 @@ var StatusCmd = &cobra.Command{
 }
 
 func init() {
-	StatusCmd.AddCommand(ActiveCmd)
-	StatusCmd.AddCommand(InactiveCmd)
+	StatusCmd.AddCommand(total_amount_subhandler.ActiveCmd)
+	StatusCmd.AddCommand(total_amount_subhandler.InactiveCmd)
 }

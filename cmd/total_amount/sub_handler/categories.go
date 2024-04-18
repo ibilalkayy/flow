@@ -1,4 +1,4 @@
-package total_amount_handler
+package total_amount_subhandler
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 // CategoriesCmd represents the category command
 var CategoriesCmd = &cobra.Command{
 	Use:   "categories",
-	Short: "View the categories included in the total amount",
+	Short: "View the categories in the total amount",
 	Run: func(cmd *cobra.Command, args []string) {
 		categories, _, err := total_amount_db.ViewTotalAmountCategory()
 		if err != nil {

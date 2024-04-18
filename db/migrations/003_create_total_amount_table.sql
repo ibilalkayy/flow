@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS TotalAmount (
 CREATE TABLE IF NOT EXISTS TotalAmountCategory (
     id BIGSERIAL PRIMARY KEY,
     included_categories VARCHAR(255) NOT NULL,
-    labels VARCHAR(255) NOT NULL
+    labels VARCHAR(255) NOT NULL,
+    UNIQUE(included_categories)
 );
