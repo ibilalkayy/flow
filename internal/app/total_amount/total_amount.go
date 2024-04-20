@@ -73,7 +73,7 @@ func handleExistingTables(totalAmount int, tav, tacv structs.TotalAmountVariable
 		}
 	} else {
 		if total_amount != 0 && totalAmount != 0 {
-			return errors.New("total amount already set, add only categories and labels")
+			return errors.New("total amount is already set, now only add categories and labels")
 		} else {
 			for _, list := range values {
 				if len(list[0]) != 0 && len(list[1]) != 0 {

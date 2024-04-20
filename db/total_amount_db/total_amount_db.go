@@ -145,17 +145,17 @@ func UpdateStatus(tv *structs.TotalAmountVariables) error {
 }
 
 func CalculateRemaining(category string) error {
-	db, err := db.Connection()
+	dbConn, err := db.Connection()
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer dbConn.Close()
 
 	// Find the total amount data
 	var totalAmount int
 	if len(category) != 0 {
 		query := "SELECT total_amount FROM TotalAmount"
-		err := db.QueryRow(query).Scan(&totalAmount)
+		err := dbConn.QueryRow(query).Scan(&totalAmount)
 		if err != nil {
 			return err
 		}
@@ -163,23 +163,31 @@ func CalculateRemaining(category string) error {
 		return errors.New("category is not present")
 	}
 
-	// Find the budget amount data
-	var savedSpent int
-	if len(category) != 0 {
-		query := "SELECT spent FROM Budget WHERE categories = $1"
-		err := db.QueryRow(query, category).Scan(&savedSpent)
-		if err != nil {
-			return err
-		}
-	} else {
-		return errors.New("category is not present")
-	}
-
-	remainingBalance := totalAmount - savedSpent
-	query := "UPDATE TotalAmount SET remaining_amount=$1"
-	_, err = db.Exec(query, remainingBalance)
+	// Calculate the total spent amount from Budget
+	query := "SELECT SUM(spent) FROM Budget"
+	var totalSpent sql.NullInt64
+	err = dbConn.QueryRow(query).Scan(&totalSpent)
 	if err != nil {
 		return err
 	}
+
+	// Check if totalSpent is valid, if not set it to zero
+	var savedSpent int
+	if totalSpent.Valid {
+		savedSpent = int(totalSpent.Int64)
+	} else {
+		savedSpent = 0
+	}
+
+	// Calculate remaining balance
+	remainingBalance := totalAmount - savedSpent
+
+	// Update the remaining amount in TotalAmount table
+	updateQuery := "UPDATE TotalAmount SET remaining_amount=$1"
+	_, err = dbConn.Exec(updateQuery, remainingBalance)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

@@ -30,62 +30,68 @@ func SpendMoney(category string, spending_amount int) error {
 		return errors.New("unable to convert budget amount to int or string")
 	}
 
-	if totalAmountStatus == "active" {
-		totalSpent := spending_amount + spentAmount
-		for _, list := range totalAmountIncludedCategory {
-			if category == categoryName && category == list[0] {
-				if totalSpent <= totalAmount {
-					err := budget_db.AddExpenditure(spending_amount, category)
-					if err != nil {
-						return err
-					}
-					err = total_amount_db.CalculateRemaining(category)
-					if err != nil {
-						return err
-					}
-					fmt.Println("Enjoy your spending!")
-				} else if spending_amount <= remainingAmount {
-					err := budget_db.AddExpenditure(spending_amount, category)
-					if err != nil {
-						return err
-					}
-					err = total_amount_db.CalculateRemaining(category)
-					if err != nil {
-						return err
-					}
-					fmt.Println("Enjoy your spending!")
-				} else if spending_amount > remainingAmount && spending_amount <= totalAllocatedAmount && spentAmount <= totalAllocatedAmount && totalSpent <= totalAllocatedAmount {
-					fmt.Printf("Your set budget is %d. You have %d remaining but you spent %d.\n", totalAmount, remainingAmount, spentAmount)
-					fmt.Printf("Do you still want to spend? [yes/no]: ")
-					fmt.Scanln(&answer)
-
-					switch answer {
-					case "yes", "y":
-						email.SendAlertEmail(category)
-						err := budget_db.AddExpenditure(spending_amount, category)
-						if err != nil {
-							return err
-						}
-						err = total_amount_db.CalculateRemaining(category)
-						if err != nil {
-							return err
-						}
-						fmt.Println("Enjoy your spending!")
-					case "no", "n":
-						fmt.Println("Alright")
-					default:
-						return errors.New("select the right option")
-					}
-				} else {
-					return errors.New("you have exceeded the total amount")
-				}
-				break
-			} else {
-				return errors.New("category is not found. setup the alert 'flow budget alert setup -h' or include the category in your total amount 'flow total-amount set -h'")
-			}
-		}
-	} else {
+	if totalAmountStatus != "active" {
 		return errors.New("make your total amount status active. see 'flow total-amount -h'")
 	}
+
+	foundCategory := false
+	for _, list := range totalAmountIncludedCategory {
+		if category == categoryName && category == list[0] {
+			foundCategory = true
+			fmt.Println(list[0])
+
+			totalSpent := spending_amount + spentAmount
+			if totalSpent <= totalAmount {
+				err := budget_db.AddExpenditure(spending_amount, category)
+				if err != nil {
+					return err
+				}
+				err = total_amount_db.CalculateRemaining(category)
+				if err != nil {
+					return err
+				}
+				fmt.Println("Enjoy your spending!")
+			} else if spending_amount <= remainingAmount {
+				err := budget_db.AddExpenditure(spending_amount, category)
+				if err != nil {
+					return err
+				}
+				err = total_amount_db.CalculateRemaining(category)
+				if err != nil {
+					return err
+				}
+				fmt.Println("Enjoy your spending!")
+			} else if spending_amount > remainingAmount && spending_amount <= totalAllocatedAmount && spentAmount <= totalAllocatedAmount && totalSpent <= totalAllocatedAmount {
+				fmt.Printf("You have spent %d and your remaining balance is %d but your budget is %d\n", spentAmount, remainingAmount, totalAmount)
+				fmt.Printf("Do you still want to spend? [yes/no]: ")
+				fmt.Scanln(&answer)
+
+				switch answer {
+				case "yes", "y":
+					email.SendAlertEmail(category)
+					err := budget_db.AddExpenditure(spending_amount, category)
+					if err != nil {
+						return err
+					}
+					err = total_amount_db.CalculateRemaining(category)
+					if err != nil {
+						return err
+					}
+					fmt.Println("Enjoy your spending!")
+				case "no", "n":
+					fmt.Println("Alright")
+				default:
+					return errors.New("select the right option")
+				}
+			} else {
+				return errors.New("you have exceeded the total amount")
+			}
+		}
+	}
+
+	if !foundCategory {
+		return errors.New("category is not found. setup the alert 'flow budget alert setup -h' or include the category in your total amount 'flow total-amount set -h'")
+	}
+
 	return nil
 }
