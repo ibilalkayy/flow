@@ -20,7 +20,7 @@ var InactiveCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		status, ok := values[2].(string)
+		status, ok := values[4].(string)
 		if !ok {
 			fmt.Println("unable to convert to string")
 		}

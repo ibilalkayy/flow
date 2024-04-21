@@ -18,10 +18,10 @@ func SpendMoney(category string, spending_amount int) error {
 	}
 
 	categoryName, ok1 := values[1].(string)
-	totalAmount, ok2 := values[2].(int)
-	spentAmount, ok3 := values[3].(int)
-	remainingAmount, ok4 := values[4].(int)
-	totalAmountIncludedCategory, totalAllocatedAmount, totalAmountStatus, err := functions.TotalAmountValues()
+	budget_category_amount, ok2 := values[2].(int)
+	budget_category_spent_amount, ok3 := values[3].(int)
+	budget_remaining_amount, ok4 := values[4].(int)
+	included_categories_in_total_amount, total_amount, total_spent_amount, total_amount_status, err := functions.TotalAmountValues()
 	if err != nil {
 		return err
 	}
@@ -30,19 +30,23 @@ func SpendMoney(category string, spending_amount int) error {
 		return errors.New("unable to convert budget amount to int or string")
 	}
 
-	if totalAmountStatus != "active" {
+	if total_amount_status != "active" {
 		return errors.New("make your total amount status active. see 'flow total-amount -h'")
 	}
 
-	foundCategory := false
-	for _, list := range totalAmountIncludedCategory {
-		if category == categoryName && category == list[0] {
-			foundCategory = true
-			fmt.Println(list[0])
+	if total_spent_amount+spending_amount > total_amount {
+		return errors.New("you have exceeded the total amount")
+	}
 
-			totalSpent := spending_amount + spentAmount
-			if totalSpent <= totalAmount {
-				err := budget_db.AddExpenditure(spending_amount, category)
+	foundCategory := false
+	for _, list := range included_categories_in_total_amount {
+		if category == categoryName && category == list[0] {
+
+			foundCategory = true
+			budget_category_total_spending_amount := spending_amount + budget_category_spent_amount
+
+			if budget_category_total_spending_amount <= budget_category_amount {
+				err := budget_db.AddBudgetExpenditure(spending_amount, category)
 				if err != nil {
 					return err
 				}
@@ -51,8 +55,9 @@ func SpendMoney(category string, spending_amount int) error {
 					return err
 				}
 				fmt.Println("Enjoy your spending!")
-			} else if spending_amount <= remainingAmount {
-				err := budget_db.AddExpenditure(spending_amount, category)
+				break
+			} else if spending_amount <= budget_remaining_amount {
+				err := budget_db.AddBudgetExpenditure(spending_amount, category)
 				if err != nil {
 					return err
 				}
@@ -61,15 +66,16 @@ func SpendMoney(category string, spending_amount int) error {
 					return err
 				}
 				fmt.Println("Enjoy your spending!")
-			} else if spending_amount > remainingAmount && spending_amount <= totalAllocatedAmount && spentAmount <= totalAllocatedAmount && totalSpent <= totalAllocatedAmount {
-				fmt.Printf("You have spent %d and your remaining balance is %d but your budget is %d\n", spentAmount, remainingAmount, totalAmount)
+				break
+			} else if spending_amount > budget_remaining_amount && spending_amount <= total_amount && budget_category_spent_amount <= total_amount && budget_category_total_spending_amount <= total_amount {
+				fmt.Printf("You have spent %d and your remaining balance is %d but your budget is %d\n", budget_category_spent_amount, budget_remaining_amount, budget_category_amount)
 				fmt.Printf("Do you still want to spend? [yes/no]: ")
 				fmt.Scanln(&answer)
 
 				switch answer {
 				case "yes", "y":
 					email.SendAlertEmail(category)
-					err := budget_db.AddExpenditure(spending_amount, category)
+					err := budget_db.AddBudgetExpenditure(spending_amount, category)
 					if err != nil {
 						return err
 					}
@@ -83,6 +89,7 @@ func SpendMoney(category string, spending_amount int) error {
 				default:
 					return errors.New("select the right option")
 				}
+				break
 			} else {
 				return errors.New("you have exceeded the total amount")
 			}

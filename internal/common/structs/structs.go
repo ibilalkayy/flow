@@ -41,6 +41,7 @@ type EmailVariables struct {
 
 type TotalAmountVariables struct {
 	TotalAmount     int
+	SpentAmount     int
 	RemainingAmount int
 	Included        string
 	Label           string

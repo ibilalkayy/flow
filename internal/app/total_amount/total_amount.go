@@ -12,6 +12,7 @@ import (
 func SetTotalAmount(totalAmount int, include_category, label string) error {
 	tav := structs.TotalAmountVariables{
 		TotalAmount:     totalAmount,
+		SpentAmount:     0,
 		RemainingAmount: 0,
 		Status:          "inactive",
 	}

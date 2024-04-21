@@ -16,7 +16,7 @@ func InsertTotalAmount(tv *structs.TotalAmountVariables, basepath string) error 
 		return err
 	}
 
-	query := "INSERT INTO TotalAmount(total_amount, remaining_amount, statuss) VALUES($1, $2, $3)"
+	query := "INSERT INTO TotalAmount(total_amount, spent_amount, remaining_amount, statuss) VALUES($1, $2, $3, $4)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
@@ -25,7 +25,7 @@ func InsertTotalAmount(tv *structs.TotalAmountVariables, basepath string) error 
 	defer insert.Close()
 
 	if tv.TotalAmount != 0 {
-		_, err = insert.Exec(tv.TotalAmount, tv.RemainingAmount, tv.Status)
+		_, err = insert.Exec(tv.TotalAmount, tv.SpentAmount, tv.RemainingAmount, tv.Status)
 		if err != nil {
 			return err
 		}
@@ -36,37 +36,37 @@ func InsertTotalAmount(tv *structs.TotalAmountVariables, basepath string) error 
 	return nil
 }
 
-func ViewTotalAmount() ([3]interface{}, error) {
+func ViewTotalAmount() ([5]interface{}, error) {
 	tv := new(structs.TotalAmountVariables)
 
 	db, err := db.Connection()
 	if err != nil {
-		return [3]interface{}{}, err
+		return [5]interface{}{}, err
 	}
 	defer db.Close()
 
 	tw := table.NewWriter()
-	tw.AppendHeader(table.Row{"Total Amount", "Remaining Amount", "Status"})
+	tw.AppendHeader(table.Row{"Total Amount", "Spent Amount", "Remaining Amount", "Status"})
 
 	var rows *sql.Rows
-	query := "SELECT total_amount, remaining_amount, statuss FROM TotalAmount"
+	query := "SELECT total_amount, spent_amount, remaining_amount, statuss FROM TotalAmount"
 	rows, err = db.Query(query)
 	if err != nil {
-		return [3]interface{}{}, err
+		return [5]interface{}{}, err
 	}
 
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&tv.TotalAmount, &tv.RemainingAmount, &tv.Status); err != nil {
-			return [3]interface{}{}, err
+		if err := rows.Scan(&tv.TotalAmount, &tv.SpentAmount, &tv.RemainingAmount, &tv.Status); err != nil {
+			return [5]interface{}{}, err
 		}
 	}
 
 	// Append data to the table inside the loop
-	tw.AppendRow([]interface{}{tv.TotalAmount, tv.RemainingAmount, tv.Status})
+	tw.AppendRow([]interface{}{tv.TotalAmount, tv.SpentAmount, tv.RemainingAmount, tv.Status})
 	tableRender := "Total Amount\n" + tw.Render()
-	details := [3]interface{}{tableRender, tv.TotalAmount, tv.Status}
+	details := [5]interface{}{tableRender, tv.TotalAmount, tv.SpentAmount, tv.RemainingAmount, tv.Status}
 	return details, nil
 }
 
@@ -145,28 +145,28 @@ func UpdateStatus(tv *structs.TotalAmountVariables) error {
 }
 
 func CalculateRemaining(category string) error {
-	dbConn, err := db.Connection()
+	db, err := db.Connection()
 	if err != nil {
 		return err
 	}
-	defer dbConn.Close()
+	defer db.Close()
 
 	// Find the total amount data
 	var totalAmount int
 	if len(category) != 0 {
 		query := "SELECT total_amount FROM TotalAmount"
-		err := dbConn.QueryRow(query).Scan(&totalAmount)
+		err := db.QueryRow(query).Scan(&totalAmount)
 		if err != nil {
 			return err
 		}
 	} else {
-		return errors.New("category is not present")
+		return errors.New("category is not found")
 	}
 
 	// Calculate the total spent amount from Budget
 	query := "SELECT SUM(spent) FROM Budget"
 	var totalSpent sql.NullInt64
-	err = dbConn.QueryRow(query).Scan(&totalSpent)
+	err = db.QueryRow(query).Scan(&totalSpent)
 	if err != nil {
 		return err
 	}
@@ -182,9 +182,9 @@ func CalculateRemaining(category string) error {
 	// Calculate remaining balance
 	remainingBalance := totalAmount - savedSpent
 
-	// Update the remaining amount in TotalAmount table
-	updateQuery := "UPDATE TotalAmount SET remaining_amount=$1"
-	_, err = dbConn.Exec(updateQuery, remainingBalance)
+	// Update the remaining amount and spent amount in TotalAmount table
+	updateQuery := "UPDATE TotalAmount SET spent_amount=$1, remaining_amount=$2"
+	_, err = db.Exec(updateQuery, savedSpent, remainingBalance)
 	if err != nil {
 		return err
 	}

@@ -26,7 +26,7 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 	}
 	defer insert.Close()
 
-	includedCategory, totalAmount, _, err := functions.TotalAmountValues()
+	includedCategory, totalAmount, _, _, err := functions.TotalAmountValues()
 	if err != nil {
 		return err
 	}
@@ -144,7 +144,7 @@ func UpdateBudget(old, new string, amount int) error {
 		return errors.New("'" + old + "'" + " category does not exist")
 	}
 
-	includedCategory, totalAmount, _, err := functions.TotalAmountValues()
+	includedCategory, totalAmount, _, _, err := functions.TotalAmountValues()
 	if err != nil {
 		return err
 	}
@@ -173,7 +173,7 @@ func UpdateBudget(old, new string, amount int) error {
 	return nil
 }
 
-func AddExpenditure(spent int, category string) error {
+func AddBudgetExpenditure(spent int, category string) error {
 	db, err := db.Connection()
 	if err != nil {
 		return err
@@ -194,7 +194,7 @@ func AddExpenditure(spent int, category string) error {
 	totalSpent := spent + savedSpent
 	remainingBalance := totalAmount - totalSpent
 
-	includedCategory, totalAmount, _, err := functions.TotalAmountValues()
+	includedCategory, totalAmount, _, _, err := functions.TotalAmountValues()
 	if err != nil {
 		return err
 	}
