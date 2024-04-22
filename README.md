@@ -2,7 +2,7 @@
 
 Flow is a budget planning application designed to empower users with the ability to track,  analyze, and optimize their spending habits and financial goals. 
 
-With a user-friendly CLI. It manages the finances and achieve greater financial stability  by leveraging the Formance API for a comprehensive financial management solution.
+With a user-friendly CLI. It manages the finances and achieve greater financial stability  by leveraging different payment APIs for a comprehensive financial management solution.
 
 ## Table of Contents
 

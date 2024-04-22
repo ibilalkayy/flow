@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const version = "v0.1.83"
+const version = "v0.1.84"
 
 // rootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -20,7 +20,7 @@ var RootCmd = &cobra.Command{
 analyze, and optimize their spending habits and financial goals. With a user-friendly CLI. 
 
 It manages the finances and achieve greater financial stability  by leveraging
-the Formance API for a comprehensive financial management solution.`,
+the different payment APIs for a comprehensive financial management solution.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
