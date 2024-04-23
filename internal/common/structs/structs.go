@@ -22,6 +22,15 @@ type BudgetVariables struct {
 	Remaining int
 }
 
+type HistoryVariables struct {
+	Date          string
+	Category      string
+	Amount        int
+	TransactionID string
+	Blockchain    string
+	Address       string
+}
+
 type AlertVariables struct {
 	Category  string
 	Method    string

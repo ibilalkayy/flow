@@ -38,7 +38,7 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 		}
 		fmt.Println("Budget data is successfully inserted!")
 	} else {
-		return errors.New("category can't be empty")
+		return errors.New("enter the category")
 	}
 	return nil
 }

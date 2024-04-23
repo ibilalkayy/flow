@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/ibilalkayy/flow/cmd"
+	spend_handler "github.com/ibilalkayy/flow/cmd/spend/handler"
 	internal_spending "github.com/ibilalkayy/flow/internal/app/spend"
 	"github.com/ibilalkayy/flow/internal/common/functions"
 	"github.com/spf13/cobra"
@@ -33,6 +34,10 @@ var SpendCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(SpendCmd)
+	// Subcommand
+	SpendCmd.AddCommand(spend_handler.HistoryCmd)
+
+	// Flags
 	SpendCmd.Flags().StringP("category", "c", "", "Write the category name to spend the money on")
 	SpendCmd.Flags().StringP("amount", "a", "", "Write the spending amount for a category")
 }
