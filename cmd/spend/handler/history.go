@@ -1,8 +1,9 @@
 package spend_handler
 
 import (
-	"fmt"
+	"log"
 
+	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +13,10 @@ var HistoryCmd = &cobra.Command{
 	Short: "Show the transaction history",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		fmt.Println(category)
+		err := budget_db.ViewHistory(category)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 

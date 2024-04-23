@@ -9,9 +9,11 @@ import (
 
 func StoreHistory(category string, spending_amount int) error {
 	currentDate := time.Now().Format("2006-01-02")
+	currentTime := time.Now().Format("03:04:05 PM")
 
 	hv := structs.HistoryVariables{
 		Date:          currentDate,
+		Time:          currentTime,
 		Category:      category,
 		Amount:        spending_amount,
 		TransactionID: "transaction id",

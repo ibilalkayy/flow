@@ -24,6 +24,7 @@ type BudgetVariables struct {
 
 type HistoryVariables struct {
 	Date          string
+	Time          string
 	Category      string
 	Amount        int
 	TransactionID string
