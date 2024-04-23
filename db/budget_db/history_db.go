@@ -21,9 +21,14 @@ func InsertHistory(hv *structs.HistoryVariables, basePath string) error {
 	}
 	defer insert.Close()
 
-	includedCategory, totalAmount, _, _, err := functions.TotalAmountValues()
+	includedCategory, value, err := functions.TotalAmountValues()
 	if err != nil {
 		return err
+	}
+
+	totalAmount, ok := value[0].(int)
+	if !ok {
+		return errors.New("unable to convert to int")
 	}
 
 	if len(hv.Category) != 0 && len(includedCategory) != 0 {

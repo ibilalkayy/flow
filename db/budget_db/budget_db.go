@@ -26,9 +26,14 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 	}
 	defer insert.Close()
 
-	includedCategory, totalAmount, _, _, err := functions.TotalAmountValues()
+	includedCategory, value, err := functions.TotalAmountValues()
 	if err != nil {
 		return err
+	}
+
+	totalAmount, ok := value[0].(int)
+	if !ok {
+		return errors.New("unable to convert to int")
 	}
 
 	if len(bv.Category) != 0 && len(includedCategory) != 0 && totalAmount != 0 {
@@ -144,9 +149,14 @@ func UpdateBudget(old, new string, amount int) error {
 		return errors.New("'" + old + "'" + " category does not exist")
 	}
 
-	includedCategory, totalAmount, _, _, err := functions.TotalAmountValues()
+	includedCategory, value, err := functions.TotalAmountValues()
 	if err != nil {
 		return err
+	}
+
+	totalAmount, ok := value[0].(int)
+	if !ok {
+		return errors.New("unable to convert to int")
 	}
 
 	if len(includedCategory) != 0 && totalAmount != 0 {
@@ -194,9 +204,14 @@ func AddBudgetExpenditure(spent int, category string) error {
 	totalSpent := spent + savedSpent
 	remainingBalance := totalAmount - totalSpent
 
-	includedCategory, totalAmount, _, _, err := functions.TotalAmountValues()
+	includedCategory, value, err := functions.TotalAmountValues()
 	if err != nil {
 		return err
+	}
+
+	totalAmount, ok := value[0].(int)
+	if !ok {
+		return errors.New("unable to convert to int")
 	}
 
 	if len(includedCategory) != 0 && totalAmount != 0 {
