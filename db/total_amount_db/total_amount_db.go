@@ -70,24 +70,51 @@ func ViewTotalAmount() ([5]interface{}, error) {
 	return details, nil
 }
 
-func RemoveTotalAmount(table string) error {
+func RemoveTotalAmount(category string) error {
 	db, err := db.Connection()
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 
-	query := "DELETE FROM " + table
-	remove, err := db.Prepare(query)
+	var query string
+	var args []interface{}
+
+	if len(category) != 0 {
+		query = "DELETE FROM TotalAmountCategory WHERE included_categories=$1"
+		args = append(args, category)
+		fmt.Printf("'%s' category is ", category)
+	} else {
+		query = "DELETE FROM TotalAmountCategory"
+		fmt.Print("Total amount data is ")
+	}
+
+	removeCategory, err := db.Prepare(query)
 	if err != nil {
 		return err
 	}
+	defer removeCategory.Close()
 
-	defer remove.Close()
-
-	_, err = remove.Exec()
+	_, err = removeCategory.Exec(args...)
 	if err != nil {
-		return nil
+		return err
 	}
+	fmt.Println("successfully removed!")
+
+	if len(category) == 0 {
+		query = "DELETE FROM TotalAmount"
+		removeTotal, err := db.Prepare(query)
+		if err != nil {
+			return err
+		}
+		defer removeTotal.Close()
+
+		_, err = removeTotal.Exec()
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -102,14 +129,14 @@ func UpdateTotalAmount(tv *structs.TotalAmountVariables) error {
 	if tv.TotalAmount != 0 {
 		query = "UPDATE TotalAmount SET total_amount=$1"
 		params = []interface{}{tv.TotalAmount}
-	} else if len(tv.Included) != 0 {
-		query = "UPDATE TotalAmountCategory SET included_categories=$1"
-		params = []interface{}{tv.Included}
-	} else if len(tv.Label) != 0 {
-		query = "UPDATE TotalAmountCategory SET labels=$1"
-		params = []interface{}{tv.Label}
+	} else if len(tv.Included) != 0 && len(tv.NewCategory) != 0 {
+		query = "UPDATE TotalAmountCategory SET included_categories=$1 WHERE included_categories=$2"
+		params = []interface{}{tv.NewCategory, tv.Included}
+	} else if len(tv.Label) != 0 && len(tv.Included) != 0 {
+		query = "UPDATE TotalAmountCategory SET labels=$1 WHERE included_categories=$2"
+		params = []interface{}{tv.Label, tv.Included}
 	} else {
-		return errors.New("no flag is provided to update")
+		return errors.New("write the present category also to update the values")
 	}
 
 	_, err = db.Exec(query, params...)

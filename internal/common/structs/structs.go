@@ -67,6 +67,7 @@ type TotalAmountVariables struct {
 	SpentAmount     int
 	RemainingAmount int
 	Included        string
+	NewCategory     string
 	Label           string
 	Status          string
 }

@@ -90,3 +90,38 @@ func ViewHistory(category string) error {
 	fmt.Println(tableRender)
 	return nil
 }
+
+func RemoveHistory(category string) error {
+	db, err := db.Connection()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	query := "DELETE FROM History"
+	var args []interface{}
+
+	if len(category) != 0 {
+		query += " WHERE categories=$1"
+		args = append(args, category)
+	}
+
+	remove, err := db.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer remove.Close()
+
+	_, err = remove.Exec(args...)
+	if err != nil {
+		return err
+	}
+
+	if len(category) != 0 {
+		fmt.Printf("'%s' category is successfully removed!\n", category)
+	} else {
+		fmt.Printf("History is successfully deleted!")
+	}
+
+	return nil
+}

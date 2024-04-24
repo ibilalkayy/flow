@@ -1,19 +1,19 @@
-package total_amount_handler
+package spend_subhandler
 
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/db/total_amount_db"
+	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/spf13/cobra"
 )
 
 // RemoveCmd represents the remove command
 var RemoveCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "Remove the total amount data",
+	Short: "Remove the history data",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		err := total_amount_db.RemoveTotalAmount(category)
+		err := budget_db.RemoveHistory(category)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -21,5 +21,5 @@ var RemoveCmd = &cobra.Command{
 }
 
 func init() {
-	RemoveCmd.Flags().StringP("category", "c", "", "Write the category to remove it's date")
+	RemoveCmd.Flags().StringP("category", "c", "", "Write the category to remove it's history")
 }

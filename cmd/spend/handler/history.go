@@ -1,9 +1,9 @@
 package spend_handler
 
 import (
-	"log"
+	"fmt"
 
-	"github.com/ibilalkayy/flow/db/budget_db"
+	spend_subhandler "github.com/ibilalkayy/flow/cmd/spend/sub_handler"
 	"github.com/spf13/cobra"
 )
 
@@ -12,14 +12,11 @@ var HistoryCmd = &cobra.Command{
 	Use:   "history",
 	Short: "Show the transaction history",
 	Run: func(cmd *cobra.Command, args []string) {
-		category, _ := cmd.Flags().GetString("category")
-		err := budget_db.ViewHistory(category)
-		if err != nil {
-			log.Fatal(err)
-		}
+		fmt.Println("no command is written")
 	},
 }
 
 func init() {
-	HistoryCmd.Flags().StringP("category", "c", "", "Write the category to show it's history")
+	HistoryCmd.AddCommand(spend_subhandler.ShowCmd)
+	HistoryCmd.AddCommand(spend_subhandler.RemoveCmd)
 }
