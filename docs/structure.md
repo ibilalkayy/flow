@@ -20,6 +20,11 @@
     │   ├── init
     │   │   └── init.go
     │   ├── spend
+    │   │   ├── handler
+    │   │   │   └── history.go
+    │   │   ├── sub_handler
+    │   │   │   ├── show.go
+    │   │   │   └── remove.go
     │   │   └── spend.go
     │   ├── total_amount
     │   │   ├── total_amount.go
@@ -32,14 +37,16 @@
     │   │   └── sub_handler
     │   │       ├── active.go
     │   │       ├── inactive.go
+    │   │       ├── amount.go
     │   │       ├── categories.go
-    │   │       └── amount.go
+    │   │       └── check.go
     │   └── root.go
     ├── db
     │   ├── alert_db
     │   │   └── alert_db.go   
     │   ├── budget_db
-    │   │   └── budget_db.go
+    │   │   ├── budget_db.go
+    │   │   └── history_db.go
     │   ├── total_amount_db
     │   │   ├── total_amount_db.go
     │   │   └── total_amount_category.go
@@ -64,6 +71,7 @@
     │   │   ├── init
     │   │   │   └── init.go
     │   │   ├── spend
+    │   │   │   ├── history.go
     │   │   │   ├── notification.go
     │   │   │   └── spend.go
     │   │   └── total_amount
@@ -133,6 +141,9 @@
 
 - **cmd/init/init.go:** Flow initialization functionality.
 - **cmd/spend/spend.go:** Spending money on various categories.
+- **cmd/spend/handler/history.go:** Show the transaction history.
+- **cmd/spend/sub_handler/show.go:** Show the history data.
+- **cmd/spend/sub_handler/remove.go:** Remove the history data.
 
 ### Database files
 
@@ -158,6 +169,7 @@
 - **internal/app/alert/alert.go:** Logic for alert management functionality.
 - **internal/app/budget/budget.go:** Logic for budget management functionality.
 - **internal/app/init/init.go:** Logic for init functionality.
+- **internal/app/spend/history.go:** Logic for handling the history.
 - **internal/app/spend/spend.go:** Logic for transaction functionality.
 - **internal/app/spend/notification.go:** Functions for setting the hourly, daily and more notifications.
 - **internal/app/total_amount/total_amount.go:** Logic for handling the total amount data.

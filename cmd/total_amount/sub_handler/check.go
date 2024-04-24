@@ -11,7 +11,7 @@ import (
 // CheckCmd represents the check command
 var CheckCmd = &cobra.Command{
 	Use:   "check",
-	Short: "A brief description of your command",
+	Short: "Check the status of the total amount",
 	Run: func(cmd *cobra.Command, args []string) {
 		values, err := total_amount_db.ViewTotalAmount()
 		if err != nil {

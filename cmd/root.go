@@ -9,13 +9,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const version = "v0.1.88"
+const version = "v0.1.89"
 
 // rootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:     "flow",
 	Version: version,
-	Short:   "Manage budgets with Formance API",
+	Short:   "Manage budgets with Payment APIs",
 	Long: `Flow is a budget planning application designed to empower users with the ability to track, 
 analyze, and optimize their spending habits and financial goals. With a user-friendly CLI. 
 

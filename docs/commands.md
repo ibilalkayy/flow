@@ -4,7 +4,7 @@ Welcome to the Flow command reference! This document provides an overview of the
 
 ## Introduction to Flow
 
-Flow helps users manage their finances and achieve greater financial stability by leveraging the Formance API for a comprehensive financial management solution. With Flow, users can:
+Flow helps users manage their finances and achieve greater financial stability by leveraging different payment APIs for a comprehensive financial management solution. With Flow, users can:
 
 - **Track Spending**: Easily track their spending across different categories.
 - **Set Budgets**: Create budgets for various spending categories to control expenses.
@@ -37,7 +37,7 @@ Sure, let's break down each command along with its structure for better understa
 ### 2. `flow init`
 - **Description**: Initalize your flow application before running other commands.
 - **Note**: All these commands are required to enter.
-- **Usage**: `flow budget flow [flags]`
+- **Usage**: `flow budget init [flags]`
 - **Flags**:
   - `-a, --app_password string`   Write the App Password of your Gmail account
   - `-d, --dbname string`         Write the PostgreSQL DB name
@@ -142,6 +142,8 @@ Sure, let's break down each command along with its structure for better understa
 ### 14. `flow spend`
 - **Description**: Provides spending services on various categories.
 - **Usage**: `flow spend [flags]`
+- **Available Commands**:
+  - `history`: Show the transaction history
 - **Flags**:
   - `-a, --amount string`: Write the spending amount for a category
   - `-c, --category string`: Write the category name to spend the money on
@@ -163,13 +165,13 @@ Sure, let's break down each command along with its structure for better understa
 - **Available Commands**:
   - `active`: Make the total amount active
   - `inactive`: Make the total amount inactive
+  - `check`: Check the status of the total amount
 
 ### 17. `flow total-amount add`
 - **Description**: Add the total amount data.
 - **Usage**: `flow total-amount add [flags]`
 - **Flags**:
   - `-a, --amount string`: Write the total amount that you want to set
-  - `-e, --exclude string`: Specify a category to exclude from the total amount
   - `-i, --include string`: Specify a category to include in the total amount
   - `-l, --label string`: Provide a label for setting up your total amount
   - `-h, --help`: help for set
@@ -180,11 +182,15 @@ Sure, let's break down each command along with its structure for better understa
 - **Flags**:
   - `-a, --amount string`: Write the total amount that you want to update
   - `-l, --label string`: Write the label that you want to update
+  - `-n, --newcategory string`: Write the new category to update with
+  - `-o, --oldcategory string`: Write the old category that you want to update
   - `-h, --help`: help for set
 
 ### 19. `flow total-amount remove`
 - **Description**: Remove the total amount data.
 - **Usage**: `flow total-amount remove [flags]`
+- **Flags**:
+  - `-c, --category string`: Write the category to remove it's date
 
 ### 20. `flow total-amount view`
 - **Description**: View the total amount data.
