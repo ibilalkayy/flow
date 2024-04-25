@@ -49,12 +49,12 @@ func InsertHistory(hv *structs.HistoryVariables, basePath string) error {
 	return nil
 }
 
-func ViewHistory(category string) error {
+func ViewHistory(category string) ([2]interface{}, error) {
 	hv := new(structs.HistoryVariables)
 
 	db, err := db.Connection()
 	if err != nil {
-		return err
+		return [2]interface{}{}, err
 	}
 
 	defer db.Close()
@@ -71,14 +71,14 @@ func ViewHistory(category string) error {
 		rows, err = db.Query(query)
 	}
 	if err != nil {
-		return err
+		return [2]interface{}{}, err
 	}
 
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&hv.Date, &hv.Time, &hv.Category, &hv.Amount, &hv.TransactionID, &hv.Blockchain, &hv.Address); err != nil {
-			return err
+			return [2]interface{}{}, err
 		}
 
 		if len(hv.Category) != 0 && hv.Amount != 0 {
@@ -87,8 +87,8 @@ func ViewHistory(category string) error {
 	}
 
 	tableRender := "History Data\n" + tw.Render()
-	fmt.Println(tableRender)
-	return nil
+	details := [2]interface{}{tableRender, hv.Category}
+	return details, nil
 }
 
 func RemoveHistory(category string) error {
@@ -98,12 +98,26 @@ func RemoveHistory(category string) error {
 	}
 	defer db.Close()
 
+	data, err := ViewHistory(category)
+	if err != nil {
+		return err
+	}
+
+	foundCategory, ok := data[1].(string)
+	if !ok {
+		return errors.New("unable to convert data to string")
+	}
+
 	query := "DELETE FROM History"
 	var args []interface{}
 
 	if len(category) != 0 {
-		query += " WHERE categories=$1"
-		args = append(args, category)
+		if len(foundCategory) != 0 {
+			query += " WHERE categories=$1"
+			args = append(args, category)
+		} else {
+			return errors.New("category is not found")
+		}
 	}
 
 	remove, err := db.Prepare(query)
@@ -120,7 +134,11 @@ func RemoveHistory(category string) error {
 	if len(category) != 0 {
 		fmt.Printf("'%s' category is successfully removed!\n", category)
 	} else {
-		fmt.Printf("History is successfully deleted!")
+		if len(foundCategory) != 0 {
+			fmt.Printf("History data is successfully deleted!")
+		} else {
+			return errors.New("no data is present")
+		}
 	}
 
 	return nil

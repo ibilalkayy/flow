@@ -1,6 +1,7 @@
 package spend_subhandler
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/ibilalkayy/flow/db/budget_db"
@@ -13,10 +14,11 @@ var ShowCmd = &cobra.Command{
 	Short: "Show the history data",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		err := budget_db.ViewHistory(category)
+		table, err := budget_db.ViewHistory(category)
 		if err != nil {
 			log.Fatal(err)
 		}
+		fmt.Println(table[0])
 	},
 }
 

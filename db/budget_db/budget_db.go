@@ -43,7 +43,7 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 		}
 		fmt.Println("Budget data is successfully inserted!")
 	} else {
-		return errors.New("enter the category")
+		return errors.New("enter the category or set the total amount. see 'flow total-amount -h'")
 	}
 	return nil
 }
@@ -108,24 +108,51 @@ func RemoveBudget(category string) error {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 
-	query := "DELETE FROM Budget WHERE categories=$1"
-	remove, err := db.Prepare(query)
+	data, err := ViewBudget(category)
 	if err != nil {
 		return err
 	}
 
-	defer remove.Close()
+	foundCategory, ok := data[1].(string)
+	if !ok {
+		return errors.New("unable to convert data to string")
+	}
+
+	query := "DELETE FROM Budget"
+	var args []interface{}
 
 	if len(category) != 0 {
-		_, err = remove.Exec(category)
-		if err != nil {
-			return err
+		if len(foundCategory) != 0 {
+			query += " WHERE categories=$1"
+			args = append(args, category)
+		} else {
+			return errors.New("category is not found")
 		}
+	}
+
+	remove, err := db.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer remove.Close()
+
+	_, err = remove.Exec(args...)
+	if err != nil {
+		return err
+	}
+
+	if len(category) != 0 {
 		fmt.Printf("'%s' category is successfully removed!\n", category)
 	} else {
-		fmt.Println("First enter the category and then remove it")
+		if len(foundCategory) != 0 {
+			fmt.Printf("Budget data is successfully deleted!")
+		} else {
+			return errors.New("no data is present")
+		}
 	}
+
 	return nil
 }
 
