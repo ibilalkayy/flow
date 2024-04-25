@@ -137,7 +137,7 @@ func RemoveHistory(category string) error {
 		if len(foundCategory) != 0 {
 			fmt.Printf("History data is successfully deleted!")
 		} else {
-			return errors.New("no data is present")
+			return errors.New("no data is found")
 		}
 	}
 

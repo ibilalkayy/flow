@@ -21,5 +21,5 @@ var RemoveCmd = &cobra.Command{
 }
 
 func init() {
-	RemoveCmd.Flags().StringP("category", "c", "", "Write the category to remove the alert notification values")
+	RemoveCmd.Flags().StringP("category", "c", "", "Write the category name to remove its alert notification values")
 }
