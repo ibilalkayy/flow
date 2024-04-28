@@ -8,7 +8,7 @@ import (
 	"github.com/ibilalkayy/flow/db/total_amount_db"
 	"github.com/ibilalkayy/flow/email"
 	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 )
 
 func SpendMoney(category string, spending_amount int) error {
@@ -40,7 +40,7 @@ func SpendMoney(category string, spending_amount int) error {
 		return errors.New("unable to return to int or string")
 	}
 
-	sv := structs.SpendingVariables{
+	sv := entities.SpendingVariables{
 		Category:                      category,
 		CategoryName:                  categoryName,
 		TotalAmountStatus:             total_amount_status,
@@ -75,7 +75,7 @@ func extractBudgetValues(values [5]interface{}) ([4]interface{}, error) {
 	return details, nil
 }
 
-func validBudgetValues(sv *structs.SpendingVariables) error {
+func validBudgetValues(sv *entities.SpendingVariables) error {
 	if sv.TotalAmountStatus != "active" {
 		return errors.New("make your total amount status active. see 'flow total-amount -h'")
 	}
@@ -120,7 +120,7 @@ func validBudgetValues(sv *structs.SpendingVariables) error {
 	return nil
 }
 
-func updateBudgetAndTotalAmount(sv *structs.SpendingVariables) error {
+func updateBudgetAndTotalAmount(sv *entities.SpendingVariables) error {
 	err := budget_db.AddBudgetExpenditure(sv.SpendingAmount, sv.Category)
 	if err != nil {
 		return err
@@ -139,7 +139,7 @@ func updateBudgetAndTotalAmount(sv *structs.SpendingVariables) error {
 	return nil
 }
 
-func handleExceededBudget(sv *structs.SpendingVariables) error {
+func handleExceededBudget(sv *entities.SpendingVariables) error {
 	var answer string
 	fmt.Printf("You have spent %d and your remaining balance is %d but your budget is %d\n", sv.BudgetCategorySpentAmount, sv.BudgetCategoryRemainingAmount, sv.BudgetCategoryAmount)
 	fmt.Printf("Do you still want to spend? [yes/no]: ")

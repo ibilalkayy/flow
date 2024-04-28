@@ -4,11 +4,11 @@ import (
 	"errors"
 
 	"github.com/ibilalkayy/flow/db"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 )
 
 func CategoryAmount(category string) (int, error) {
-	bv := new(structs.BudgetVariables)
+	bv := new(entities.BudgetVariables)
 
 	db, err := db.Connection()
 	if err != nil {

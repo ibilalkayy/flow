@@ -6,7 +6,7 @@ import (
 	"text/template"
 
 	"github.com/ibilalkayy/flow/db/budget_db"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/ibilalkayy/flow/internal/middleware"
 	"gopkg.in/gomail.v2"
 )
@@ -36,7 +36,7 @@ func SendAlertEmail(category string) error {
 		return errors.New("unable to convert category and amount to int and string")
 	}
 
-	emailVariables := structs.EmailVariables{
+	emailVariables := entities.EmailVariables{
 		Username:       myUsername,
 		Category:       categoryName,
 		CategoryAmount: categoryAmount,

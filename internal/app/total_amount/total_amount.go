@@ -6,18 +6,18 @@ import (
 
 	"github.com/ibilalkayy/flow/db"
 	"github.com/ibilalkayy/flow/db/total_amount_db"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 )
 
 func SetTotalAmount(totalAmount int, include_category, label string) error {
-	tav := structs.TotalAmountVariables{
+	tav := entities.TotalAmountVariables{
 		TotalAmount:     totalAmount,
 		SpentAmount:     0,
 		RemainingAmount: 0,
 		Status:          "inactive",
 	}
 
-	tacv := structs.TotalAmountVariables{
+	tacv := entities.TotalAmountVariables{
 		Included: include_category,
 		Label:    label,
 	}
@@ -46,7 +46,7 @@ func SetTotalAmount(totalAmount int, include_category, label string) error {
 	return nil
 }
 
-func handleExistingTables(totalAmount int, tav, tacv structs.TotalAmountVariables) error {
+func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariables) error {
 	_, values, err := total_amount_db.ViewTotalAmountCategory()
 	if err != nil {
 		return err
@@ -91,7 +91,7 @@ func handleExistingTables(totalAmount int, tav, tacv structs.TotalAmountVariable
 	return nil
 }
 
-func handleMissingTables(tav, tacv structs.TotalAmountVariables) error {
+func handleMissingTables(tav, tacv entities.TotalAmountVariables) error {
 	err := total_amount_db.InsertTotalAmount(&tav, "db/migrations/")
 	if err != nil {
 		return err

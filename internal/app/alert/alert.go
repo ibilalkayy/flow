@@ -10,10 +10,10 @@ import (
 	"github.com/ibilalkayy/flow/db/budget_db"
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	internal_spending "github.com/ibilalkayy/flow/internal/app/spend"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 )
 
-func AlertSetup(av *structs.AlertVariables) error {
+func AlertSetup(av *entities.AlertVariables) error {
 	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
 		validMethods := map[string]bool{"email": true, "cli": true}
 		validFrequencies := map[string]bool{"hourly": true, "daily": true, "weekly": true, "monthly": true}

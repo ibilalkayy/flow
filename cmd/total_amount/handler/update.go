@@ -5,7 +5,7 @@ import (
 
 	"github.com/ibilalkayy/flow/db/total_amount_db"
 	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +20,7 @@ var UpdateCmd = &cobra.Command{
 		label, _ := cmd.Flags().GetString("label")
 		totalAmount := functions.StringToInt(amount)
 
-		tv := structs.TotalAmountVariables{
+		tv := entities.TotalAmountVariables{
 			Included:    old_category,
 			NewCategory: new_category,
 			TotalAmount: totalAmount,

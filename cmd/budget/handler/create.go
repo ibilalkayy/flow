@@ -5,7 +5,7 @@ import (
 
 	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +18,7 @@ var CreateCmd = &cobra.Command{
 		amount, _ := cmd.Flags().GetString("amount")
 		amountInt := functions.StringToInt(amount)
 
-		bv := structs.BudgetVariables{Category: category, Amount: amountInt}
+		bv := entities.BudgetVariables{Category: category, Amount: amountInt}
 		err := budget_db.CreateBudget(&bv, "db/migrations/")
 		if err != nil {
 			log.Fatal(err)

@@ -7,16 +7,16 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/ibilalkayy/flow/internal/middleware"
 	_ "github.com/lib/pq"
 )
 
 func Connection() (*sql.DB, error) {
-	var dv structs.DatabaseVariables
+	var dv entities.DatabaseVariables
 
 	if middleware.LoadEnvVariable("DB_HOST") != "" {
-		dv = structs.DatabaseVariables{
+		dv = entities.DatabaseVariables{
 			Host:     middleware.LoadEnvVariable("DB_HOST"),
 			Port:     middleware.LoadEnvVariable("DB_PORT"),
 			User:     middleware.LoadEnvVariable("DB_USER"),

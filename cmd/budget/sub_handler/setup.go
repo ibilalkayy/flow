@@ -5,7 +5,7 @@ import (
 
 	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
 	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ var SetupCmd = &cobra.Command{
 		minuteInt := functions.StringToInt(minute)
 		secondInt := functions.StringToInt(second)
 
-		av := structs.AlertVariables{
+		av := entities.AlertVariables{
 			Category:  category,
 			Method:    method,
 			Frequency: frequency,

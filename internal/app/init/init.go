@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 )
 
-func WriteEnvFile(av *structs.AuthVariables, dv *structs.DatabaseVariables) error {
+func WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVariables) error {
 	f, err := os.Create(".env")
 	if err != nil {
 		return err

@@ -8,11 +8,11 @@ import (
 	"strings"
 
 	"github.com/ibilalkayy/flow/db"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func CreateAlert(av *structs.AlertVariables, basePath string) error {
+func CreateAlert(av *entities.AlertVariables, basePath string) error {
 	data, err := db.Table(basePath, "002_create_alert_table.sql", 0)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func CreateAlert(av *structs.AlertVariables, basePath string) error {
 }
 
 func ViewAlert(category string) ([9]interface{}, error) {
-	av := new(structs.AlertVariables)
+	av := new(entities.AlertVariables)
 
 	db, err := db.Connection()
 	if err != nil {
@@ -131,7 +131,7 @@ func RemoveAlert(category string) error {
 	return nil
 }
 
-func UpdateAlert(av *structs.AlertVariables) error {
+func UpdateAlert(av *entities.AlertVariables) error {
 	db, err := db.Connection()
 	if err != nil {
 		return err

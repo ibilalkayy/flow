@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/ibilalkayy/flow/db/total_amount_db"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ var InactiveCmd = &cobra.Command{
 		if status == "inactive" {
 			fmt.Println(errors.New("the status is already inactive"))
 		} else {
-			updateStatus := structs.TotalAmountVariables{
+			updateStatus := entities.TotalAmountVariables{
 				Status: "Inactive",
 			}
 			total_amount_db.UpdateStatus(&updateStatus)

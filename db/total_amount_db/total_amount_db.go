@@ -6,11 +6,11 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/db"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func InsertTotalAmount(tv *structs.TotalAmountVariables, basepath string) error {
+func InsertTotalAmount(tv *entities.TotalAmountVariables, basepath string) error {
 	data, err := db.Table(basepath, "003_create_total_amount_table.sql", 0)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func InsertTotalAmount(tv *structs.TotalAmountVariables, basepath string) error 
 }
 
 func ViewTotalAmount() ([5]interface{}, error) {
-	tv := new(structs.TotalAmountVariables)
+	tv := new(entities.TotalAmountVariables)
 
 	db, err := db.Connection()
 	if err != nil {
@@ -118,7 +118,7 @@ func RemoveTotalAmount(category string) error {
 	return nil
 }
 
-func UpdateTotalAmount(tv *structs.TotalAmountVariables) error {
+func UpdateTotalAmount(tv *entities.TotalAmountVariables) error {
 	var query string
 	var params []interface{}
 
@@ -147,7 +147,7 @@ func UpdateTotalAmount(tv *structs.TotalAmountVariables) error {
 	return nil
 }
 
-func UpdateStatus(tv *structs.TotalAmountVariables) error {
+func UpdateStatus(tv *entities.TotalAmountVariables) error {
 	db, err := db.Connection()
 	if err != nil {
 		return err

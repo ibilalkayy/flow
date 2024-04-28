@@ -7,11 +7,11 @@ import (
 
 	"github.com/ibilalkayy/flow/db"
 	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func InsertHistory(hv *structs.HistoryVariables, basePath string) error {
+func InsertHistory(hv *entities.HistoryVariables, basePath string) error {
 	data, err := db.Table(basePath, "001_create_budget_table.sql", 1)
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func InsertHistory(hv *structs.HistoryVariables, basePath string) error {
 }
 
 func ViewHistory(category string) ([2]interface{}, error) {
-	hv := new(structs.HistoryVariables)
+	hv := new(entities.HistoryVariables)
 
 	db, err := db.Connection()
 	if err != nil {

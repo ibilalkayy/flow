@@ -5,7 +5,7 @@ import (
 
 	"github.com/ibilalkayy/flow/db/alert_db"
 	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ var UpdateCmd = &cobra.Command{
 		minuteInt := functions.StringToInt(minute)
 		secondInt := functions.StringToInt(second)
 
-		av := structs.AlertVariables{
+		av := entities.AlertVariables{
 			Category:  category,
 			Method:    method,
 			Frequency: frequency,

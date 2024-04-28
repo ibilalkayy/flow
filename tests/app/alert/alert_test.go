@@ -6,18 +6,18 @@ import (
 
 	"github.com/ibilalkayy/flow/db/alert_db"
 	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 )
 
 func TestCreateAlert(t *testing.T) {
 	testCases := []struct {
 		name        string
-		input       *structs.AlertVariables
+		input       *entities.AlertVariables
 		expectedMsg string
 	}{
 		{
 			name: "ValidInput",
-			input: &structs.AlertVariables{
+			input: &entities.AlertVariables{
 				Category:  "first",
 				Frequency: "hourly",
 				Method:    "email",
@@ -26,7 +26,7 @@ func TestCreateAlert(t *testing.T) {
 		},
 		{
 			name: "NoCategory",
-			input: &structs.AlertVariables{
+			input: &entities.AlertVariables{
 				Category:  "",
 				Frequency: "hourly",
 				Method:    "email",
@@ -35,7 +35,7 @@ func TestCreateAlert(t *testing.T) {
 		},
 		{
 			name: "NoFrequency",
-			input: &structs.AlertVariables{
+			input: &entities.AlertVariables{
 				Category:  "first",
 				Frequency: "",
 				Method:    "email",
@@ -44,7 +44,7 @@ func TestCreateAlert(t *testing.T) {
 		},
 		{
 			name: "NoFrequency",
-			input: &structs.AlertVariables{
+			input: &entities.AlertVariables{
 				Category:  "first",
 				Frequency: "hourly",
 				Method:    "",
@@ -67,13 +67,13 @@ func TestCreateAlert(t *testing.T) {
 func TestAlertSetup(t *testing.T) {
 	tests := []struct {
 		name        string
-		alertVars   *structs.AlertVariables
+		alertVars   *entities.AlertVariables
 		expectedErr error
 	}{
 		// Test cases for valid inputs
 		{
 			name: "Valid inputs - Category amount alert",
-			alertVars: &structs.AlertVariables{
+			alertVars: &entities.AlertVariables{
 				Frequency: "weekly",
 				Method:    "cli",
 				Category:  "food",
@@ -83,7 +83,7 @@ func TestAlertSetup(t *testing.T) {
 		// Test cases for invalid inputs
 		{
 			name: "Invalid frequency",
-			alertVars: &structs.AlertVariables{
+			alertVars: &entities.AlertVariables{
 				Frequency: "invalid",
 				Method:    "cli",
 				Category:  "food",
@@ -92,7 +92,7 @@ func TestAlertSetup(t *testing.T) {
 		},
 		{
 			name: "Invalid category",
-			alertVars: &structs.AlertVariables{
+			alertVars: &entities.AlertVariables{
 				Frequency: "monthly",
 				Method:    "email",
 				Category:  "invalid",

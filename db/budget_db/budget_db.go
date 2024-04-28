@@ -9,11 +9,11 @@ import (
 
 	"github.com/ibilalkayy/flow/db"
 	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
+func CreateBudget(bv *entities.BudgetVariables, basePath string) error {
 	data, err := db.Table(basePath, "001_create_budget_table.sql", 0)
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func CreateBudget(bv *structs.BudgetVariables, basePath string) error {
 
 func ViewBudget(category string) ([5]interface{}, error) {
 	// Create a new instance of BudgetVariables to hold the retrieved data
-	bv := new(structs.BudgetVariables)
+	bv := new(entities.BudgetVariables)
 
 	// Connect to the database
 	db, err := db.Connection()
@@ -262,7 +262,7 @@ func AddBudgetExpenditure(spent int, category string) error {
 }
 
 func GetBudgetData(filepath, filename string) error {
-	bv := new(structs.BudgetVariables)
+	bv := new(entities.BudgetVariables)
 	db, err := db.Connection()
 	if err != nil {
 		return err

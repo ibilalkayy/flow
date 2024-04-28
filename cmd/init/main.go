@@ -7,7 +7,7 @@ import (
 	"github.com/ibilalkayy/flow/cmd"
 	"github.com/ibilalkayy/flow/db"
 	internal_init "github.com/ibilalkayy/flow/internal/app/init"
-	"github.com/ibilalkayy/flow/internal/common/structs"
+	"github.com/ibilalkayy/flow/internal/entities"
 	"github.com/spf13/cobra"
 )
 
@@ -38,13 +38,13 @@ func initApp(cmd *cobra.Command, args []string) {
 	postgresDBName, _ := cmd.Flags().GetString("dbname")
 	sslMode, _ := cmd.Flags().GetString("sslmode")
 
-	authParams := &structs.AuthVariables{
+	authParams := &entities.AuthVariables{
 		Username:    username,
 		Gmail:       gmail,
 		AppPassword: appPassword,
 	}
 
-	dbParams := &structs.DatabaseVariables{
+	dbParams := &entities.DatabaseVariables{
 		Host:     dbHost,
 		Port:     postgresPort,
 		User:     postgresUser,
@@ -68,7 +68,7 @@ func initApp(cmd *cobra.Command, args []string) {
 	}
 }
 
-func initializeApplication(authParams *structs.AuthVariables, dbParams *structs.DatabaseVariables) error {
+func initializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables) error {
 	err := internal_init.WriteEnvFile(authParams, dbParams)
 	if err != nil {
 		return fmt.Errorf("error writing to .env file: %v", err)
