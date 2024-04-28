@@ -3,8 +3,8 @@ package internal_budget
 import (
 	"errors"
 
-	"github.com/ibilalkayy/flow/db"
 	"github.com/ibilalkayy/flow/internal/entities"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db"
 )
 
 func CategoryAmount(category string) (int, error) {

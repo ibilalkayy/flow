@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ibilalkayy/flow/db/total_amount_db"
 	"github.com/ibilalkayy/flow/internal/entities"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/total_amount_db"
 	"github.com/spf13/cobra"
 )
 

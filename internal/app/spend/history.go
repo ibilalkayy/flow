@@ -3,8 +3,8 @@ package internal_spending
 import (
 	"time"
 
-	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/internal/entities"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/budget_db"
 )
 
 func StoreHistory(category string, spending_amount int) error {
@@ -21,7 +21,7 @@ func StoreHistory(category string, spending_amount int) error {
 		Address:       "ethereum address",
 	}
 
-	err := budget_db.InsertHistory(&hv, "db/migrations/")
+	err := budget_db.InsertHistory(&hv, "internal/framework_drivers/db/migrations/")
 	if err != nil {
 		return err
 	}

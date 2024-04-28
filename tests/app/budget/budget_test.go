@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ibilalkayy/flow/db/budget_db"
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	"github.com/ibilalkayy/flow/internal/common/functions"
 	"github.com/ibilalkayy/flow/internal/entities"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/budget_db"
 )
 
 type mockDB struct{}

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ibilalkayy/flow/db"
-	"github.com/ibilalkayy/flow/db/total_amount_db"
 	"github.com/ibilalkayy/flow/internal/entities"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/total_amount_db"
 )
 
 func SetTotalAmount(totalAmount int, include_category, label string) error {
@@ -63,12 +63,12 @@ func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariabl
 	}
 
 	if len(values) == 0 {
-		err = total_amount_db.InsertTotalAmount(&tav, "db/migrations/")
+		err = total_amount_db.InsertTotalAmount(&tav, "internal/framework_drivers/db/migrations/")
 		if err != nil {
 			return err
 		}
 
-		err = total_amount_db.InsertTotalAmountCategory(&tacv, "db/migrations/")
+		err = total_amount_db.InsertTotalAmountCategory(&tacv, "internal/framework_drivers/db/migrations/")
 		if err != nil {
 			return err
 		}
@@ -78,7 +78,7 @@ func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariabl
 		} else {
 			for _, list := range values {
 				if len(list[0]) != 0 && len(list[1]) != 0 {
-					err = total_amount_db.InsertTotalAmountCategory(&tacv, "db/migrations/")
+					err = total_amount_db.InsertTotalAmountCategory(&tacv, "internal/framework_drivers/db/migrations/")
 					if err != nil {
 						return err
 					}
@@ -92,12 +92,12 @@ func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariabl
 }
 
 func handleMissingTables(tav, tacv entities.TotalAmountVariables) error {
-	err := total_amount_db.InsertTotalAmount(&tav, "db/migrations/")
+	err := total_amount_db.InsertTotalAmount(&tav, "internal/framework_drivers/db/migrations/")
 	if err != nil {
 		return err
 	}
 
-	err = total_amount_db.InsertTotalAmountCategory(&tacv, "db/migrations/")
+	err = total_amount_db.InsertTotalAmountCategory(&tacv, "internal/framework_drivers/db/migrations/")
 	if err != nil {
 		return err
 	}

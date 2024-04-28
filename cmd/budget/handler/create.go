@@ -3,9 +3,9 @@ package budget_handler
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/db/budget_db"
 	"github.com/ibilalkayy/flow/internal/common/functions"
 	"github.com/ibilalkayy/flow/internal/entities"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/budget_db"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +19,7 @@ var CreateCmd = &cobra.Command{
 		amountInt := functions.StringToInt(amount)
 
 		bv := entities.BudgetVariables{Category: category, Amount: amountInt}
-		err := budget_db.CreateBudget(&bv, "db/migrations/")
+		err := budget_db.CreateBudget(&bv, "internal/framework_drivers/db/migrations/")
 		if err != nil {
 			log.Fatal(err)
 		}

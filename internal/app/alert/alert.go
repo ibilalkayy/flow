@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ibilalkayy/flow/db/alert_db"
-	"github.com/ibilalkayy/flow/db/budget_db"
 	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
 	internal_spending "github.com/ibilalkayy/flow/internal/app/spend"
 	"github.com/ibilalkayy/flow/internal/entities"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/alert_db"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/budget_db"
 )
 
 func AlertSetup(av *entities.AlertVariables) error {
@@ -32,7 +32,7 @@ func AlertSetup(av *entities.AlertVariables) error {
 		}
 
 		if categoryAmount != 0 {
-			err := alert_db.CreateAlert(av, "db/migrations/")
+			err := alert_db.CreateAlert(av, "internal/framework_drivers/db/migrations/")
 			if err != nil {
 				return err
 			}

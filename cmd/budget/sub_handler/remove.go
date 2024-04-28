@@ -3,7 +3,7 @@ package budget_subhandler
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/db/alert_db"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/alert_db"
 	"github.com/spf13/cobra"
 )
 

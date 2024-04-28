@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/cmd"
-	"github.com/ibilalkayy/flow/db"
 	internal_init "github.com/ibilalkayy/flow/internal/app/init"
 	"github.com/ibilalkayy/flow/internal/entities"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db"
 	"github.com/spf13/cobra"
 )
 

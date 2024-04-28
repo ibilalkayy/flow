@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ibilalkayy/flow/db/budget_db"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/budget_db"
 	"github.com/spf13/cobra"
 )
 

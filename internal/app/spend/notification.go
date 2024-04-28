@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ibilalkayy/flow/email"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/email"
 )
 
 func HourlyNotification(category string) {

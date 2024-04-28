@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/ibilalkayy/flow/db/alert_db"
 	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
 	"github.com/ibilalkayy/flow/internal/entities"
+	"github.com/ibilalkayy/flow/internal/framework_drivers/db/alert_db"
 )
 
 func TestCreateAlert(t *testing.T) {
