@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	internal_budget "github.com/ibilalkayy/flow/internal/app/budget"
-	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/entities"
-	"github.com/ibilalkayy/flow/internal/framework_drivers/db/budget_db"
+	conversion "github.com/ibilalkayy/flow/common/utils"
+	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/framework_drivers/db/budget_db"
+	usecases_budget "github.com/ibilalkayy/flow/usecases/app/budget"
 )
 
 type mockDB struct{}
@@ -177,7 +177,7 @@ func TestUpdateBudget(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			amount := functions.StringToInt(tc.amount)
+			amount := conversion.StringToInt(tc.amount)
 			err := budget_db.UpdateBudget(tc.oldCategory, tc.newCategory, amount)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
@@ -254,7 +254,7 @@ func TestCategoryAmount(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := internal_budget.CategoryAmount(tc.category)
+			_, err := usecases_budget.CategoryAmount(tc.category)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}

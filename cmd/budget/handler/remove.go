@@ -3,7 +3,7 @@ package budget_handler
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/internal/framework_drivers/db/budget_db"
+	"github.com/ibilalkayy/flow/framework_drivers/db/budget_db"
 	"github.com/spf13/cobra"
 )
 

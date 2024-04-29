@@ -7,8 +7,8 @@ import (
 
 	"github.com/ibilalkayy/flow/cmd"
 	spend_handler "github.com/ibilalkayy/flow/cmd/spend/handler"
-	internal_spending "github.com/ibilalkayy/flow/internal/app/spend"
-	"github.com/ibilalkayy/flow/internal/common/functions"
+	conversion "github.com/ibilalkayy/flow/common/utils"
+	usecases_spending "github.com/ibilalkayy/flow/usecases/app/spend"
 	"github.com/spf13/cobra"
 )
 
@@ -19,10 +19,10 @@ var SpendCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		categoryName, _ := cmd.Flags().GetString("category")
 		spendingAmount, _ := cmd.Flags().GetString("amount")
-		spendingAmountInt := functions.StringToInt(spendingAmount)
+		spendingAmountInt := conversion.StringToInt(spendingAmount)
 
 		if len(categoryName) != 0 && spendingAmountInt != 0 {
-			err := internal_spending.SpendMoney(categoryName, spendingAmountInt)
+			err := usecases_spending.SpendMoney(categoryName, spendingAmountInt)
 			if err != nil {
 				log.Fatal(err)
 			}

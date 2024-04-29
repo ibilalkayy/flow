@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/cmd"
-	internal_init "github.com/ibilalkayy/flow/internal/app/init"
-	"github.com/ibilalkayy/flow/internal/entities"
-	"github.com/ibilalkayy/flow/internal/framework_drivers/db"
+	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/framework_drivers/db"
+	usecases_init "github.com/ibilalkayy/flow/usecases/app/init"
 	"github.com/spf13/cobra"
 )
 
@@ -69,7 +69,7 @@ func initApp(cmd *cobra.Command, args []string) {
 }
 
 func initializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables) error {
-	err := internal_init.WriteEnvFile(authParams, dbParams)
+	err := usecases_init.WriteEnvFile(authParams, dbParams)
 	if err != nil {
 		return fmt.Errorf("error writing to .env file: %v", err)
 	}

@@ -3,9 +3,9 @@ package budget_subhandler
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/entities"
-	"github.com/ibilalkayy/flow/internal/framework_drivers/db/alert_db"
+	conversion "github.com/ibilalkayy/flow/common/utils"
+	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/framework_drivers/db/alert_db"
 	"github.com/spf13/cobra"
 )
 
@@ -23,10 +23,10 @@ var UpdateCmd = &cobra.Command{
 		minute, _ := cmd.Flags().GetString("minute")
 		second, _ := cmd.Flags().GetString("second")
 
-		dayInt := functions.StringToInt(day)
-		hourInt := functions.StringToInt(hour)
-		minuteInt := functions.StringToInt(minute)
-		secondInt := functions.StringToInt(second)
+		dayInt := conversion.StringToInt(day)
+		hourInt := conversion.StringToInt(hour)
+		minuteInt := conversion.StringToInt(minute)
+		secondInt := conversion.StringToInt(second)
 
 		av := entities.AlertVariables{
 			Category:  category,

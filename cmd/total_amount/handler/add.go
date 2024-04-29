@@ -3,8 +3,8 @@ package total_amount_handler
 import (
 	"log"
 
-	internal_total_amount "github.com/ibilalkayy/flow/internal/app/total_amount"
-	"github.com/ibilalkayy/flow/internal/common/functions"
+	conversion "github.com/ibilalkayy/flow/common/utils"
+	usecases_total_amount "github.com/ibilalkayy/flow/usecases/app/total_amount"
 	"github.com/spf13/cobra"
 )
 
@@ -16,9 +16,9 @@ var AddCmd = &cobra.Command{
 		amount, _ := cmd.Flags().GetString("amount")
 		include_category, _ := cmd.Flags().GetString("include")
 		label, _ := cmd.Flags().GetString("label")
-		totalAmount := functions.StringToInt(amount)
+		totalAmount := conversion.StringToInt(amount)
 
-		err := internal_total_amount.SetTotalAmount(totalAmount, include_category, label)
+		err := usecases_total_amount.SetTotalAmount(totalAmount, include_category, label)
 		if err != nil {
 			log.Fatal(err)
 		}

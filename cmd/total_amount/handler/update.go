@@ -3,9 +3,9 @@ package total_amount_handler
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/entities"
-	"github.com/ibilalkayy/flow/internal/framework_drivers/db/total_amount_db"
+	conversion "github.com/ibilalkayy/flow/common/utils"
+	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/framework_drivers/db/total_amount_db"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +18,7 @@ var UpdateCmd = &cobra.Command{
 		new_category, _ := cmd.Flags().GetString("newcategory")
 		amount, _ := cmd.Flags().GetString("amount")
 		label, _ := cmd.Flags().GetString("label")
-		totalAmount := functions.StringToInt(amount)
+		totalAmount := conversion.StringToInt(amount)
 
 		tv := entities.TotalAmountVariables{
 			Included:    old_category,

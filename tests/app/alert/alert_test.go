@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
-	"github.com/ibilalkayy/flow/internal/entities"
-	"github.com/ibilalkayy/flow/internal/framework_drivers/db/alert_db"
+	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/framework_drivers/db/alert_db"
+	usecases_alert "github.com/ibilalkayy/flow/usecases/app/alert"
 )
 
 func TestCreateAlert(t *testing.T) {
@@ -103,7 +103,7 @@ func TestAlertSetup(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := internal_alert.AlertSetup(test.alertVars)
+			err := usecases_alert.AlertSetup(test.alertVars)
 			if err != nil {
 				t.Errorf("Expected error: %v, got: %v", test.expectedErr, err)
 			}
@@ -111,7 +111,7 @@ func TestAlertSetup(t *testing.T) {
 	}
 }
 
-// Mock internal_budget package for testing
+// Mock usecases_budget package for testing
 // type mockBudget struct{}
 
 // func (m mockBudget) TotalBudgetAmount() (int, error) {
@@ -131,14 +131,14 @@ func TestAlertSetup(t *testing.T) {
 // 	_ = mockTransaction{}
 
 // 	// Test case where transaction amount is less than total budget
-// 	err := internal_alert.AlertMessage()
+// 	err := usecases_alert.AlertMessage()
 // 	if err != nil {
 // 		t.Errorf("AlertMessage() returned an error, expected nil: %v", err)
 // 	}
 
 // 	// Test case where transaction amount is greater than or equal to total budget
 // 	_ = mockTransaction{}
-// 	err = internal_alert.AlertMessage()
+// 	err = usecases_alert.AlertMessage()
 // 	expectedError := "You can't spend more because your budget is set to 1000"
 // 	if err == nil || err.Error() != expectedError {
 // 		t.Errorf("AlertMessage() returned unexpected error: got %v, want %v", err, expectedError)

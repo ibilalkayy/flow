@@ -3,9 +3,9 @@ package budget_subhandler
 import (
 	"log"
 
-	internal_alert "github.com/ibilalkayy/flow/internal/app/alert"
-	"github.com/ibilalkayy/flow/internal/common/functions"
-	"github.com/ibilalkayy/flow/internal/entities"
+	conversion "github.com/ibilalkayy/flow/common/utils"
+	"github.com/ibilalkayy/flow/entities"
+	usecases_alert "github.com/ibilalkayy/flow/usecases/app/alert"
 	"github.com/spf13/cobra"
 )
 
@@ -23,10 +23,10 @@ var SetupCmd = &cobra.Command{
 		minute, _ := cmd.Flags().GetString("minute")
 		second, _ := cmd.Flags().GetString("second")
 
-		dayInt := functions.StringToInt(day)
-		hourInt := functions.StringToInt(hour)
-		minuteInt := functions.StringToInt(minute)
-		secondInt := functions.StringToInt(second)
+		dayInt := conversion.StringToInt(day)
+		hourInt := conversion.StringToInt(hour)
+		minuteInt := conversion.StringToInt(minute)
+		secondInt := conversion.StringToInt(second)
 
 		av := entities.AlertVariables{
 			Category:  category,
@@ -39,7 +39,7 @@ var SetupCmd = &cobra.Command{
 			Seconds:   secondInt,
 		}
 
-		err := internal_alert.AlertSetup(&av)
+		err := usecases_alert.AlertSetup(&av)
 		if err != nil {
 			log.Fatal(err)
 		}
