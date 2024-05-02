@@ -11,8 +11,8 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func InsertHistory(hv *entities.HistoryVariables, basePath string) error {
-	data, err := db.Table(basePath, "001_create_budget_table.sql", 1)
+func InsertHistory(hv *entities.HistoryVariables) error {
+	data, err := db.Table("framework_drivers/db/migrations/001_create_budget_table.sql", 1)
 	if err != nil {
 		return err
 	}

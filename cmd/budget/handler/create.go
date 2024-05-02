@@ -19,7 +19,7 @@ var CreateCmd = &cobra.Command{
 		amountInt := conversion.StringToInt(amount)
 
 		bv := entities.BudgetVariables{Category: category, Amount: amountInt}
-		err := budget_db.CreateBudget(&bv, "framework_drivers/db/migrations/")
+		err := budget_db.CreateBudget(&bv)
 		if err != nil {
 			log.Fatal(err)
 		}

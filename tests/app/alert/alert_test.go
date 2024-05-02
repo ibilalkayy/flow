@@ -53,10 +53,10 @@ func TestCreateAlert(t *testing.T) {
 		},
 	}
 
-	basePath := "../../../db/budget_db/migrations/"
+	// basePath := "../../../db/budget_db/migrations/"
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := alert_db.CreateAlert(tc.input, basePath)
+			err := alert_db.CreateAlert(tc.input)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}

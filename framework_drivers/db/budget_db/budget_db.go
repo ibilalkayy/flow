@@ -13,8 +13,8 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func CreateBudget(bv *entities.BudgetVariables, basePath string) error {
-	data, err := db.Table(basePath, "001_create_budget_table.sql", 0)
+func CreateBudget(bv *entities.BudgetVariables) error {
+	data, err := db.Table("framework_drivers/db/migrations/001_create_budget_table.sql", 0)
 	if err != nil {
 		return err
 	}

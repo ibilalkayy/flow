@@ -63,12 +63,12 @@ func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariabl
 	}
 
 	if len(values) == 0 {
-		err = total_amount_db.InsertTotalAmount(&tav, "framework_drivers/db/migrations/")
+		err = total_amount_db.InsertTotalAmount(&tav)
 		if err != nil {
 			return err
 		}
 
-		err = total_amount_db.InsertTotalAmountCategory(&tacv, "framework_drivers/db/migrations/")
+		err = total_amount_db.InsertTotalAmountCategory(&tacv)
 		if err != nil {
 			return err
 		}
@@ -78,7 +78,7 @@ func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariabl
 		} else {
 			for _, list := range values {
 				if len(list[0]) != 0 && len(list[1]) != 0 {
-					err = total_amount_db.InsertTotalAmountCategory(&tacv, "framework_drivers/db/migrations/")
+					err = total_amount_db.InsertTotalAmountCategory(&tacv)
 					if err != nil {
 						return err
 					}
@@ -92,12 +92,12 @@ func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariabl
 }
 
 func handleMissingTables(tav, tacv entities.TotalAmountVariables) error {
-	err := total_amount_db.InsertTotalAmount(&tav, "framework_drivers/db/migrations/")
+	err := total_amount_db.InsertTotalAmount(&tav)
 	if err != nil {
 		return err
 	}
 
-	err = total_amount_db.InsertTotalAmountCategory(&tacv, "framework_drivers/db/migrations/")
+	err = total_amount_db.InsertTotalAmountCategory(&tacv)
 	if err != nil {
 		return err
 	}

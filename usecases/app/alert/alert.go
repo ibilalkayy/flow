@@ -32,7 +32,7 @@ func AlertSetup(av *entities.AlertVariables) error {
 		}
 
 		if categoryAmount != 0 {
-			err := alert_db.CreateAlert(av, "framework_drivers/db/migrations/")
+			err := alert_db.CreateAlert(av)
 			if err != nil {
 				return err
 			}

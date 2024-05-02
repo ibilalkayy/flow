@@ -10,8 +10,8 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func InsertTotalAmount(tv *entities.TotalAmountVariables, basepath string) error {
-	data, err := db.Table(basepath, "003_create_total_amount_table.sql", 0)
+func InsertTotalAmount(tv *entities.TotalAmountVariables) error {
+	data, err := db.Table("framework_drivers/db/migrations/003_create_total_amount_table.sql", 0)
 	if err != nil {
 		return err
 	}

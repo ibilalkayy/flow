@@ -12,8 +12,8 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func CreateAlert(av *entities.AlertVariables, basePath string) error {
-	data, err := db.Table(basePath, "002_create_alert_table.sql", 0)
+func CreateAlert(av *entities.AlertVariables) error {
+	data, err := db.Table("framework_drivers/db/migrations/002_create_alert_table.sql", 0)
 	if err != nil {
 		return err
 	}

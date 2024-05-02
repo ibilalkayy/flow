@@ -21,7 +21,7 @@ func StoreHistory(category string, spending_amount int) error {
 		Address:       "ethereum address",
 	}
 
-	err := budget_db.InsertHistory(&hv, "framework_drivers/db/migrations/")
+	err := budget_db.InsertHistory(&hv)
 	if err != nil {
 		return err
 	}

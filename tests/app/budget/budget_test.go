@@ -68,10 +68,10 @@ func TestCreateBudget(t *testing.T) {
 		},
 	}
 
-	basePath := "../../../db/budget_db/migrations/"
+	// basePath := "../../../db/budget_db/migrations/"
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := budget_db.CreateBudget(tc.input, basePath)
+			err := budget_db.CreateBudget(tc.input)
 			if err != nil {
 				t.Errorf("Expected no error, got %v", err)
 			}
