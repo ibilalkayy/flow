@@ -12,9 +12,10 @@ var RemoveCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove the total amount data",
 	Run: func(cmd *cobra.Command, args []string) {
+		var m total_amount_db.MyTotalDatabase
+
 		category, _ := cmd.Flags().GetString("category")
-		var remove total_amount_db.MyTotalDatabase
-		err := remove.RemoveTotalAmount(category)
+		err := m.RemoveTotalAmount(category)
 		if err != nil {
 			log.Fatal(err)
 		}

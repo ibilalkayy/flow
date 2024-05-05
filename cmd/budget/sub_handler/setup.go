@@ -14,6 +14,9 @@ var SetupCmd = &cobra.Command{
 	Use:   "setup",
 	Short: "Set the alert notification",
 	Run: func(cmd *cobra.Command, args []string) {
+		var c conversion.MyConversion
+		var m usecases_alert.MyAlerts
+
 		category, _ := cmd.Flags().GetString("category")
 		method, _ := cmd.Flags().GetString("method")
 		frequency, _ := cmd.Flags().GetString("frequency")
@@ -23,7 +26,6 @@ var SetupCmd = &cobra.Command{
 		minute, _ := cmd.Flags().GetString("minute")
 		second, _ := cmd.Flags().GetString("second")
 
-		var c conversion.MyConversion
 		dayInt := c.StringToInt(day)
 		hourInt := c.StringToInt(hour)
 		minuteInt := c.StringToInt(minute)
@@ -40,7 +42,6 @@ var SetupCmd = &cobra.Command{
 			Seconds:   secondInt,
 		}
 
-		var m usecases_alert.MyAlerts
 		err := m.AlertSetup(&av)
 		if err != nil {
 			log.Fatal(err)

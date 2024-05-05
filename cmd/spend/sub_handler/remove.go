@@ -12,8 +12,9 @@ var RemoveCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove the history data",
 	Run: func(cmd *cobra.Command, args []string) {
-		category, _ := cmd.Flags().GetString("category")
 		var m budget_db.MyHistoryDatabase
+
+		category, _ := cmd.Flags().GetString("category")
 		err := m.RemoveHistory(category)
 		if err != nil {
 			log.Fatal(err)

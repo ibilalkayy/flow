@@ -14,6 +14,7 @@ var CategoriesCmd = &cobra.Command{
 	Short: "View the categories in the total amount",
 	Run: func(cmd *cobra.Command, args []string) {
 		var m total_amount_db.MyTotalDatabase
+
 		categories, _, err := m.ViewTotalAmountCategory()
 		if err != nil {
 			log.Fatal(err)

@@ -13,8 +13,9 @@ var ViewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View the alert notification values",
 	Run: func(cmd *cobra.Command, args []string) {
-		category, _ := cmd.Flags().GetString("category")
 		var m alert_db.MyAlertDatabase
+
+		category, _ := cmd.Flags().GetString("category")
 		table, err := m.ViewAlert(category)
 		if err != nil {
 			log.Fatal(err)

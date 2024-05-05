@@ -17,13 +17,14 @@ var SpendCmd = &cobra.Command{
 	Use:   "spend",
 	Short: "Spending money on various categories",
 	Run: func(cmd *cobra.Command, args []string) {
+		var c conversion.MyConversion
+		var m usecases_spending.MySpending
+
 		categoryName, _ := cmd.Flags().GetString("category")
 		spendingAmount, _ := cmd.Flags().GetString("amount")
-		var c conversion.MyConversion
 		spendingAmountInt := c.StringToInt(spendingAmount)
 
 		if len(categoryName) != 0 && spendingAmountInt != 0 {
-			var m usecases_spending.MySpending
 			err := m.SpendMoney(categoryName, spendingAmountInt)
 			if err != nil {
 				log.Fatal(err)

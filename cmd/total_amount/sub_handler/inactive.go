@@ -15,8 +15,9 @@ var InactiveCmd = &cobra.Command{
 	Use:   "inactive",
 	Short: "Make the total amount inactive",
 	Run: func(cmd *cobra.Command, args []string) {
-		var action total_amount_db.MyTotalDatabase
-		values, err := action.ViewTotalAmount()
+		var m total_amount_db.MyTotalDatabase
+
+		values, err := m.ViewTotalAmount()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -32,7 +33,7 @@ var InactiveCmd = &cobra.Command{
 			updateStatus := entities.TotalAmountVariables{
 				Status: "Inactive",
 			}
-			action.UpdateStatus(&updateStatus)
+			m.UpdateStatus(&updateStatus)
 		}
 	},
 }

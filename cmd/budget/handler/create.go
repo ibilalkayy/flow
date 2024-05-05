@@ -14,13 +14,14 @@ var CreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create the budget of different categories",
 	Run: func(cmd *cobra.Command, args []string) {
+		var c conversion.MyConversion
+		var m budget_db.MyBudgetDatabase
+
 		category, _ := cmd.Flags().GetString("category")
 		amount, _ := cmd.Flags().GetString("amount")
-		var c conversion.MyConversion
 		amountInt := c.StringToInt(amount)
 
 		bv := entities.BudgetVariables{Category: category, Amount: amountInt}
-		var m budget_db.MyBudgetDatabase
 		err := m.CreateBudget(&bv)
 		if err != nil {
 			log.Fatal(err)

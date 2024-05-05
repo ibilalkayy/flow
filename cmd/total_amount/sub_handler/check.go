@@ -13,8 +13,9 @@ var CheckCmd = &cobra.Command{
 	Use:   "check",
 	Short: "Check the status of the total amount",
 	Run: func(cmd *cobra.Command, args []string) {
-		var view total_amount_db.MyTotalDatabase
-		values, err := view.ViewTotalAmount()
+		var m total_amount_db.MyTotalDatabase
+
+		values, err := m.ViewTotalAmount()
 		if err != nil {
 			log.Fatal(err)
 		}

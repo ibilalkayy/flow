@@ -14,11 +14,13 @@ var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the total amount data",
 	Run: func(cmd *cobra.Command, args []string) {
+		var m total_amount_db.MyTotalDatabase
+		var c conversion.MyConversion
+
 		old_category, _ := cmd.Flags().GetString("oldcategory")
 		new_category, _ := cmd.Flags().GetString("newcategory")
 		amount, _ := cmd.Flags().GetString("amount")
 		label, _ := cmd.Flags().GetString("label")
-		var c conversion.MyConversion
 		totalAmount := c.StringToInt(amount)
 
 		tv := entities.TotalAmountVariables{
@@ -27,8 +29,7 @@ var UpdateCmd = &cobra.Command{
 			TotalAmount: totalAmount,
 			Label:       label,
 		}
-		var update total_amount_db.MyTotalDatabase
-		err := update.UpdateTotalAmount(&tv)
+		err := m.UpdateTotalAmount(&tv)
 		if err != nil {
 			log.Fatal(err)
 		}

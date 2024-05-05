@@ -5,7 +5,14 @@ import (
 	"time"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/spf13/cobra"
 )
+
+type Init interface {
+	AllNonEmpty(params ...string) bool
+	InitApp(cmd *cobra.Command, args []string)
+	InitializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables) error
+}
 
 type Connect interface {
 	Connection() (*sql.DB, error)

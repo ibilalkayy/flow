@@ -13,14 +13,15 @@ var AddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add the total amount data",
 	Run: func(cmd *cobra.Command, args []string) {
+		var c conversion.MyConversion
+		var m usecases_total_amount.MyTotalAmount
+
 		amount, _ := cmd.Flags().GetString("amount")
 		category, _ := cmd.Flags().GetString("category")
 		label, _ := cmd.Flags().GetString("label")
-		var c conversion.MyConversion
 		totalAmount := c.StringToInt(amount)
 
-		var set usecases_total_amount.MyTotalAmount
-		err := set.SetTotalAmount(totalAmount, category, label)
+		err := m.SetTotalAmount(totalAmount, category, label)
 		if err != nil {
 			log.Fatal(err)
 		}

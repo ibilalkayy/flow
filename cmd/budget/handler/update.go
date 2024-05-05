@@ -14,13 +14,14 @@ var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
+		var c conversion.MyConversion
+		var m budget_db.MyBudgetDatabase
+
 		oldCategory, _ := cmd.Flags().GetString("oldcategory")
 		newCategory, _ := cmd.Flags().GetString("newcategory")
 		amount, _ := cmd.Flags().GetString("amount")
-		var c conversion.MyConversion
 		newAmount := c.StringToInt(amount)
 
-		var m budget_db.MyBudgetDatabase
 		err := m.UpdateBudget(oldCategory, newCategory, newAmount)
 		if err != nil {
 			log.Fatal(err)

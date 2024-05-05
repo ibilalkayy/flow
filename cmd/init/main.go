@@ -7,11 +7,10 @@ import (
 	"github.com/ibilalkayy/flow/cmd"
 	"github.com/ibilalkayy/flow/entities"
 	"github.com/ibilalkayy/flow/framework_drivers/db"
-	usecases_init "github.com/ibilalkayy/flow/usecases/app/init"
 	"github.com/spf13/cobra"
 )
 
-func allNonEmpty(params ...string) bool {
+func (MyInit) AllNonEmpty(params ...string) bool {
 	for _, param := range params {
 		if len(param) == 0 {
 			return false
@@ -20,13 +19,18 @@ func allNonEmpty(params ...string) bool {
 	return true
 }
 
+func Initialize(cmd *cobra.Command, args []string) {
+	var m MyInit
+	m.InitApp(cmd, args)
+}
+
 var InitCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize your flow application",
-	Run:   initApp,
+	Run:   Initialize,
 }
 
-func initApp(cmd *cobra.Command, args []string) {
+func (m MyInit) InitApp(cmd *cobra.Command, args []string) {
 	username, _ := cmd.Flags().GetString("username")
 	gmail, _ := cmd.Flags().GetString("gmail")
 	appPassword, _ := cmd.Flags().GetString("app_password")
@@ -53,12 +57,12 @@ func initApp(cmd *cobra.Command, args []string) {
 		SSLMode:  sslMode,
 	}
 
-	if allNonEmpty(
+	if m.AllNonEmpty(
 		authParams.Username, authParams.Gmail, authParams.AppPassword,
 		dbParams.Host, dbParams.Port, dbParams.User, dbParams.Password,
 		dbParams.DBName, dbParams.SSLMode,
 	) {
-		err := initializeApplication(authParams, dbParams)
+		err := m.InitializeApplication(authParams, dbParams)
 		if err != nil {
 			fmt.Println("Error during initialization:", err)
 			return
@@ -68,8 +72,7 @@ func initApp(cmd *cobra.Command, args []string) {
 	}
 }
 
-func initializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables) error {
-	var m usecases_init.MyEnvFile
+func (m MyInit) InitializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables) error {
 	err := m.WriteEnvFile(authParams, dbParams)
 	if err != nil {
 		return fmt.Errorf("error writing to .env file: %v", err)

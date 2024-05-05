@@ -12,8 +12,9 @@ var RemoveCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
-		category, _ := cmd.Flags().GetString("category")
 		var m budget_db.MyBudgetDatabase
+
+		category, _ := cmd.Flags().GetString("category")
 		err := m.RemoveBudget(category)
 		if err != nil {
 			log.Fatal(err)

@@ -12,8 +12,9 @@ var MsgCmd = &cobra.Command{
 	Use:   "msg",
 	Short: "The CLI message for the alert notifications",
 	Run: func(cmd *cobra.Command, args []string) {
-		category, _ := cmd.Flags().GetString("category")
 		var m usecases_alert.MyAlerts
+
+		category, _ := cmd.Flags().GetString("category")
 		err := m.CheckNotification(category)
 		if err != nil {
 			log.Fatal(err)

@@ -14,6 +14,9 @@ var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the alert values for notification",
 	Run: func(cmd *cobra.Command, args []string) {
+		var c conversion.MyConversion
+		var m alert_db.MyAlertDatabase
+
 		category, _ := cmd.Flags().GetString("category")
 		method, _ := cmd.Flags().GetString("method")
 		frequency, _ := cmd.Flags().GetString("frequency")
@@ -23,7 +26,6 @@ var UpdateCmd = &cobra.Command{
 		minute, _ := cmd.Flags().GetString("minute")
 		second, _ := cmd.Flags().GetString("second")
 
-		var c conversion.MyConversion
 		dayInt := c.StringToInt(day)
 		hourInt := c.StringToInt(hour)
 		minuteInt := c.StringToInt(minute)
@@ -39,7 +41,7 @@ var UpdateCmd = &cobra.Command{
 			Minutes:   minuteInt,
 			Seconds:   secondInt,
 		}
-		var m alert_db.MyAlertDatabase
+
 		err := m.UpdateAlert(&av)
 		if err != nil {
 			log.Fatal(err)

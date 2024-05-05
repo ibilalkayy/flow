@@ -13,8 +13,9 @@ var ShowCmd = &cobra.Command{
 	Use:   "show",
 	Short: "Show the history data",
 	Run: func(cmd *cobra.Command, args []string) {
-		category, _ := cmd.Flags().GetString("category")
 		var m budget_db.MyHistoryDatabase
+
+		category, _ := cmd.Flags().GetString("category")
 		table, err := m.ViewHistory(category)
 		if err != nil {
 			log.Fatal(err)
