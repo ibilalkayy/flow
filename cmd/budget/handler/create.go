@@ -16,7 +16,8 @@ var CreateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
 		amount, _ := cmd.Flags().GetString("amount")
-		amountInt := conversion.StringToInt(amount)
+		var c conversion.MyConversion
+		amountInt := c.StringToInt(amount)
 
 		bv := entities.BudgetVariables{Category: category, Amount: amountInt}
 		var m budget_db.MyBudgetDatabase

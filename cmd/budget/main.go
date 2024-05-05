@@ -26,7 +26,7 @@ func init() {
 	// Subcommands
 	budgetCmd.AddCommand(budget_handler.CreateCmd)
 	budgetCmd.AddCommand(budget_handler.ViewCmd)
-	budgetCmd.AddCommand(budget_handler.AdjustCmd)
+	budgetCmd.AddCommand(budget_handler.UpdateCmd)
 	budgetCmd.AddCommand(budget_handler.RemoveCmd)
 	budgetCmd.AddCommand(budget_handler.GetCmd)
 	budgetCmd.AddCommand(budget_handler.AlertCmd)

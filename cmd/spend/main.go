@@ -19,7 +19,8 @@ var SpendCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		categoryName, _ := cmd.Flags().GetString("category")
 		spendingAmount, _ := cmd.Flags().GetString("amount")
-		spendingAmountInt := conversion.StringToInt(spendingAmount)
+		var c conversion.MyConversion
+		spendingAmountInt := c.StringToInt(spendingAmount)
 
 		if len(categoryName) != 0 && spendingAmountInt != 0 {
 			var m usecases_spending.MySpending

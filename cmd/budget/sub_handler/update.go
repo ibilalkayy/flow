@@ -23,10 +23,11 @@ var UpdateCmd = &cobra.Command{
 		minute, _ := cmd.Flags().GetString("minute")
 		second, _ := cmd.Flags().GetString("second")
 
-		dayInt := conversion.StringToInt(day)
-		hourInt := conversion.StringToInt(hour)
-		minuteInt := conversion.StringToInt(minute)
-		secondInt := conversion.StringToInt(second)
+		var c conversion.MyConversion
+		dayInt := c.StringToInt(day)
+		hourInt := c.StringToInt(hour)
+		minuteInt := c.StringToInt(minute)
+		secondInt := c.StringToInt(second)
 
 		av := entities.AlertVariables{
 			Category:  category,

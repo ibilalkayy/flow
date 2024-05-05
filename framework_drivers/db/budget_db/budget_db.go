@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 
-	conversion "github.com/ibilalkayy/flow/common"
 	"github.com/ibilalkayy/flow/entities"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
@@ -293,7 +292,7 @@ func (m MyBudgetDatabase) GetBudgetData(filepath, filename string) error {
 		}
 
 		var data []string
-		amountStr := conversion.IntToString(bv.Amount)
+		amountStr := m.IntToString(bv.Amount)
 		data = append(data, bv.Category, amountStr)
 		if err := writer.Write(data); err != nil {
 			return err

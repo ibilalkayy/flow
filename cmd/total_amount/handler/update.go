@@ -18,7 +18,8 @@ var UpdateCmd = &cobra.Command{
 		new_category, _ := cmd.Flags().GetString("newcategory")
 		amount, _ := cmd.Flags().GetString("amount")
 		label, _ := cmd.Flags().GetString("label")
-		totalAmount := conversion.StringToInt(amount)
+		var c conversion.MyConversion
+		totalAmount := c.StringToInt(amount)
 
 		tv := entities.TotalAmountVariables{
 			Included:    old_category,

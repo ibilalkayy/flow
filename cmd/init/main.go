@@ -33,8 +33,8 @@ func initApp(cmd *cobra.Command, args []string) {
 
 	dbHost, _ := cmd.Flags().GetString("host")
 	postgresPort, _ := cmd.Flags().GetString("port")
-	postgresUser, _ := cmd.Flags().GetString("user")
-	postgresPassword, _ := cmd.Flags().GetString("password")
+	postgresUser, _ := cmd.Flags().GetString("db_username")
+	postgresPassword, _ := cmd.Flags().GetString("db_password")
 	postgresDBName, _ := cmd.Flags().GetString("dbname")
 	sslMode, _ := cmd.Flags().GetString("sslmode")
 
@@ -91,8 +91,8 @@ func init() {
 	InitCmd.Flags().StringP("app_password", "a", "", "Write the App Password of your Gmail account. For more info visit: https://support.google.com/accounts/answer/185833")
 	InitCmd.Flags().StringP("host", "o", "", "Write the PostgreSQL host")
 	InitCmd.Flags().StringP("port", "p", "", "Write the PostgreSQL port")
-	InitCmd.Flags().StringP("password", "w", "", "Write the PostgreSQL password")
-	InitCmd.Flags().StringP("user", "u", "", "Write the PostgreSQL username")
+	InitCmd.Flags().StringP("db_password", "w", "", "Write the PostgreSQL password")
+	InitCmd.Flags().StringP("db_username", "u", "", "Write the PostgreSQL username")
 	InitCmd.Flags().StringP("dbname", "d", "", "Write the PostgreSQL DB name")
 	InitCmd.Flags().StringP("sslmode", "s", "", "Write the PostgreSQL SSLMode")
 }

@@ -5,12 +5,12 @@ import (
 	"strconv"
 )
 
-func IntToString(key int) string {
+func (MyConversion) IntToString(key int) string {
 	value := strconv.Itoa(key)
 	return value
 }
 
-func StringToInt(key string) int {
+func (MyConversion) StringToInt(key string) int {
 	if key == "" {
 		return 0
 	}

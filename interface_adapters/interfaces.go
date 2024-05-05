@@ -85,3 +85,8 @@ type EnvFile interface {
 type Email interface {
 	SendAlertEmail(category string) error
 }
+
+type Conversion interface {
+	IntToString(key int) string
+	StringToInt(key string) int
+}
