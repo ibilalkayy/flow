@@ -7,7 +7,7 @@ import (
 	"github.com/ibilalkayy/flow/entities"
 )
 
-func WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVariables) error {
+func (MyEnvFile) WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVariables) error {
 	f, err := os.Create(".env")
 	if err != nil {
 		return err

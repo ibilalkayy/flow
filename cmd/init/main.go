@@ -69,12 +69,14 @@ func initApp(cmd *cobra.Command, args []string) {
 }
 
 func initializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables) error {
-	err := usecases_init.WriteEnvFile(authParams, dbParams)
+	var m usecases_init.MyEnvFile
+	err := m.WriteEnvFile(authParams, dbParams)
 	if err != nil {
 		return fmt.Errorf("error writing to .env file: %v", err)
 	}
 
-	_, err = db.Connection()
+	var c db.MyConnect
+	_, err = c.Connection()
 	if err != nil {
 		return fmt.Errorf("error connecting to the database: %v", err)
 	}

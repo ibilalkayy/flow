@@ -3,7 +3,7 @@ package budget_subhandler
 import (
 	"log"
 
-	conversion "github.com/ibilalkayy/flow/common/utils"
+	conversion "github.com/ibilalkayy/flow/common"
 	"github.com/ibilalkayy/flow/entities"
 	usecases_alert "github.com/ibilalkayy/flow/usecases/app/alert"
 	"github.com/spf13/cobra"
@@ -39,7 +39,8 @@ var SetupCmd = &cobra.Command{
 			Seconds:   secondInt,
 		}
 
-		err := usecases_alert.AlertSetup(&av)
+		var m usecases_alert.MyAlerts
+		err := m.AlertSetup(&av)
 		if err != nil {
 			log.Fatal(err)
 		}

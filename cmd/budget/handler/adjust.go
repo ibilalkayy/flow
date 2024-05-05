@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	conversion "github.com/ibilalkayy/flow/common/utils"
+	conversion "github.com/ibilalkayy/flow/common"
 	"github.com/ibilalkayy/flow/framework_drivers/db/budget_db"
 	"github.com/spf13/cobra"
 )
@@ -19,7 +19,8 @@ var AdjustCmd = &cobra.Command{
 		amount, _ := cmd.Flags().GetString("amount")
 		newAmount := conversion.StringToInt(amount)
 
-		err := budget_db.UpdateBudget(oldCategory, newCategory, newAmount)
+		var m budget_db.MyBudgetDatabase
+		err := m.UpdateBudget(oldCategory, newCategory, newAmount)
 		if err != nil {
 			log.Fatal(err)
 		}

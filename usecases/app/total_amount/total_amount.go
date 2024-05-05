@@ -5,11 +5,9 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework_drivers/db"
-	"github.com/ibilalkayy/flow/framework_drivers/db/total_amount_db"
 )
 
-func SetTotalAmount(totalAmount int, include_category, label string) error {
+func (m MyTotalAmount) SetTotalAmount(totalAmount int, include_category, label string) error {
 	tav := entities.TotalAmountVariables{
 		TotalAmount:     totalAmount,
 		SpentAmount:     0,
@@ -22,23 +20,23 @@ func SetTotalAmount(totalAmount int, include_category, label string) error {
 		Label:    label,
 	}
 
-	amountExists, err := db.TableExists("totalamount")
+	amountExists, err := m.TableExists("totalamount")
 	if err != nil {
 		return err
 	}
 
-	categoryExists, err := db.TableExists("totalamountcategory")
+	categoryExists, err := m.TableExists("totalamountcategory")
 	if err != nil {
 		return err
 	}
 
 	if amountExists && categoryExists {
-		err := handleExistingTables(totalAmount, tav, tacv)
+		err := m.HandleExistingTables(totalAmount, tav, tacv)
 		if err != nil {
 			return err
 		}
 	} else {
-		err := handleMissingTables(tav, tacv)
+		err := m.HandleMissingTables(tav, tacv)
 		if err != nil {
 			return err
 		}
@@ -46,13 +44,13 @@ func SetTotalAmount(totalAmount int, include_category, label string) error {
 	return nil
 }
 
-func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariables) error {
-	_, values, err := total_amount_db.ViewTotalAmountCategory()
+func (m MyTotalAmount) HandleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariables) error {
+	_, values, err := m.ViewTotalAmountCategory()
 	if err != nil {
 		return err
 	}
 
-	amount, err := total_amount_db.ViewTotalAmount()
+	amount, err := m.ViewTotalAmount()
 	if err != nil {
 		return err
 	}
@@ -63,12 +61,12 @@ func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariabl
 	}
 
 	if len(values) == 0 {
-		err = total_amount_db.InsertTotalAmount(&tav)
+		err = m.InsertTotalAmount(&tav)
 		if err != nil {
 			return err
 		}
 
-		err = total_amount_db.InsertTotalAmountCategory(&tacv)
+		err = m.InsertTotalAmountCategory(&tacv)
 		if err != nil {
 			return err
 		}
@@ -78,7 +76,7 @@ func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariabl
 		} else {
 			for _, list := range values {
 				if len(list[0]) != 0 && len(list[1]) != 0 {
-					err = total_amount_db.InsertTotalAmountCategory(&tacv)
+					err = m.InsertTotalAmountCategory(&tacv)
 					if err != nil {
 						return err
 					}
@@ -91,13 +89,13 @@ func handleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariabl
 	return nil
 }
 
-func handleMissingTables(tav, tacv entities.TotalAmountVariables) error {
-	err := total_amount_db.InsertTotalAmount(&tav)
+func (m MyTotalAmount) HandleMissingTables(tav, tacv entities.TotalAmountVariables) error {
+	err := m.InsertTotalAmount(&tav)
 	if err != nil {
 		return err
 	}
 
-	err = total_amount_db.InsertTotalAmountCategory(&tacv)
+	err = m.InsertTotalAmountCategory(&tacv)
 	if err != nil {
 		return err
 	}

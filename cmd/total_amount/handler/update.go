@@ -3,7 +3,7 @@ package total_amount_handler
 import (
 	"log"
 
-	conversion "github.com/ibilalkayy/flow/common/utils"
+	conversion "github.com/ibilalkayy/flow/common"
 	"github.com/ibilalkayy/flow/entities"
 	"github.com/ibilalkayy/flow/framework_drivers/db/total_amount_db"
 	"github.com/spf13/cobra"
@@ -26,7 +26,8 @@ var UpdateCmd = &cobra.Command{
 			TotalAmount: totalAmount,
 			Label:       label,
 		}
-		err := total_amount_db.UpdateTotalAmount(&tv)
+		var update total_amount_db.MyTotalDatabase
+		err := update.UpdateTotalAmount(&tv)
 		if err != nil {
 			log.Fatal(err)
 		}

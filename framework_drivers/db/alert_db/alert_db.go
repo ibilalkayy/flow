@@ -8,12 +8,11 @@ import (
 	"strings"
 
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework_drivers/db"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func CreateAlert(av *entities.AlertVariables) error {
-	data, err := db.Table("framework_drivers/db/migrations/002_create_alert_table.sql", 0)
+func (m MyAlertDatabase) CreateAlert(av *entities.AlertVariables) error {
+	data, err := m.Table("framework_drivers/db/migrations/002_create_alert_table.sql", 0)
 	if err != nil {
 		return err
 	}
@@ -36,10 +35,10 @@ func CreateAlert(av *entities.AlertVariables) error {
 	return nil
 }
 
-func ViewAlert(category string) ([9]interface{}, error) {
+func (m MyAlertDatabase) ViewAlert(category string) ([9]interface{}, error) {
 	av := new(entities.AlertVariables)
 
-	db, err := db.Connection()
+	db, err := m.Connection()
 	if err != nil {
 		return [9]interface{}{}, err
 	}
@@ -78,14 +77,14 @@ func ViewAlert(category string) ([9]interface{}, error) {
 	return values, nil
 }
 
-func RemoveAlert(category string) error {
-	db, err := db.Connection()
+func (m MyAlertDatabase) RemoveAlert(category string) error {
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	data, err := ViewAlert(category)
+	data, err := m.ViewAlert(category)
 	if err != nil {
 		return err
 	}
@@ -131,8 +130,8 @@ func RemoveAlert(category string) error {
 	return nil
 }
 
-func UpdateAlert(av *entities.AlertVariables) error {
-	db, err := db.Connection()
+func (m MyAlertDatabase) UpdateAlert(av *entities.AlertVariables) error {
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}

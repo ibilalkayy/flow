@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func LoadEnvVariable(key string) string {
+func (LoadEnv) LoadEnvVariable(key string) string {
 	viper.SetConfigFile(".env")
 	err := viper.ReadInConfig()
 	if err != nil {

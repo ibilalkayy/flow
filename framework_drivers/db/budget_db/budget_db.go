@@ -7,14 +7,13 @@ import (
 	"fmt"
 	"os"
 
-	conversion "github.com/ibilalkayy/flow/common/utils"
+	conversion "github.com/ibilalkayy/flow/common"
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework_drivers/db"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func CreateBudget(bv *entities.BudgetVariables) error {
-	data, err := db.Table("framework_drivers/db/migrations/001_create_budget_table.sql", 0)
+func (m MyBudgetDatabase) CreateBudget(bv *entities.BudgetVariables) error {
+	data, err := m.Table("framework_drivers/db/migrations/001_create_budget_table.sql", 0)
 	if err != nil {
 		return err
 	}
@@ -26,7 +25,7 @@ func CreateBudget(bv *entities.BudgetVariables) error {
 	}
 	defer insert.Close()
 
-	includedCategory, value, err := conversion.TotalAmountValues()
+	includedCategory, value, err := m.TotalAmountValues()
 	if err != nil {
 		return err
 	}
@@ -48,12 +47,12 @@ func CreateBudget(bv *entities.BudgetVariables) error {
 	return nil
 }
 
-func ViewBudget(category string) ([5]interface{}, error) {
+func (m MyBudgetDatabase) ViewBudget(category string) ([5]interface{}, error) {
 	// Create a new instance of BudgetVariables to hold the retrieved data
 	bv := new(entities.BudgetVariables)
 
 	// Connect to the database
-	db, err := db.Connection()
+	db, err := m.Connection()
 	if err != nil {
 		return [5]interface{}{}, err
 	}
@@ -103,14 +102,14 @@ func ViewBudget(category string) ([5]interface{}, error) {
 	return details, nil
 }
 
-func RemoveBudget(category string) error {
-	db, err := db.Connection()
+func (m MyBudgetDatabase) RemoveBudget(category string) error {
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	data, err := ViewBudget(category)
+	data, err := m.ViewBudget(category)
 	if err != nil {
 		return err
 	}
@@ -156,12 +155,12 @@ func RemoveBudget(category string) error {
 	return nil
 }
 
-func UpdateBudget(old, new string, amount int) error {
+func (m MyBudgetDatabase) UpdateBudget(old, new string, amount int) error {
 	var count int
 	var query string
 	var params []interface{}
 
-	db, err := db.Connection()
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}
@@ -176,7 +175,7 @@ func UpdateBudget(old, new string, amount int) error {
 		return errors.New("'" + old + "'" + " category does not exist")
 	}
 
-	includedCategory, value, err := conversion.TotalAmountValues()
+	includedCategory, value, err := m.TotalAmountValues()
 	if err != nil {
 		return err
 	}
@@ -210,8 +209,8 @@ func UpdateBudget(old, new string, amount int) error {
 	return nil
 }
 
-func AddBudgetExpenditure(spent int, category string) error {
-	db, err := db.Connection()
+func (m MyBudgetDatabase) AddBudgetExpenditure(spent int, category string) error {
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}
@@ -231,7 +230,7 @@ func AddBudgetExpenditure(spent int, category string) error {
 	totalSpent := spent + savedSpent
 	remainingBalance := totalAmount - totalSpent
 
-	includedCategory, value, err := conversion.TotalAmountValues()
+	includedCategory, value, err := m.TotalAmountValues()
 	if err != nil {
 		return err
 	}
@@ -261,9 +260,9 @@ func AddBudgetExpenditure(spent int, category string) error {
 	return nil
 }
 
-func GetBudgetData(filepath, filename string) error {
+func (m MyBudgetDatabase) GetBudgetData(filepath, filename string) error {
 	bv := new(entities.BudgetVariables)
-	db, err := db.Connection()
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}

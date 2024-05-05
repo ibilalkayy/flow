@@ -1,6 +1,8 @@
 package budget_subhandler
 
 import (
+	"log"
+
 	usecases_alert "github.com/ibilalkayy/flow/usecases/app/alert"
 	"github.com/spf13/cobra"
 )
@@ -11,7 +13,11 @@ var MsgCmd = &cobra.Command{
 	Short: "The CLI message for the alert notifications",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		usecases_alert.CheckNotification(category)
+		var m usecases_alert.MyAlerts
+		err := m.CheckNotification(category)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 

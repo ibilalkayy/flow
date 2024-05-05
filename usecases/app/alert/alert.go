@@ -7,13 +7,9 @@ import (
 	"time"
 
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework_drivers/db/alert_db"
-	"github.com/ibilalkayy/flow/framework_drivers/db/budget_db"
-	usecases_budget "github.com/ibilalkayy/flow/usecases/app/budget"
-	usecases_spending "github.com/ibilalkayy/flow/usecases/app/spend"
 )
 
-func AlertSetup(av *entities.AlertVariables) error {
+func (m MyAlerts) AlertSetup(av *entities.AlertVariables) error {
 	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
 		validMethods := map[string]bool{"email": true, "cli": true}
 		validFrequencies := map[string]bool{"hourly": true, "daily": true, "weekly": true, "monthly": true}
@@ -26,13 +22,13 @@ func AlertSetup(av *entities.AlertVariables) error {
 			return errors.New("invalid alert frequency")
 		}
 
-		categoryAmount, err := usecases_budget.CategoryAmount(av.Category)
+		categoryAmount, err := m.CategoryAmount(av.Category)
 		if err != nil {
 			return err
 		}
 
 		if categoryAmount != 0 {
-			err := alert_db.CreateAlert(av)
+			err := m.CreateAlert(av)
 			if err != nil {
 				return err
 			}
@@ -47,8 +43,8 @@ func AlertSetup(av *entities.AlertVariables) error {
 	return nil
 }
 
-func SendAlert(category string) error {
-	value, err := alert_db.ViewAlert(category)
+func (m MyAlerts) SendAlert(category string) error {
+	value, err := m.ViewAlert(category)
 	if err != nil {
 		return err
 	}
@@ -89,13 +85,13 @@ func SendAlert(category string) error {
 	case "email":
 		switch frequency {
 		case "hourly":
-			usecases_spending.HourlyNotification(category)
+			m.HourlyNotification(category)
 		case "daily":
-			usecases_spending.DailyNotification(hour, minute, second, category)
+			m.DailyNotification(hour, minute, second, category)
 		case "weekly":
-			usecases_spending.WeeklyNotification(weekday, hour, minute, second, category)
+			m.WeeklyNotification(weekday, hour, minute, second, category)
 		case "monthly":
-			usecases_spending.MonthlyNotification(day, hour, minute, second, category)
+			m.MonthlyNotification(day, hour, minute, second, category)
 		default:
 			return errors.New("wrong or no frequency is selected")
 		}
@@ -105,8 +101,8 @@ func SendAlert(category string) error {
 	return nil
 }
 
-func CheckNotification(category string) error {
-	details, err := budget_db.ViewBudget(category)
+func (m MyAlerts) CheckNotification(category string) error {
+	details, err := m.ViewBudget(category)
 	if err != nil {
 		return err
 	}
@@ -119,7 +115,7 @@ func CheckNotification(category string) error {
 	}
 
 	if spentAmount > budgetAmount {
-		SendAlert(category)
+		m.SendAlert(category)
 	} else {
 		fmt.Printf("The '%s' category amount is not exceeded\n", category)
 	}

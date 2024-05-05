@@ -4,13 +4,12 @@ import (
 	"errors"
 
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework_drivers/db"
 )
 
-func CategoryAmount(category string) (int, error) {
+func (m MyBudget) CategoryAmount(category string) (int, error) {
 	bv := new(entities.BudgetVariables)
 
-	db, err := db.Connection()
+	db, err := m.Connection()
 	if err != nil {
 		return 0, err
 	}

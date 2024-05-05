@@ -13,7 +13,8 @@ var RemoveCmd = &cobra.Command{
 	Short: "Remove the alert values",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		err := alert_db.RemoveAlert(category)
+		var m alert_db.MyAlertDatabase
+		err := m.RemoveAlert(category)
 		if err != nil {
 			log.Fatal(err)
 		}

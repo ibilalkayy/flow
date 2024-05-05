@@ -3,7 +3,7 @@ package budget_subhandler
 import (
 	"log"
 
-	conversion "github.com/ibilalkayy/flow/common/utils"
+	conversion "github.com/ibilalkayy/flow/common"
 	"github.com/ibilalkayy/flow/entities"
 	"github.com/ibilalkayy/flow/framework_drivers/db/alert_db"
 	"github.com/spf13/cobra"
@@ -38,7 +38,8 @@ var UpdateCmd = &cobra.Command{
 			Minutes:   minuteInt,
 			Seconds:   secondInt,
 		}
-		err := alert_db.UpdateAlert(&av)
+		var m alert_db.MyAlertDatabase
+		err := m.UpdateAlert(&av)
 		if err != nil {
 			log.Fatal(err)
 		}

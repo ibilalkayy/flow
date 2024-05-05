@@ -1,6 +1,8 @@
 package budget_handler
 
 import (
+	"log"
+
 	"github.com/ibilalkayy/flow/framework_drivers/db/budget_db"
 	"github.com/spf13/cobra"
 )
@@ -12,7 +14,11 @@ var GetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		filepath, _ := cmd.Flags().GetString("filepath")
 		filename, _ := cmd.Flags().GetString("filename")
-		budget_db.GetBudgetData(filepath, filename)
+		var m budget_db.MyBudgetDatabase
+		err := m.GetBudgetData(filepath, filename)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 

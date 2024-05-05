@@ -8,21 +8,20 @@ import (
 	"strings"
 
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/usecases/middleware"
 	_ "github.com/lib/pq"
 )
 
-func Connection() (*sql.DB, error) {
+func (m MyConnect) Connection() (*sql.DB, error) {
 	var dv entities.DatabaseVariables
 
-	if middleware.LoadEnvVariable("DB_HOST") != "" {
+	if m.LoadEnvVariable("DB_HOST") != "" {
 		dv = entities.DatabaseVariables{
-			Host:     middleware.LoadEnvVariable("DB_HOST"),
-			Port:     middleware.LoadEnvVariable("DB_PORT"),
-			User:     middleware.LoadEnvVariable("DB_USER"),
-			Password: middleware.LoadEnvVariable("DB_PASSWORD"),
-			DBName:   middleware.LoadEnvVariable("DB_NAME"),
-			SSLMode:  middleware.LoadEnvVariable("SSL_MODE"),
+			Host:     m.LoadEnvVariable("DB_HOST"),
+			Port:     m.LoadEnvVariable("DB_PORT"),
+			User:     m.LoadEnvVariable("DB_USER"),
+			Password: m.LoadEnvVariable("DB_PASSWORD"),
+			DBName:   m.LoadEnvVariable("DB_NAME"),
+			SSLMode:  m.LoadEnvVariable("SSL_MODE"),
 		}
 	} else {
 		return nil, errors.New("invalid host provided")
@@ -41,8 +40,8 @@ func Connection() (*sql.DB, error) {
 	return db, nil
 }
 
-func Table(filename string, number int) (*sql.DB, error) {
-	db, err := Connection()
+func (m MyConnect) Table(filename string, number int) (*sql.DB, error) {
+	db, err := m.Connection()
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +64,8 @@ func Table(filename string, number int) (*sql.DB, error) {
 	return db, nil
 }
 
-func TableExists(tableName string) (bool, error) {
-	db, err := Connection()
+func (m MyConnect) TableExists(tableName string) (bool, error) {
+	db, err := m.Connection()
 	if err != nil {
 		return false, err
 	}

@@ -6,12 +6,11 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework_drivers/db"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func InsertTotalAmount(tv *entities.TotalAmountVariables) error {
-	data, err := db.Table("framework_drivers/db/migrations/003_create_total_amount_table.sql", 0)
+func (m MyTotalDatabase) InsertTotalAmount(tv *entities.TotalAmountVariables) error {
+	data, err := m.Table("framework_drivers/db/migrations/003_create_total_amount_table.sql", 0)
 	if err != nil {
 		return err
 	}
@@ -36,10 +35,10 @@ func InsertTotalAmount(tv *entities.TotalAmountVariables) error {
 	return nil
 }
 
-func ViewTotalAmount() ([5]interface{}, error) {
+func (m MyTotalDatabase) ViewTotalAmount() ([5]interface{}, error) {
 	tv := new(entities.TotalAmountVariables)
 
-	db, err := db.Connection()
+	db, err := m.Connection()
 	if err != nil {
 		return [5]interface{}{}, err
 	}
@@ -70,8 +69,8 @@ func ViewTotalAmount() ([5]interface{}, error) {
 	return details, nil
 }
 
-func RemoveTotalAmount(category string) error {
-	db, err := db.Connection()
+func (m MyTotalDatabase) RemoveTotalAmount(category string) error {
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}
@@ -118,11 +117,11 @@ func RemoveTotalAmount(category string) error {
 	return nil
 }
 
-func UpdateTotalAmount(tv *entities.TotalAmountVariables) error {
+func (m MyTotalDatabase) UpdateTotalAmount(tv *entities.TotalAmountVariables) error {
 	var query string
 	var params []interface{}
 
-	db, err := db.Connection()
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}
@@ -147,8 +146,8 @@ func UpdateTotalAmount(tv *entities.TotalAmountVariables) error {
 	return nil
 }
 
-func UpdateStatus(tv *entities.TotalAmountVariables) error {
-	db, err := db.Connection()
+func (m MyTotalDatabase) UpdateStatus(tv *entities.TotalAmountVariables) error {
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}
@@ -171,8 +170,8 @@ func UpdateStatus(tv *entities.TotalAmountVariables) error {
 	return nil
 }
 
-func CalculateRemaining(category string) error {
-	db, err := db.Connection()
+func (m MyTotalDatabase) CalculateRemaining(category string) error {
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}

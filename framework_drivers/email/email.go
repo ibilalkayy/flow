@@ -7,17 +7,15 @@ import (
 	"text/template"
 
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework_drivers/db/budget_db"
-	"github.com/ibilalkayy/flow/usecases/middleware"
 	"gopkg.in/gomail.v2"
 )
 
-func SendAlertEmail(category string) error {
-	myEmail := middleware.LoadEnvVariable("APP_EMAIL")
-	myPassword := middleware.LoadEnvVariable("APP_PASSWORD")
-	myUsername := middleware.LoadEnvVariable("USERNAME")
+func (m MyEmail) SendAlertEmail(category string) error {
+	myEmail := m.LoadEnvVariable("APP_EMAIL")
+	myPassword := m.LoadEnvVariable("APP_PASSWORD")
+	myUsername := m.LoadEnvVariable("USERNAME")
 
-	details, err := budget_db.ViewBudget(category)
+	details, err := m.ViewBudget(category)
 	if err != nil {
 		return err
 	}

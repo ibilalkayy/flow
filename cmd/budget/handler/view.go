@@ -14,7 +14,8 @@ var ViewCmd = &cobra.Command{
 	Short: "View the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
-		details, err := budget_db.ViewBudget(category)
+		var m budget_db.MyBudgetDatabase
+		details, err := m.ViewBudget(category)
 		if err != nil {
 			log.Fatal(err)
 		}

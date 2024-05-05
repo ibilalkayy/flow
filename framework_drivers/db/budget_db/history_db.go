@@ -5,14 +5,12 @@ import (
 	"errors"
 	"fmt"
 
-	conversion "github.com/ibilalkayy/flow/common/utils"
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework_drivers/db"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func InsertHistory(hv *entities.HistoryVariables) error {
-	data, err := db.Table("framework_drivers/db/migrations/001_create_budget_table.sql", 1)
+func (m MyHistoryDatabase) InsertHistory(hv *entities.HistoryVariables) error {
+	data, err := m.Table("framework_drivers/db/migrations/001_create_budget_table.sql", 1)
 	if err != nil {
 		return err
 	}
@@ -24,7 +22,7 @@ func InsertHistory(hv *entities.HistoryVariables) error {
 	}
 	defer insert.Close()
 
-	includedCategory, value, err := conversion.TotalAmountValues()
+	includedCategory, value, err := m.TotalAmountValues()
 	if err != nil {
 		return err
 	}
@@ -49,10 +47,10 @@ func InsertHistory(hv *entities.HistoryVariables) error {
 	return nil
 }
 
-func ViewHistory(category string) ([2]interface{}, error) {
+func (m MyHistoryDatabase) ViewHistory(category string) ([2]interface{}, error) {
 	hv := new(entities.HistoryVariables)
 
-	db, err := db.Connection()
+	db, err := m.Connection()
 	if err != nil {
 		return [2]interface{}{}, err
 	}
@@ -91,14 +89,14 @@ func ViewHistory(category string) ([2]interface{}, error) {
 	return details, nil
 }
 
-func RemoveHistory(category string) error {
-	db, err := db.Connection()
+func (m MyHistoryDatabase) RemoveHistory(category string) error {
+	db, err := m.Connection()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	data, err := ViewHistory(category)
+	data, err := m.ViewHistory(category)
 	if err != nil {
 		return err
 	}
