@@ -49,6 +49,9 @@ func (m MySpending) SpendMoney(category string, spending_amount int) error {
 		BudgetCategoryRemainingAmount: budget_category_remaining_amount,
 	}
 
+	fmt.Println(included_categories_in_total_amount[1][0])
+	fmt.Println(included_categories_in_total_amount[0][0])
+
 	err = m.ValidBudgetValues(&sv)
 	if err != nil {
 		return err
@@ -81,8 +84,8 @@ func (m MySpending) ValidBudgetValues(sv *entities.SpendingVariables) error {
 	}
 
 	foundCategory := false
-	for _, list := range sv.IncludedCatogeries {
-		if sv.Category == sv.CategoryName && sv.Category == list[0] {
+	for i := 0; i < len(sv.IncludedCatogeries); i++ {
+		if sv.Category == sv.CategoryName && sv.Category == sv.IncludedCatogeries[i][0] {
 			foundCategory = true
 			budget_category_total_spending_amount := sv.SpendingAmount + sv.BudgetCategorySpentAmount
 

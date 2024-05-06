@@ -67,7 +67,7 @@
     │   │   │   ├── 002_create_alert_table.sql
     │   │   │   └── 003_create_total_amount_table.sql
     │   │   └── total_amount_db
-    │   │       ├── total_amount_category.go
+    │   │       ├── total_amount_categories.go
     │   │       └── total_amount_db.go
     │   ├── email
     │   │   ├── email.go

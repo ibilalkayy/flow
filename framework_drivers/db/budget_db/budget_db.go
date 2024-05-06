@@ -34,16 +34,17 @@ func (m MyBudgetDatabase) CreateBudget(bv *entities.BudgetVariables) error {
 		return errors.New("unable to convert to int")
 	}
 
-	if len(bv.Category) != 0 && len(includedCategory) != 0 && totalAmount != 0 {
-		_, err = insert.Exec(bv.Category, bv.Amount, 0, 0)
-		if err != nil {
-			return err
+	for i := 0; i < len(includedCategory); i++ {
+		if len(bv.Category) != 0 && len(includedCategory) != 0 && includedCategory[i][0] == bv.Category && totalAmount != 0 {
+			_, err = insert.Exec(bv.Category, bv.Amount, 0, 0)
+			if err != nil {
+				return err
+			}
+			fmt.Println("Budget data is successfully inserted!")
+			return nil
 		}
-		fmt.Println("Budget data is successfully inserted!")
-	} else {
-		return errors.New("enter the category or set the total amount. see 'flow total-amount -h'")
 	}
-	return nil
+	return errors.New("enter the category in the total amount. see 'flow total-amount -h'")
 }
 
 func (m MyBudgetDatabase) ViewBudget(category string) ([5]interface{}, error) {
