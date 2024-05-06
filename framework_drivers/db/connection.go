@@ -71,6 +71,7 @@ func (m MyConnect) TableExists(tableName string) (bool, error) {
 	}
 
 	var exists bool
+	tableName = strings.ToLower(tableName)
 	query := `SELECT EXISTS (
 		SELECT FROM information_schema.tables 
 		WHERE table_schema = 'public' 

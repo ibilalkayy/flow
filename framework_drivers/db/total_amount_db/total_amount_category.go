@@ -14,7 +14,7 @@ func (m MyTotalDatabase) InsertTotalAmountCategory(tv *entities.TotalAmountVaria
 		return err
 	}
 
-	query := "INSERT INTO TotalAmountCategory(included_categories, labels) VALUES($1, $2)"
+	query := "INSERT INTO TotalAmountCategories(included_categories, labels) VALUES($1, $2)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func (m MyTotalDatabase) ViewTotalAmountCategory() (string, [][2]string, error) 
 	tw.AppendHeader(table.Row{"Included Categories", "Labels"})
 
 	var rows *sql.Rows
-	query := "SELECT included_categories, labels FROM TotalAmountCategory"
+	query := "SELECT included_categories, labels FROM TotalAmountCategories"
 	rows, err = db.Query(query)
 	if err != nil {
 		return "", [][2]string{}, err

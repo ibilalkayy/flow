@@ -80,11 +80,11 @@ func (m MyTotalDatabase) RemoveTotalAmount(category string) error {
 	var args []interface{}
 
 	if len(category) != 0 {
-		query = "DELETE FROM TotalAmountCategory WHERE included_categories=$1"
+		query = "DELETE FROM TotalAmountCategories WHERE included_categories=$1"
 		args = append(args, category)
 		fmt.Printf("'%s' category is ", category)
 	} else {
-		query = "DELETE FROM TotalAmountCategory"
+		query = "DELETE FROM TotalAmountCategories"
 		fmt.Print("Total amount data is ")
 	}
 
@@ -129,10 +129,10 @@ func (m MyTotalDatabase) UpdateTotalAmount(tv *entities.TotalAmountVariables) er
 		query = "UPDATE TotalAmount SET total_amount=$1"
 		params = []interface{}{tv.TotalAmount}
 	} else if len(tv.Included) != 0 && len(tv.NewCategory) != 0 {
-		query = "UPDATE TotalAmountCategory SET included_categories=$1 WHERE included_categories=$2"
+		query = "UPDATE TotalAmountCategories SET included_categories=$1 WHERE included_categories=$2"
 		params = []interface{}{tv.NewCategory, tv.Included}
 	} else if len(tv.Label) != 0 && len(tv.Included) != 0 {
-		query = "UPDATE TotalAmountCategory SET labels=$1 WHERE included_categories=$2"
+		query = "UPDATE TotalAmountCategories SET labels=$1 WHERE included_categories=$2"
 		params = []interface{}{tv.Label, tv.Included}
 	} else {
 		return errors.New("write the present category also to update the values")

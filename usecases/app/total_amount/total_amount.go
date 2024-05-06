@@ -20,12 +20,12 @@ func (m MyTotalAmount) SetTotalAmount(totalAmount int, include_category, label s
 		Label:    label,
 	}
 
-	amountExists, err := m.TableExists("totalamount")
+	amountExists, err := m.TableExists("TotalAmount")
 	if err != nil {
 		return err
 	}
 
-	categoryExists, err := m.TableExists("totalamountcategory")
+	categoryExists, err := m.TableExists("TotalAmountCategories")
 	if err != nil {
 		return err
 	}
