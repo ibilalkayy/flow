@@ -39,6 +39,7 @@ type TotalAmountDatabase interface {
 
 type BudgetDatabase interface {
 	CreateBudget(bv *entities.BudgetVariables) error
+	TakeBudgetAmounts() ([]int, error)
 	ViewBudget(category string) ([5]interface{}, error)
 	RemoveBudget(category string) error
 	UpdateBudget(old, new string, amount int) error

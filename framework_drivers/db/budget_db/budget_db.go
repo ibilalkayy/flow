@@ -29,13 +29,23 @@ func (m MyBudgetDatabase) CreateBudget(bv *entities.BudgetVariables) error {
 		return err
 	}
 
-	totalAmount, ok := value[0].(int)
+	fullTotalAmount, ok := value[0].(int)
 	if !ok {
 		return errors.New("unable to convert to int")
 	}
 
+	budgetAmount, err := m.TakeBudgetAmounts()
+	if err != nil {
+		return nil
+	}
+
+	budgetTotalAmount := 0
+	for _, amount := range budgetAmount {
+		budgetTotalAmount += amount
+	}
+
 	for i := 0; i < len(includedCategory); i++ {
-		if len(bv.Category) != 0 && len(includedCategory) != 0 && includedCategory[i][0] == bv.Category && totalAmount != 0 {
+		if len(bv.Category) != 0 && len(includedCategory) != 0 && includedCategory[i][0] == bv.Category && fullTotalAmount != 0 && budgetTotalAmount+bv.Amount <= fullTotalAmount {
 			_, err = insert.Exec(bv.Category, bv.Amount, 0, 0)
 			if err != nil {
 				return err
@@ -44,7 +54,35 @@ func (m MyBudgetDatabase) CreateBudget(bv *entities.BudgetVariables) error {
 			return nil
 		}
 	}
-	return errors.New("enter the category in the total amount. see 'flow total-amount -h'")
+	return errors.New("enter the category in the total amount or set the budget below or equal to total amount. see 'flow total-amount -h'")
+}
+
+func (m MyBudgetDatabase) TakeBudgetAmounts() ([]int, error) {
+	bv := new(entities.BudgetVariables)
+	var amounts []int
+
+	db, err := m.Connection()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	query := "SELECT amounts FROM Budget"
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&bv.Amount)
+		if err != nil {
+			return nil, err
+		}
+		amounts = append(amounts, bv.Amount)
+	}
+
+	return amounts, nil
 }
 
 func (m MyBudgetDatabase) ViewBudget(category string) ([5]interface{}, error) {

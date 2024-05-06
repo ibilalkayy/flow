@@ -49,9 +49,6 @@ func (m MySpending) SpendMoney(category string, spending_amount int) error {
 		BudgetCategoryRemainingAmount: budget_category_remaining_amount,
 	}
 
-	fmt.Println(included_categories_in_total_amount[1][0])
-	fmt.Println(included_categories_in_total_amount[0][0])
-
 	err = m.ValidBudgetValues(&sv)
 	if err != nil {
 		return err
