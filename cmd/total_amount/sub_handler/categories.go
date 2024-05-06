@@ -15,7 +15,7 @@ var CategoriesCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var m total_amount_db.MyTotalDatabase
 
-		categories, _, err := m.ViewTotalAmountCategory()
+		categories, _, err := m.ViewTotalAmountCategories()
 		if err != nil {
 			log.Fatal(err)
 		}

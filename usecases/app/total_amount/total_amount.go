@@ -45,7 +45,7 @@ func (m MyTotalAmount) SetTotalAmount(totalAmount int, include_category, label s
 }
 
 func (m MyTotalAmount) HandleExistingTables(totalAmount int, tav, tacv entities.TotalAmountVariables) error {
-	_, values, err := m.ViewTotalAmountCategory()
+	_, values, err := m.ViewTotalAmountCategories()
 	if err != nil {
 		return err
 	}

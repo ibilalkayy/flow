@@ -33,7 +33,7 @@ func (m MyTotalDatabase) InsertTotalAmountCategory(tv *entities.TotalAmountVaria
 	return nil
 }
 
-func (m MyTotalDatabase) ViewTotalAmountCategory() (string, [][2]string, error) {
+func (m MyTotalDatabase) ViewTotalAmountCategories() (string, [][2]string, error) {
 	tv := new(entities.TotalAmountVariables)
 	var values [][2]string
 

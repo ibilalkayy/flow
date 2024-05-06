@@ -31,7 +31,7 @@ type TotalAmountDatabase interface {
 
 	// Categories
 	InsertTotalAmountCategory(tv *entities.TotalAmountVariables) error
-	ViewTotalAmountCategory() (string, [][2]string, error)
+	ViewTotalAmountCategories() (string, [][2]string, error)
 
 	// values
 	TotalAmountValues() ([][2]string, [3]interface{}, error)

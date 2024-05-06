@@ -8,7 +8,7 @@ func (m MyTotalDatabase) TotalAmountValues() ([][2]string, [3]interface{}, error
 		return [][2]string{}, [3]interface{}{}, err
 	}
 
-	_, includedCategory, err := m.ViewTotalAmountCategory()
+	_, includedCategory, err := m.ViewTotalAmountCategories()
 	if err != nil {
 		return [][2]string{}, [3]interface{}{}, err
 	}
