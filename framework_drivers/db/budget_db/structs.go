@@ -10,8 +10,8 @@ import (
 type MyBudgetDatabase struct {
 	interface_adapters.BudgetDatabase
 	total_amount_db.MyTotalDatabase
-	db.MyConnect
 	conversion.MyConversion
+	db.MyConnect
 }
 
 type MyHistoryDatabase struct {

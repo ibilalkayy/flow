@@ -76,47 +76,74 @@ func (m MyTotalDatabase) RemoveTotalAmount(category string) error {
 	}
 	defer db.Close()
 
-	var query string
-	var args []interface{}
-
 	if len(category) != 0 {
-		query = "DELETE FROM TotalAmountCategories WHERE included_categories=$1"
-		args = append(args, category)
-		fmt.Printf("'%s' category is ", category)
+		query := "DELETE FROM TotalAmountCategories WHERE included_categories=$1"
+		removeCategory, err := db.Prepare(query)
+		if err != nil {
+			return err
+		}
+		defer removeCategory.Close()
+
+		_, err = removeCategory.Exec(category)
+		if err != nil {
+			return err
+		}
+
+		query = "DELETE FROM Budget WHERE categories=$1"
+		removeBudgetCategory, err := db.Prepare(query)
+		if err != nil {
+			return err
+		}
+		defer removeBudgetCategory.Close()
+
+		_, err = removeBudgetCategory.Exec(category)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("'%s' category removed successfully from Total Amount and Budget!\n", category)
 	} else {
-		query = "DELETE FROM TotalAmountCategories"
-		fmt.Print("Total amount data is ")
-	}
+		query := "DELETE FROM TotalAmountCategories"
+		removeTotalAmountCategories, err := db.Prepare(query)
+		if err != nil {
+			return err
+		}
+		defer removeTotalAmountCategories.Close()
 
-	removeCategory, err := db.Prepare(query)
-	if err != nil {
-		return err
-	}
-	defer removeCategory.Close()
+		_, err = removeTotalAmountCategories.Exec()
+		if err != nil {
+			return err
+		}
 
-	_, err = removeCategory.Exec(args...)
-	if err != nil {
-		return err
+		query = "DELETE FROM Budget"
+		removeBudget, err := db.Prepare(query)
+		if err != nil {
+			return err
+		}
+		defer removeBudget.Close()
+
+		_, err = removeBudget.Exec()
+		if err != nil {
+			return err
+		}
 	}
-	fmt.Println("successfully removed!")
 
 	if len(category) == 0 {
-		query = "DELETE FROM TotalAmount"
-		removeTotal, err := db.Prepare(query)
+		query := "DELETE FROM TotalAmount"
+		removeTotalAmount, err := db.Prepare(query)
 		if err != nil {
 			return err
 		}
-		defer removeTotal.Close()
+		defer removeTotalAmount.Close()
 
-		_, err = removeTotal.Exec()
+		_, err = removeTotalAmount.Exec()
 		if err != nil {
 			return err
 		}
+		fmt.Println("All entries removed successfully from TotalAmount and Budget!")
 	}
 
 	return nil
 }
-
 func (m MyTotalDatabase) UpdateTotalAmount(tv *entities.TotalAmountVariables) error {
 	var query string
 	var params []interface{}
