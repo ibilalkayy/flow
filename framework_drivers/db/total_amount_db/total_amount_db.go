@@ -152,9 +152,37 @@ func (m MyTotalDatabase) UpdateTotalAmount(tv *entities.TotalAmountVariables) er
 	if err != nil {
 		return err
 	}
+
+	details, err := m.ViewTotalAmount()
+	if err != nil {
+		return err
+	}
+
+	totalAmountInDB, ok1 := details[1].(int)
+	spentAmountInDB, ok2 := details[2].(int)
+	remainingAmountInDB, ok3 := details[3].(int)
+	if !ok1 || !ok2 || !ok3 {
+		return errors.New("unable to convert amount to int")
+	}
+
 	if tv.TotalAmount != 0 {
-		query = "UPDATE TotalAmount SET total_amount=$1"
-		params = []interface{}{tv.TotalAmount}
+		if tv.TotalAmount > totalAmountInDB {
+			// Update Remaining Amount if Total Amount increases
+			updatedRemaining := tv.TotalAmount - totalAmountInDB
+			remainingAmountInDB += updatedRemaining
+		} else if tv.TotalAmount < totalAmountInDB {
+			// Update Spent Amount and Remaining Amount if Total Amount decreases
+			if spentAmountInDB <= tv.TotalAmount {
+				remainingAmountInDB = tv.TotalAmount - spentAmountInDB
+			} else {
+				spentAmountInDB = tv.TotalAmount
+				remainingAmountInDB = 0
+			}
+		} else {
+			return errors.New("this amount is already present. enter a different amount")
+		}
+		query = "UPDATE TotalAmount SET total_amount = $1, spent_amount = $2, remaining_amount = $3"
+		params = []interface{}{tv.TotalAmount, spentAmountInDB, remainingAmountInDB}
 	} else if len(tv.Included) != 0 && len(tv.NewCategory) != 0 {
 		query = "UPDATE TotalAmountCategories SET included_categories=$1 WHERE included_categories=$2"
 		params = []interface{}{tv.NewCategory, tv.Included}
