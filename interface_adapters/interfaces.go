@@ -48,7 +48,7 @@ type BudgetDatabase interface {
 }
 
 type Budget interface {
-	CategoryAmount(category string) (int, error)
+	CategoryAmount(category string) (string, int, error)
 }
 
 type HistoryDatabase interface {

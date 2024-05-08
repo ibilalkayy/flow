@@ -10,7 +10,7 @@ import (
 )
 
 func (m MyAlerts) AlertSetup(av *entities.AlertVariables) error {
-	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
+	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 && av.Days != 0 && len(av.Weekdays) != 0 && av.Hours != 0 && av.Minutes != 0 && (av.Seconds >= 0 && av.Seconds <= 60) {
 		validMethods := map[string]bool{"email": true, "cli": true}
 		validFrequencies := map[string]bool{"hourly": true, "daily": true, "weekly": true, "monthly": true}
 
@@ -22,23 +22,22 @@ func (m MyAlerts) AlertSetup(av *entities.AlertVariables) error {
 			return errors.New("invalid alert frequency")
 		}
 
-		categoryAmount, err := m.CategoryAmount(av.Category)
+		category, categoryAmount, err := m.CategoryAmount(av.Category)
 		if err != nil {
 			return err
 		}
 
-		if categoryAmount != 0 {
+		if len(category) != 0 && categoryAmount != 0 {
 			err := m.CreateAlert(av)
 			if err != nil {
 				return err
 			}
 			fmt.Printf("Alert is set for the '%s' category\n", av.Category)
 		} else {
-			return errors.New("category amount is not present")
+			return errors.New("budget data is not found. first set the budget")
 		}
 	} else {
-		return errors.New("enter all the flags properly")
-		// fmt.Printf("You can't spend more than your '%s' category budget\n", av.Category)
+		return errors.New("enter all the required flags properly")
 	}
 	return nil
 }
