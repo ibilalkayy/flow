@@ -5,11 +5,16 @@ import (
 	"errors"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/handler"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func (m MyTotalDatabase) InsertTotalAmountCategory(tv *entities.TotalAmountVariables) error {
-	data, err := m.Table("framework_drivers/db/migrations/003_create_total_amount_table.sql", 1)
+type MyTotalAmountDB struct {
+	*handler.Handler
+}
+
+func (h MyTotalAmountDB) InsertTotalAmountCategory(tv *entities.TotalAmountVariables) error {
+	data, err := h.Deps.Connect.Table("framework/db/migrations/003_create_total_amount_table.sql", 1)
 	if err != nil {
 		return err
 	}
@@ -33,11 +38,11 @@ func (m MyTotalDatabase) InsertTotalAmountCategory(tv *entities.TotalAmountVaria
 	return nil
 }
 
-func (m MyTotalDatabase) ViewTotalAmountCategories() (string, [][2]string, error) {
+func (h MyTotalAmountDB) ViewTotalAmountCategories() (string, [][2]string, error) {
 	tv := new(entities.TotalAmountVariables)
 	var values [][2]string
 
-	db, err := m.Connection()
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return "", [][2]string{}, err
 	}

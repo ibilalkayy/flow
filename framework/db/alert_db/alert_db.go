@@ -8,11 +8,16 @@ import (
 	"strings"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/handler"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func (m MyAlertDatabase) CreateAlert(av *entities.AlertVariables) error {
-	data, err := m.Table("framework_drivers/db/migrations/002_create_alert_table.sql", 0)
+type MyAlertDB struct {
+	*handler.Handler
+}
+
+func (h MyAlertDB) CreateAlert(av *entities.AlertVariables) error {
+	data, err := h.Deps.Connect.Table("framework/db/migrations/002_create_alert_table.sql", 0)
 	if err != nil {
 		return err
 	}
@@ -35,10 +40,10 @@ func (m MyAlertDatabase) CreateAlert(av *entities.AlertVariables) error {
 	return nil
 }
 
-func (m MyAlertDatabase) ViewAlert(category string) ([9]interface{}, error) {
+func (h MyAlertDB) ViewAlert(category string) ([9]interface{}, error) {
 	av := new(entities.AlertVariables)
 
-	db, err := m.Connection()
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return [9]interface{}{}, err
 	}
@@ -77,14 +82,14 @@ func (m MyAlertDatabase) ViewAlert(category string) ([9]interface{}, error) {
 	return values, nil
 }
 
-func (m MyAlertDatabase) RemoveAlert(category string) error {
-	db, err := m.Connection()
+func (h MyAlertDB) RemoveAlert(category string) error {
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	data, err := m.ViewAlert(category)
+	data, err := h.Deps.AlertDB.ViewAlert(category)
 	if err != nil {
 		return err
 	}
@@ -121,7 +126,7 @@ func (m MyAlertDatabase) RemoveAlert(category string) error {
 		fmt.Printf("Alert values of '%s' category is successfully removed", category)
 	} else {
 		if len(foundCategory) != 0 {
-			fmt.Printf("Alert data is successfully deleted!")
+			fmt.Println("Alert data is successfully deleted!")
 		} else {
 			return errors.New("no data is found")
 		}
@@ -130,8 +135,8 @@ func (m MyAlertDatabase) RemoveAlert(category string) error {
 	return nil
 }
 
-func (m MyAlertDatabase) UpdateAlert(av *entities.AlertVariables) error {
-	db, err := m.Connection()
+func (h MyAlertDB) UpdateAlert(av *entities.AlertVariables) error {
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return err
 	}

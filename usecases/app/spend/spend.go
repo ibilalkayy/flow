@@ -5,20 +5,25 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/handler"
 )
 
-func (m MySpending) SpendMoney(category string, spending_amount int) error {
-	values, err := m.ViewBudget(category)
+type MySpending struct {
+	*handler.Handler
+}
+
+func (h MySpending) SpendMoney(category string, spending_amount int) error {
+	values, err := h.Deps.ManageBudget.ViewBudget(category)
 	if err != nil {
 		return err
 	}
 
-	details, err := ExtractBudgetValues(values)
+	details, err := extractBudgetValues(values)
 	if err != nil {
 		return err
 	}
 
-	included_categories_in_total_amount, value, err := m.TotalAmountValues()
+	included_categories_in_total_amount, value, err := h.Deps.TotalAmount.TotalAmountValues()
 	if err != nil {
 		return err
 	}
@@ -49,7 +54,7 @@ func (m MySpending) SpendMoney(category string, spending_amount int) error {
 		BudgetCategoryRemainingAmount: budget_category_remaining_amount,
 	}
 
-	err = m.ValidBudgetValues(&sv)
+	err = h.Deps.SpendAmount.ValidBudgetValues(&sv)
 	if err != nil {
 		return err
 	}
@@ -57,7 +62,7 @@ func (m MySpending) SpendMoney(category string, spending_amount int) error {
 	return nil
 }
 
-func ExtractBudgetValues(values [5]interface{}) ([4]interface{}, error) {
+func extractBudgetValues(values [5]interface{}) ([4]interface{}, error) {
 	categoryName, ok1 := values[1].(string)
 	budget_category_amount, ok2 := values[2].(int)
 	budget_category_spent_amount, ok3 := values[3].(int)
@@ -71,7 +76,7 @@ func ExtractBudgetValues(values [5]interface{}) ([4]interface{}, error) {
 	return details, nil
 }
 
-func (m MySpending) ValidBudgetValues(sv *entities.SpendingVariables) error {
+func (h MySpending) ValidBudgetValues(sv *entities.SpendingVariables) error {
 	if sv.TotalAmountStatus != "active" {
 		return errors.New("make your total amount status active. see 'flow total-amount -h'")
 	}
@@ -87,19 +92,19 @@ func (m MySpending) ValidBudgetValues(sv *entities.SpendingVariables) error {
 			budget_category_total_spending_amount := sv.SpendingAmount + sv.BudgetCategorySpentAmount
 
 			if budget_category_total_spending_amount <= sv.BudgetCategoryAmount {
-				err := m.UpdateBudgetAndTotalAmount(sv)
+				err := h.Deps.SpendAmount.UpdateBudgetAndTotalAmount(sv)
 				if err != nil {
 					return err
 				}
 				break
 			} else if sv.SpendingAmount <= sv.BudgetCategoryRemainingAmount {
-				err := m.UpdateBudgetAndTotalAmount(sv)
+				err := h.Deps.SpendAmount.UpdateBudgetAndTotalAmount(sv)
 				if err != nil {
 					return err
 				}
 				break
 			} else if sv.SpendingAmount > sv.BudgetCategoryRemainingAmount && sv.SpendingAmount <= sv.TotalAmount && sv.BudgetCategorySpentAmount <= sv.TotalAmount && budget_category_total_spending_amount <= sv.TotalAmount {
-				err := m.HandleExceededBudget(sv)
+				err := h.Deps.SpendAmount.HandleExceededBudget(sv)
 				if err != nil {
 					return err
 				}
@@ -116,17 +121,17 @@ func (m MySpending) ValidBudgetValues(sv *entities.SpendingVariables) error {
 	return nil
 }
 
-func (m MySpending) UpdateBudgetAndTotalAmount(sv *entities.SpendingVariables) error {
-	err := m.AddBudgetExpenditure(sv.SpendingAmount, sv.Category)
+func (h MySpending) UpdateBudgetAndTotalAmount(sv *entities.SpendingVariables) error {
+	err := h.Deps.ManageBudget.AddBudgetExpenditure(sv.SpendingAmount, sv.Category)
 	if err != nil {
 		return err
 	}
-	err = m.CalculateRemaining(sv.Category)
+	err = h.Deps.TotalAmount.CalculateRemaining(sv.Category)
 	if err != nil {
 		return err
 	}
 
-	err = m.StoreHistory(sv.Category, sv.SpendingAmount)
+	err = h.Deps.SpendAmount.StoreHistory(sv.Category, sv.SpendingAmount)
 	if err != nil {
 		return err
 	}
@@ -135,7 +140,7 @@ func (m MySpending) UpdateBudgetAndTotalAmount(sv *entities.SpendingVariables) e
 	return nil
 }
 
-func (m MySpending) HandleExceededBudget(sv *entities.SpendingVariables) error {
+func (h MySpending) HandleExceededBudget(sv *entities.SpendingVariables) error {
 	var answer string
 	fmt.Printf("You have spent %d and your remaining balance is %d but your budget is %d\n", sv.BudgetCategorySpentAmount, sv.BudgetCategoryRemainingAmount, sv.BudgetCategoryAmount)
 	fmt.Printf("Do you still want to spend? [yes/no]: ")
@@ -143,8 +148,8 @@ func (m MySpending) HandleExceededBudget(sv *entities.SpendingVariables) error {
 
 	switch answer {
 	case "yes", "y":
-		m.SendAlertEmail(sv.Category)
-		err := m.UpdateBudgetAndTotalAmount(sv)
+		h.Deps.HandleEmail.SendAlertEmail(sv.Category)
+		err := h.Deps.SpendAmount.UpdateBudgetAndTotalAmount(sv)
 		if err != nil {
 			return err
 		}

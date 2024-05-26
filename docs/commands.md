@@ -9,7 +9,7 @@ Flow helps users manage their finances and achieve greater financial stability b
 - **Track Spending**: Easily track their spending across different categories.
 - **Set Budgets**: Create budgets for various spending categories to control expenses.
 - **Receive Alerts**: Get notified when they exceed their budget for a specific category.
-- **View and Adjust Budgets**: View, adjust, and remove budget allocations as needed.
+- **View, Update and Remove Budgets**: View, update, and remove budget allocations as needed.
 - **Export Data**: Export budget data in CSV format for further analysis.
 
 The Flow CLI provides intuitive commands and options to perform these tasks efficiently, making it easier for users to manage their finances effectively.
@@ -51,12 +51,12 @@ Sure, let's break down each command along with its structure for better understa
   - `-n, --username string`       Write your username
 
 ### 3. `flow budget`
-- **Description**: Allows users to manage their budgetary allocations for different spending categories. Users can create, view, adjust, remove, and get budget details.
+- **Description**: Allows users to manage their budgetary allocations for different spending categories. Users can create, view, update, remove, and get budget details.
 - **Usage**: 
   - `flow budget [flags]`
   - `flow budget [command]`
 - **Available Commands**:
-  - `adjust`: Adjust the budget details
+  - `update`: Update the budget details
   - `alert`: Get notification once you pass the budget
   - `create`: Create the budget of different categories
   - `get`: Get the budget data in CSV
@@ -65,13 +65,13 @@ Sure, let's break down each command along with its structure for better understa
 - **Flags**:
   - `-h, --help`: Display help information
 
-### 4. `flow budget adjust`
-- **Description**: Adjusts the budget details such as changing the amount or category name.
-- **Usage**: `flow budget adjust [flags]`
+### 4. `flow budget update`
+- **Description**: Updates the budget details such as changing the amount or category name.
+- **Usage**: `flow budget update [flags]`
 - **Flags**:
-  - `-a, --amount string`: New amount of the category to adjust
+  - `-a, --amount string`: New amount of the category to update
   - `-n, --newcategory string`: New category name to allocate
-  - `-o, --oldcategory string`: Old category name to adjust
+  - `-o, --oldcategory string`: Old category name to update
 
 ### 5. `flow budget alert`
 - **Description**: Command for the alert notification.
@@ -172,7 +172,7 @@ Sure, let's break down each command along with its structure for better understa
 - **Usage**: `flow total-amount add [flags]`
 - **Flags**:
   - `-a, --amount string`: Write the total amount that you want to set
-  - `-i, --include string`: Specify a category to include in the total amount
+  - `-c, --category string`: Specify a category to include in the total amount
   - `-l, --label string`: Provide a label for setting up your total amount
   - `-h, --help`: help for set
 

@@ -4,12 +4,17 @@ import (
 	"errors"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/handler"
 )
 
-func (m MyBudget) CategoryAmount(category string) (string, int, error) {
+type MyBudget struct {
+	*handler.Handler
+}
+
+func (h MyBudget) CategoryAmount(category string) (string, int, error) {
 	bv := new(entities.BudgetVariables)
 
-	db, err := m.Connection()
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return "", 0, err
 	}
@@ -22,7 +27,7 @@ func (m MyBudget) CategoryAmount(category string) (string, int, error) {
 	}
 
 	if count == 0 {
-		return "", 0, errors.New("category not found in the budget")
+		return "", 0, errors.New("first create a budget. go to 'flow budget -h' for help")
 	}
 
 	query := "SELECT categories, amounts FROM Budget WHERE categories=$1"

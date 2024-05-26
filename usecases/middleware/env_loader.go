@@ -4,10 +4,15 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ibilalkayy/flow/handler"
 	"github.com/spf13/viper"
 )
 
-func (LoadEnv) LoadEnvVariable(key string) string {
+type MyEnv struct {
+	*handler.Handler
+}
+
+func (MyEnv) LoadEnvVariable(key string) string {
 	viper.SetConfigFile(".env")
 	err := viper.ReadInConfig()
 	if err != nil {

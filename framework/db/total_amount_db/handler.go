@@ -1,14 +1,16 @@
 package total_amount_db
 
-import "errors"
+import (
+	"errors"
+)
 
-func (m MyTotalDatabase) TotalAmountValues() ([][2]string, [3]interface{}, error) {
-	values, err := m.ViewTotalAmount()
+func (h MyTotalAmountDB) TotalAmountValues() ([][2]string, [3]interface{}, error) {
+	values, err := h.ViewTotalAmount()
 	if err != nil {
 		return [][2]string{}, [3]interface{}{}, err
 	}
 
-	_, includedCategory, err := m.ViewTotalAmountCategories()
+	_, includedCategory, err := h.ViewTotalAmountCategories()
 	if err != nil {
 		return [][2]string{}, [3]interface{}{}, err
 	}

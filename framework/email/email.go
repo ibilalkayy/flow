@@ -7,15 +7,20 @@ import (
 	"text/template"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/handler"
 	"gopkg.in/gomail.v2"
 )
 
-func (m MyEmail) SendAlertEmail(category string) error {
-	myEmail := m.LoadEnvVariable("APP_EMAIL")
-	myPassword := m.LoadEnvVariable("APP_PASSWORD")
-	myUsername := m.LoadEnvVariable("USERNAME")
+type MyEmail struct {
+	*handler.Handler
+}
 
-	details, err := m.ViewBudget(category)
+func (h MyEmail) SendAlertEmail(category string) error {
+	myEmail := h.Deps.Env.LoadEnvVariable("APP_EMAIL")
+	myPassword := h.Deps.Env.LoadEnvVariable("APP_PASSWORD")
+	myUsername := h.Deps.Env.LoadEnvVariable("USERNAME")
+
+	details, err := h.Deps.ManageBudget.ViewBudget(category)
 	if err != nil {
 		return err
 	}
@@ -23,7 +28,7 @@ func (m MyEmail) SendAlertEmail(category string) error {
 	mail := gomail.NewMessage()
 
 	body := new(bytes.Buffer)
-	temp, err := template.ParseFiles("framework_drivers/email/templates/alert.html")
+	temp, err := template.ParseFiles("framework/email/templates/alert.html")
 	if err != nil {
 		log.Fatal(err)
 	}

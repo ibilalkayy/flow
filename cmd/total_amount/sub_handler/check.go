@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ibilalkayy/flow/framework_drivers/db/total_amount_db"
+	"github.com/ibilalkayy/flow/framework/db"
+	"github.com/ibilalkayy/flow/framework/db/total_amount_db"
+	"github.com/ibilalkayy/flow/handler"
+	"github.com/ibilalkayy/flow/interfaces"
 	"github.com/spf13/cobra"
 )
 
@@ -13,9 +16,19 @@ var CheckCmd = &cobra.Command{
 	Use:   "check",
 	Short: "Check the status of the total amount",
 	Run: func(cmd *cobra.Command, args []string) {
-		var m total_amount_db.MyTotalDatabase
 
-		values, err := m.ViewTotalAmount()
+		myConnection := &db.MyConnection{}
+		myTotalAmount := &total_amount_db.MyTotalAmountDB{}
+		deps := interfaces.Dependencies{
+			Connect:     myConnection,
+			TotalAmount: myTotalAmount,
+		}
+
+		handle := handler.NewHandler(deps)
+		myConnection.Handler = handle
+		myTotalAmount.Handler = handle
+
+		values, err := handle.Deps.TotalAmount.ViewTotalAmount()
 		if err != nil {
 			log.Fatal(err)
 		}

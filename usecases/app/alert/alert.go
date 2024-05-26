@@ -7,10 +7,15 @@ import (
 	"time"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/handler"
 )
 
-func (m MyAlerts) AlertSetup(av *entities.AlertVariables) error {
-	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 && av.Days != 0 && len(av.Weekdays) != 0 && av.Hours != 0 && av.Minutes != 0 && (av.Seconds >= 0 && av.Seconds <= 60) {
+type MyAlert struct {
+	*handler.Handler
+}
+
+func (h MyAlert) AlertSetup(av *entities.AlertVariables) error {
+	if len(av.Category) != 0 && len(av.Frequency) != 0 && len(av.Method) != 0 {
 		validMethods := map[string]bool{"email": true, "cli": true}
 		validFrequencies := map[string]bool{"hourly": true, "daily": true, "weekly": true, "monthly": true}
 
@@ -22,19 +27,19 @@ func (m MyAlerts) AlertSetup(av *entities.AlertVariables) error {
 			return errors.New("invalid alert frequency")
 		}
 
-		category, categoryAmount, err := m.CategoryAmount(av.Category)
+		category, categoryAmount, err := h.Deps.Budget.CategoryAmount(av.Category)
 		if err != nil {
 			return err
 		}
 
 		if len(category) != 0 && categoryAmount != 0 {
-			err := m.CreateAlert(av)
+			err := h.Deps.AlertDB.CreateAlert(av)
 			if err != nil {
 				return err
 			}
 			fmt.Printf("Alert is set for the '%s' category\n", av.Category)
 		} else {
-			return errors.New("budget data is not found. first set the budget")
+			return errors.New("first create a budget. go to 'flow budget -h' for help")
 		}
 	} else {
 		return errors.New("enter all the required flags properly")
@@ -42,8 +47,8 @@ func (m MyAlerts) AlertSetup(av *entities.AlertVariables) error {
 	return nil
 }
 
-func (m MyAlerts) SendAlert(category string) error {
-	value, err := m.ViewAlert(category)
+func (h MyAlert) SendAlert(category string) error {
+	value, err := h.Deps.AlertDB.ViewAlert(category)
 	if err != nil {
 		return err
 	}
@@ -60,6 +65,7 @@ func (m MyAlerts) SendAlert(category string) error {
 		return errors.New("unable to convert string to int and string")
 	}
 
+	weekdayStr = strings.TrimSpace(strings.ToLower(weekdayStr)) // important line
 	var weekday time.Weekday
 	switch weekdayStr {
 	case "monday":
@@ -84,13 +90,13 @@ func (m MyAlerts) SendAlert(category string) error {
 	case "email":
 		switch frequency {
 		case "hourly":
-			m.HourlyNotification(category)
+			h.Deps.SpendAmount.HourlyNotification(category)
 		case "daily":
-			m.DailyNotification(hour, minute, second, category)
+			h.Deps.SpendAmount.DailyNotification(hour, minute, second, category)
 		case "weekly":
-			m.WeeklyNotification(weekday, hour, minute, second, category)
+			h.Deps.SpendAmount.WeeklyNotification(weekday, hour, minute, second, category)
 		case "monthly":
-			m.MonthlyNotification(day, hour, minute, second, category)
+			h.Deps.SpendAmount.MonthlyNotification(day, hour, minute, second, category)
 		default:
 			return errors.New("wrong or no frequency is selected")
 		}
@@ -100,8 +106,8 @@ func (m MyAlerts) SendAlert(category string) error {
 	return nil
 }
 
-func (m MyAlerts) CheckNotification(category string) error {
-	details, err := m.ViewBudget(category)
+func (h MyAlert) CheckNotification(category string) error {
+	details, err := h.Deps.ManageBudget.ViewBudget(category)
 	if err != nil {
 		return err
 	}
@@ -114,7 +120,7 @@ func (m MyAlerts) CheckNotification(category string) error {
 	}
 
 	if spentAmount > budgetAmount {
-		m.SendAlert(category)
+		h.Deps.ManageAlerts.SendAlert(category)
 	} else {
 		fmt.Printf("The '%s' category amount is not exceeded\n", category)
 	}

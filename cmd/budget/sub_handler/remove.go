@@ -3,7 +3,10 @@ package budget_subhandler
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/framework_drivers/db/alert_db"
+	"github.com/ibilalkayy/flow/framework/db"
+	"github.com/ibilalkayy/flow/framework/db/alert_db"
+	"github.com/ibilalkayy/flow/handler"
+	"github.com/ibilalkayy/flow/interfaces"
 	"github.com/spf13/cobra"
 )
 
@@ -12,10 +15,20 @@ var RemoveCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove the alert values",
 	Run: func(cmd *cobra.Command, args []string) {
-		var m alert_db.MyAlertDatabase
-
 		category, _ := cmd.Flags().GetString("category")
-		err := m.RemoveAlert(category)
+
+		myConnection := &db.MyConnection{}
+		myAlertDB := &alert_db.MyAlertDB{}
+		deps := interfaces.Dependencies{
+			Connect: myConnection,
+			AlertDB: myAlertDB,
+		}
+
+		handle := handler.NewHandler(deps)
+		myConnection.Handler = handle
+		myAlertDB.Handler = handle
+
+		err := handle.Deps.AlertDB.RemoveAlert(category)
 		if err != nil {
 			log.Fatal(err)
 		}

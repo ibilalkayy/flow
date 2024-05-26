@@ -6,7 +6,7 @@ import (
 	"github.com/ibilalkayy/flow/entities"
 )
 
-func (m MySpending) StoreHistory(category string, spending_amount int) error {
+func (h MySpending) StoreHistory(category string, spending_amount int) error {
 	currentDate := time.Now().Format("2006-01-02")
 	currentTime := time.Now().Format("03:04:05 PM")
 
@@ -20,7 +20,7 @@ func (m MySpending) StoreHistory(category string, spending_amount int) error {
 		Address:       "ethereum address",
 	}
 
-	err := m.InsertHistory(&hv)
+	err := h.Deps.ManageBudget.InsertHistory(&hv)
 	if err != nil {
 		return err
 	}

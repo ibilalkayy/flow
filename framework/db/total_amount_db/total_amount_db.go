@@ -9,8 +9,8 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func (m MyTotalDatabase) InsertTotalAmount(tv *entities.TotalAmountVariables) error {
-	data, err := m.Table("framework_drivers/db/migrations/003_create_total_amount_table.sql", 0)
+func (h MyTotalAmountDB) InsertTotalAmount(tv *entities.TotalAmountVariables) error {
+	data, err := h.Deps.Connect.Table("framework/db/migrations/003_create_total_amount_table.sql", 0)
 	if err != nil {
 		return err
 	}
@@ -35,10 +35,10 @@ func (m MyTotalDatabase) InsertTotalAmount(tv *entities.TotalAmountVariables) er
 	return nil
 }
 
-func (m MyTotalDatabase) ViewTotalAmount() ([5]interface{}, error) {
+func (h MyTotalAmountDB) ViewTotalAmount() ([5]interface{}, error) {
 	tv := new(entities.TotalAmountVariables)
 
-	db, err := m.Connection()
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return [5]interface{}{}, err
 	}
@@ -69,8 +69,8 @@ func (m MyTotalDatabase) ViewTotalAmount() ([5]interface{}, error) {
 	return details, nil
 }
 
-func (m MyTotalDatabase) RemoveTotalAmount(category string) error {
-	db, err := m.Connection()
+func (h MyTotalAmountDB) RemoveTotalAmount(category string) error {
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return err
 	}
@@ -144,16 +144,17 @@ func (m MyTotalDatabase) RemoveTotalAmount(category string) error {
 
 	return nil
 }
-func (m MyTotalDatabase) UpdateTotalAmount(tv *entities.TotalAmountVariables) error {
+
+func (h MyTotalAmountDB) UpdateTotalAmount(tv *entities.TotalAmountVariables) error {
 	var query string
 	var params []interface{}
 
-	db, err := m.Connection()
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return err
 	}
 
-	details, err := m.ViewTotalAmount()
+	details, err := h.Deps.TotalAmount.ViewTotalAmount()
 	if err != nil {
 		return err
 	}
@@ -201,8 +202,8 @@ func (m MyTotalDatabase) UpdateTotalAmount(tv *entities.TotalAmountVariables) er
 	return nil
 }
 
-func (m MyTotalDatabase) UpdateStatus(tv *entities.TotalAmountVariables) error {
-	db, err := m.Connection()
+func (h MyTotalAmountDB) UpdateStatus(tv *entities.TotalAmountVariables) error {
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return err
 	}
@@ -225,8 +226,8 @@ func (m MyTotalDatabase) UpdateStatus(tv *entities.TotalAmountVariables) error {
 	return nil
 }
 
-func (m MyTotalDatabase) CalculateRemaining(category string) error {
-	db, err := m.Connection()
+func (h MyTotalAmountDB) CalculateRemaining(category string) error {
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return err
 	}

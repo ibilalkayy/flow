@@ -3,7 +3,11 @@ package budget_handler
 import (
 	"log"
 
-	"github.com/ibilalkayy/flow/framework_drivers/db/budget_db"
+	conversion "github.com/ibilalkayy/flow/common"
+	"github.com/ibilalkayy/flow/framework/db"
+	"github.com/ibilalkayy/flow/framework/db/budget_db"
+	"github.com/ibilalkayy/flow/handler"
+	"github.com/ibilalkayy/flow/interfaces"
 	"github.com/spf13/cobra"
 )
 
@@ -14,8 +18,21 @@ var GetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		filepath, _ := cmd.Flags().GetString("filepath")
 		filename, _ := cmd.Flags().GetString("filename")
-		var m budget_db.MyBudgetDatabase
-		err := m.GetBudgetData(filepath, filename)
+
+		myConnection := &db.MyConnection{}
+		myBudget := &budget_db.MyBudgetDB{}
+		myCommon := &conversion.MyCommon{}
+		deps := interfaces.Dependencies{
+			Connect:      myConnection,
+			ManageBudget: myBudget,
+			Common:       myCommon,
+		}
+		handle := handler.NewHandler(deps)
+		myConnection.Handler = handle
+		myBudget.Handler = handle
+		myCommon.Handler = handle
+
+		err := handle.Deps.ManageBudget.GetBudgetData(filepath, filename)
 		if err != nil {
 			log.Fatal(err)
 		}

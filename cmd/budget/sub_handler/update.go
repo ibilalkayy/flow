@@ -5,7 +5,10 @@ import (
 
 	conversion "github.com/ibilalkayy/flow/common"
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework_drivers/db/alert_db"
+	"github.com/ibilalkayy/flow/framework/db"
+	"github.com/ibilalkayy/flow/framework/db/alert_db"
+	"github.com/ibilalkayy/flow/handler"
+	"github.com/ibilalkayy/flow/interfaces"
 	"github.com/spf13/cobra"
 )
 
@@ -14,9 +17,6 @@ var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the alert values for notification",
 	Run: func(cmd *cobra.Command, args []string) {
-		var c conversion.MyConversion
-		var m alert_db.MyAlertDatabase
-
 		category, _ := cmd.Flags().GetString("category")
 		method, _ := cmd.Flags().GetString("method")
 		frequency, _ := cmd.Flags().GetString("frequency")
@@ -26,10 +26,24 @@ var UpdateCmd = &cobra.Command{
 		minute, _ := cmd.Flags().GetString("minute")
 		second, _ := cmd.Flags().GetString("second")
 
-		dayInt := c.StringToInt(day)
-		hourInt := c.StringToInt(hour)
-		minuteInt := c.StringToInt(minute)
-		secondInt := c.StringToInt(second)
+		myConnection := &db.MyConnection{}
+		myCommon := &conversion.MyCommon{}
+		myAlertDB := &alert_db.MyAlertDB{}
+		deps := interfaces.Dependencies{
+			Connect: myConnection,
+			AlertDB: myAlertDB,
+			Common:  myCommon,
+		}
+
+		handle := handler.NewHandler(deps)
+		myConnection.Handler = handle
+		myAlertDB.Handler = handle
+		myCommon.Handler = handle
+
+		dayInt := handle.Deps.Common.StringToInt(day)
+		hourInt := handle.Deps.Common.StringToInt(hour)
+		minuteInt := handle.Deps.Common.StringToInt(minute)
+		secondInt := handle.Deps.Common.StringToInt(second)
 
 		av := entities.AlertVariables{
 			Category:  category,
@@ -42,7 +56,7 @@ var UpdateCmd = &cobra.Command{
 			Seconds:   secondInt,
 		}
 
-		err := m.UpdateAlert(&av)
+		err := handle.Deps.AlertDB.UpdateAlert(&av)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -8,20 +8,33 @@ import (
 	"strings"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/handler"
+	"github.com/ibilalkayy/flow/interfaces"
+	"github.com/ibilalkayy/flow/usecases/middleware"
 	_ "github.com/lib/pq"
 )
 
-func (m MyConnect) Connection() (*sql.DB, error) {
-	var dv entities.DatabaseVariables
+type MyConnection struct {
+	*handler.Handler
+}
 
-	if m.LoadEnvVariable("DB_HOST") != "" {
+func (MyConnection) Connection() (*sql.DB, error) {
+	myEnv := middleware.MyEnv{}
+	deps := interfaces.Dependencies{
+		Env: myEnv,
+	}
+	h := handler.NewHandler(deps)
+	myEnv.Handler = h
+
+	var dv entities.DatabaseVariables
+	if h.Deps.Env.LoadEnvVariable("DB_HOST") != "" {
 		dv = entities.DatabaseVariables{
-			Host:     m.LoadEnvVariable("DB_HOST"),
-			Port:     m.LoadEnvVariable("DB_PORT"),
-			User:     m.LoadEnvVariable("DB_USER"),
-			Password: m.LoadEnvVariable("DB_PASSWORD"),
-			DBName:   m.LoadEnvVariable("DB_NAME"),
-			SSLMode:  m.LoadEnvVariable("SSL_MODE"),
+			Host:     h.Deps.Env.LoadEnvVariable("DB_HOST"),
+			Port:     h.Deps.Env.LoadEnvVariable("DB_PORT"),
+			User:     h.Deps.Env.LoadEnvVariable("DB_USER"),
+			Password: h.Deps.Env.LoadEnvVariable("DB_PASSWORD"),
+			DBName:   h.Deps.Env.LoadEnvVariable("DB_NAME"),
+			SSLMode:  h.Deps.Env.LoadEnvVariable("SSL_MODE"),
 		}
 	} else {
 		return nil, errors.New("invalid host provided")
@@ -40,8 +53,8 @@ func (m MyConnect) Connection() (*sql.DB, error) {
 	return db, nil
 }
 
-func (m MyConnect) Table(filename string, number int) (*sql.DB, error) {
-	db, err := m.Connection()
+func (h MyConnection) Table(filename string, number int) (*sql.DB, error) {
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +77,8 @@ func (m MyConnect) Table(filename string, number int) (*sql.DB, error) {
 	return db, nil
 }
 
-func (m MyConnect) TableExists(tableName string) (bool, error) {
-	db, err := m.Connection()
+func (h MyConnection) TableExists(tableName string) (bool, error) {
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return false, err
 	}

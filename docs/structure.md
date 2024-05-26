@@ -4,7 +4,7 @@
     ├── cmd
     │   ├── budget
     │   │   ├── handler
-    │   │   │   ├── adjust.go
+    │   │   │   ├── update.go
     │   │   │   ├── alert.go
     │   │   │   ├── create.go
     │   │   │   ├── get.go
@@ -67,7 +67,7 @@
     │   │   │   ├── 002_create_alert_table.sql
     │   │   │   └── 003_create_total_amount_table.sql
     │   │   └── total_amount_db
-    │   │       ├── total_amount_categories.go
+    │   │       ├── total_amount_category.go
     │   │       └── total_amount_db.go
     │   ├── email
     │   │   ├── email.go
@@ -112,7 +112,7 @@
 ### Budget command files
 
 - **cmd/budget/main.go:** Budget service entry point.
-- **cmd/budget/handler/adjust.go:** Handler for adjusting budget.
+- **cmd/budget/handler/update.go:** Handler for updating budget.
 - **cmd/budget/handler/alert.go:** Handler for alerting.
 - **cmd/budget/handler/create.go:** Handler for creating budget.
 - **cmd/budget/handler/get.go:** Handler for getting budget.

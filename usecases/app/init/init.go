@@ -5,9 +5,14 @@ import (
 	"os"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/handler"
 )
 
-func (MyEnvFile) WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVariables) error {
+type MyInit struct {
+	*handler.Handler
+}
+
+func (MyInit) WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVariables) error {
 	f, err := os.Create(".env")
 	if err != nil {
 		return err

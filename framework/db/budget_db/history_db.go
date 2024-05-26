@@ -9,8 +9,8 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func (m MyHistoryDatabase) InsertHistory(hv *entities.HistoryVariables) error {
-	data, err := m.Table("framework_drivers/db/migrations/001_create_budget_table.sql", 1)
+func (h MyBudgetDB) InsertHistory(hv *entities.HistoryVariables) error {
+	data, err := h.Deps.Connect.Table("framework/db/migrations/001_create_budget_table.sql", 1)
 	if err != nil {
 		return err
 	}
@@ -22,7 +22,7 @@ func (m MyHistoryDatabase) InsertHistory(hv *entities.HistoryVariables) error {
 	}
 	defer insert.Close()
 
-	includedCategory, value, err := m.TotalAmountValues()
+	includedCategory, value, err := h.Deps.TotalAmount.TotalAmountValues()
 	if err != nil {
 		return err
 	}
@@ -47,10 +47,10 @@ func (m MyHistoryDatabase) InsertHistory(hv *entities.HistoryVariables) error {
 	return nil
 }
 
-func (m MyHistoryDatabase) ViewHistory(category string) ([2]interface{}, error) {
+func (h MyBudgetDB) ViewHistory(category string) ([2]interface{}, error) {
 	hv := new(entities.HistoryVariables)
 
-	db, err := m.Connection()
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return [2]interface{}{}, err
 	}
@@ -89,14 +89,14 @@ func (m MyHistoryDatabase) ViewHistory(category string) ([2]interface{}, error) 
 	return details, nil
 }
 
-func (m MyHistoryDatabase) RemoveHistory(category string) error {
-	db, err := m.Connection()
+func (h MyBudgetDB) RemoveHistory(category string) error {
+	db, err := h.Deps.Connect.Connection()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	data, err := m.ViewHistory(category)
+	data, err := h.ViewHistory(category)
 	if err != nil {
 		return err
 	}
@@ -133,7 +133,7 @@ func (m MyHistoryDatabase) RemoveHistory(category string) error {
 		fmt.Printf("'%s' category is successfully removed!\n", category)
 	} else {
 		if len(foundCategory) != 0 {
-			fmt.Printf("History data is successfully deleted!")
+			fmt.Println("History data is successfully deleted!")
 		} else {
 			return errors.New("no data is found")
 		}

@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ibilalkayy/flow/framework_drivers/db/budget_db"
+	"github.com/ibilalkayy/flow/framework/db"
+	"github.com/ibilalkayy/flow/framework/db/budget_db"
+	"github.com/ibilalkayy/flow/handler"
+	"github.com/ibilalkayy/flow/interfaces"
 	"github.com/spf13/cobra"
 )
 
@@ -13,10 +16,19 @@ var ViewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View the budget details",
 	Run: func(cmd *cobra.Command, args []string) {
-		var m budget_db.MyBudgetDatabase
-
 		category, _ := cmd.Flags().GetString("category")
-		details, err := m.ViewBudget(category)
+
+		myConnection := &db.MyConnection{}
+		myBudget := &budget_db.MyBudgetDB{}
+		deps := interfaces.Dependencies{
+			Connect:      myConnection,
+			ManageBudget: myBudget,
+		}
+		handle := handler.NewHandler(deps)
+		myConnection.Handler = handle
+		myBudget.Handler = handle
+
+		details, err := handle.Deps.ManageBudget.ViewBudget(category)
 		if err != nil {
 			log.Fatal(err)
 		}

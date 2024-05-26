@@ -3,14 +3,20 @@ package conversion
 import (
 	"log"
 	"strconv"
+
+	"github.com/ibilalkayy/flow/handler"
 )
 
-func (MyConversion) IntToString(key int) string {
+type MyCommon struct {
+	*handler.Handler
+}
+
+func (MyCommon) IntToString(key int) string {
 	value := strconv.Itoa(key)
 	return value
 }
 
-func (MyConversion) StringToInt(key string) int {
+func (MyCommon) StringToInt(key string) int {
 	if key == "" {
 		return 0
 	}
