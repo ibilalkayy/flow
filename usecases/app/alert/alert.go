@@ -108,26 +108,37 @@ func (h MyAlert) SendAlert(category string) error {
 }
 
 func (h MyAlert) SendNotification(category string) error {
-	details, err := h.Deps.ManageBudget.ViewBudget(category)
+	budgetDetails, err := h.Deps.ManageBudget.ViewBudget(category)
 	if err != nil {
 		return err
 	}
 
-	budgetAmount, ok1 := details[2].(int)
-	spentAmount, ok2 := details[3].(int)
-
-	if !ok1 || !ok2 {
-		return errors.New("unable to convert to int")
+	alertDetails, err := h.Deps.AlertDB.ViewAlert(category)
+	if err != nil {
+		return err
 	}
 
-	if len(category) != 0 {
-		if spentAmount > budgetAmount {
-			h.Deps.ManageAlerts.SendAlert(category)
+	budgetCategory, ok1 := budgetDetails[1].(string)
+	budgetAmount, ok2 := budgetDetails[2].(int)
+	spentAmount, ok3 := budgetDetails[3].(int)
+	alertCategory, ok4 := alertDetails[1].(string)
+
+	if !ok1 || !ok2 || !ok3 || !ok4 {
+		return errors.New("unable to convert to int or string")
+	}
+
+	if len(alertCategory) != 0 {
+		if len(category) != 0 && category == budgetCategory {
+			if spentAmount > budgetAmount {
+				h.Deps.ManageAlerts.SendAlert(category)
+			} else {
+				fmt.Printf("The '%s' category amount is not exceeded\n", category)
+			}
 		} else {
-			fmt.Printf("The '%s' category amount is not exceeded\n", category)
+			log.Fatal("Write the correct category. See 'flow budget alert msg -h'")
 		}
 	} else {
-		log.Fatal("Write the category. See 'flow budget alert msg -h'")
+		log.Fatal("Write the category in the alert. See 'flow budget alert -h'")
 	}
 	return nil
 }
