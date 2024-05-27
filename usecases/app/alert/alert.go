@@ -3,6 +3,7 @@ package usecases_alert
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -106,7 +107,7 @@ func (h MyAlert) SendAlert(category string) error {
 	return nil
 }
 
-func (h MyAlert) CheckNotification(category string) error {
+func (h MyAlert) SendNotification(category string) error {
 	details, err := h.Deps.ManageBudget.ViewBudget(category)
 	if err != nil {
 		return err
@@ -116,13 +117,17 @@ func (h MyAlert) CheckNotification(category string) error {
 	spentAmount, ok2 := details[3].(int)
 
 	if !ok1 || !ok2 {
-		return errors.New("unable to convert spent or amount to int")
+		return errors.New("unable to convert to int")
 	}
 
-	if spentAmount > budgetAmount {
-		h.Deps.ManageAlerts.SendAlert(category)
+	if len(category) != 0 {
+		if spentAmount > budgetAmount {
+			h.Deps.ManageAlerts.SendAlert(category)
+		} else {
+			fmt.Printf("The '%s' category amount is not exceeded\n", category)
+		}
 	} else {
-		fmt.Printf("The '%s' category amount is not exceeded\n", category)
+		log.Fatal("Write the category. See 'flow budget alert msg -h'")
 	}
 	return nil
 }

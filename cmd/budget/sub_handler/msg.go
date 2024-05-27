@@ -15,6 +15,37 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func TakeHandler() *handler.Handler {
+	myConnection := &db.MyConnection{}
+	myAlert := &usecases_alert.MyAlert{}
+	myBudget := &budget_db.MyBudgetDB{}
+	mySpending := &usecases_spending.MySpending{}
+	myEmail := &email.MyEmail{}
+	myAlertDB := &alert_db.MyAlertDB{}
+	myEnv := &middleware.MyEnv{}
+
+	deps := interfaces.Dependencies{
+		Connect:      myConnection,
+		ManageAlerts: myAlert,
+		ManageBudget: myBudget,
+		SpendAmount:  mySpending,
+		HandleEmail:  myEmail,
+		AlertDB:      myAlertDB,
+		Env:          myEnv,
+	}
+
+	handle := handler.NewHandler(deps)
+	myConnection.Handler = handle
+	myAlert.Handler = handle
+	myBudget.Handler = handle
+	mySpending.Handler = handle
+	myEmail.Handler = handle
+	myAlertDB.Handler = handle
+	myEnv.Handler = handle
+
+	return handle
+}
+
 // MsgCmd represents the msg command
 var MsgCmd = &cobra.Command{
 	Use:   "msg",
@@ -22,34 +53,8 @@ var MsgCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		category, _ := cmd.Flags().GetString("category")
 
-		myConnection := &db.MyConnection{}
-		myAlert := &usecases_alert.MyAlert{}
-		myBudget := &budget_db.MyBudgetDB{}
-		mySpending := &usecases_spending.MySpending{}
-		myEmail := &email.MyEmail{}
-		myAlertDB := &alert_db.MyAlertDB{}
-		myEnv := &middleware.MyEnv{}
-
-		deps := interfaces.Dependencies{
-			Connect:      myConnection,
-			ManageAlerts: myAlert,
-			ManageBudget: myBudget,
-			SpendAmount:  mySpending,
-			HandleEmail:  myEmail,
-			AlertDB:      myAlertDB,
-			Env:          myEnv,
-		}
-
-		handle := handler.NewHandler(deps)
-		myConnection.Handler = handle
-		myAlert.Handler = handle
-		myBudget.Handler = handle
-		mySpending.Handler = handle
-		myEmail.Handler = handle
-		myAlertDB.Handler = handle
-		myEnv.Handler = handle
-
-		err := handle.Deps.ManageAlerts.CheckNotification(category)
+		h := TakeHandler()
+		err := h.Deps.ManageAlerts.SendNotification(category)
 		if err != nil {
 			log.Fatal(err)
 		}
