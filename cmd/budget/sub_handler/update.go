@@ -3,12 +3,7 @@ package budget_subhandler
 import (
 	"log"
 
-	conversion "github.com/ibilalkayy/flow/common"
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework/db"
-	"github.com/ibilalkayy/flow/framework/db/alert_db"
-	"github.com/ibilalkayy/flow/handler"
-	"github.com/ibilalkayy/flow/interfaces"
 	"github.com/spf13/cobra"
 )
 
@@ -26,24 +21,11 @@ var UpdateCmd = &cobra.Command{
 		minute, _ := cmd.Flags().GetString("minute")
 		second, _ := cmd.Flags().GetString("second")
 
-		myConnection := &db.MyConnection{}
-		myCommon := &conversion.MyCommon{}
-		myAlertDB := &alert_db.MyAlertDB{}
-		deps := interfaces.Dependencies{
-			Connect: myConnection,
-			AlertDB: myAlertDB,
-			Common:  myCommon,
-		}
-
-		handle := handler.NewHandler(deps)
-		myConnection.Handler = handle
-		myAlertDB.Handler = handle
-		myCommon.Handler = handle
-
-		dayInt := handle.Deps.Common.StringToInt(day)
-		hourInt := handle.Deps.Common.StringToInt(hour)
-		minuteInt := handle.Deps.Common.StringToInt(minute)
-		secondInt := handle.Deps.Common.StringToInt(second)
+		h := TakeHandler()
+		dayInt := h.Deps.Common.StringToInt(day)
+		hourInt := h.Deps.Common.StringToInt(hour)
+		minuteInt := h.Deps.Common.StringToInt(minute)
+		secondInt := h.Deps.Common.StringToInt(second)
 
 		av := entities.AlertVariables{
 			Category:  category,
@@ -56,7 +38,7 @@ var UpdateCmd = &cobra.Command{
 			Seconds:   secondInt,
 		}
 
-		err := handle.Deps.AlertDB.UpdateAlert(&av)
+		err := h.Deps.AlertDB.UpdateAlert(&av)
 		if err != nil {
 			log.Fatal(err)
 		}

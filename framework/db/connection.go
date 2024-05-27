@@ -18,15 +18,19 @@ type MyConnection struct {
 	*handler.Handler
 }
 
-func (MyConnection) Connection() (*sql.DB, error) {
+func TakeHandler() *handler.Handler {
 	myEnv := middleware.MyEnv{}
 	deps := interfaces.Dependencies{
 		Env: myEnv,
 	}
-	h := handler.NewHandler(deps)
-	myEnv.Handler = h
+	handle := handler.NewHandler(deps)
+	myEnv.Handler = handle
+	return handle
+}
 
+func (MyConnection) Connection() (*sql.DB, error) {
 	var dv entities.DatabaseVariables
+	h := TakeHandler()
 	if h.Deps.Env.LoadEnvVariable("DB_HOST") != "" {
 		dv = entities.DatabaseVariables{
 			Host:     h.Deps.Env.LoadEnvVariable("DB_HOST"),

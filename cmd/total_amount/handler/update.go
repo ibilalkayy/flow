@@ -3,12 +3,7 @@ package total_amount_handler
 import (
 	"log"
 
-	conversion "github.com/ibilalkayy/flow/common"
 	"github.com/ibilalkayy/flow/entities"
-	"github.com/ibilalkayy/flow/framework/db"
-	"github.com/ibilalkayy/flow/framework/db/total_amount_db"
-	"github.com/ibilalkayy/flow/handler"
-	"github.com/ibilalkayy/flow/interfaces"
 	"github.com/spf13/cobra"
 )
 
@@ -22,22 +17,8 @@ var UpdateCmd = &cobra.Command{
 		amount, _ := cmd.Flags().GetString("amount")
 		label, _ := cmd.Flags().GetString("label")
 
-		myConnection := &db.MyConnection{}
-		myTotalDB := &total_amount_db.MyTotalAmountDB{}
-		myCommon := &conversion.MyCommon{}
-
-		deps := interfaces.Dependencies{
-			Connect:             myConnection,
-			TotalAmount:         myTotalDB,
-			TotalAmountCategory: myTotalDB,
-			Common:              myCommon,
-		}
-		handle := handler.NewHandler(deps)
-		myConnection.Handler = handle
-		myTotalDB.Handler = handle
-		myCommon.Handler = handle
-
-		totalAmount := handle.Deps.Common.StringToInt(amount)
+		h := TakeHandler()
+		totalAmount := h.Deps.Common.StringToInt(amount)
 		tv := entities.TotalAmountVariables{
 			Included:    old_category,
 			NewCategory: new_category,
@@ -45,7 +26,7 @@ var UpdateCmd = &cobra.Command{
 			Label:       label,
 		}
 
-		err := handle.Deps.TotalAmount.UpdateTotalAmount(&tv)
+		err := h.Deps.TotalAmount.UpdateTotalAmount(&tv)
 		if err != nil {
 			log.Fatal(err)
 		}

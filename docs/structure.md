@@ -18,14 +18,16 @@
     │   │   │   ├── get.go
     │   │   │   ├── remove.go
     │   │   │   ├── update.go
-    │   │   │   └── view.go
+    │   │   │   ├── view.go
+    │   │   │   └── handler.go
     │   │   ├── main.go
     │   │   └── sub_handler
     │   │       ├── msg.go
     │   │       ├── remove.go
     │   │       ├── setup.go
     │   │       ├── update.go
-    │   │       └── view.go
+    │   │       ├── view.go
+    │   │       └── sub_handler.go
     │   ├── init
     │   │   └── main.go
     │   ├── root.go
@@ -35,21 +37,24 @@
     │   │   ├── main.go
     │   │   └── sub_handler
     │   │       ├── remove.go
-    │   │       └── show.go
+    │   │       ├── show.go
+    │   │       └── sub_handler.go
     │   └── total_amount
     │       ├── handler
     │       │   ├── add.go
     │       │   ├── remove.go
     │       │   ├── status.go
     │       │   ├── update.go
-    │       │   └── view.go
+    │       │   ├── view.go
+    │       │   └── handler.go
     │       ├── main.go
     │       └── sub_handler
     │           ├── active.go
     │           ├── amount.go
     │           ├── categories.go
     │           ├── check.go
-    │           └── inactive.go
+    │           ├── inactive.go
+    │           └── sub_handler.go
     ├── common
     │   └── conversion.go
     ├── docs
@@ -134,20 +139,22 @@
 #### **Budget Command**
 
 - **cmd/budget/main.go:** Budget service entry point.
-- **cmd/budget/handler/alert.go:** Handler for alerting.
-- **cmd/budget/handler/create.go:** Handler for creating budget.
-- **cmd/budget/handler/get.go:** Handler for getting budget.
-- **cmd/budget/handler/remove.go:** Handler for removing budget.
-- **cmd/budget/handler/update.go:** Handler for updating budget.
-- **cmd/budget/handler/view.go:** Handler for viewing budget.
+- **cmd/budget/handler/alert.go:** Budget alert service entry point.
+- **cmd/budget/handler/create.go:** Budget create service entry point.
+- **cmd/budget/handler/get.go:** Budget get service entry point.
+- **cmd/budget/handler/remove.go:** Budget remove service entry point.
+- **cmd/budget/handler/update.go:** Budget update service entry point.
+- **cmd/budget/handler/view.go:** Budget view service entry point.
+- **cmd/budget/handler/handler.go:** Handler for managing the budget.
 
 #### **Budget Sub-command**
 
-- **cmd/budget/sub_handler/msg.go:** Handler for showing alert messages.
-- **cmd/budget/sub_handler/setup.go:** Handler for setting up alert values.
-- **cmd/budget/sub_handler/remove.go:** Handler for removing alert values.
-- **cmd/budget/sub_handler/update.go:** Handler for updating alert values.
-- **cmd/budget/sub_handler/view.go:** Handler for viewing alert values.
+- **cmd/budget/sub_handler/msg.go:** Budget alert message service entry point.
+- **cmd/budget/sub_handler/setup.go:** Budget alert setup service entry point.
+- **cmd/budget/sub_handler/remove.go:** Budget alert removal service entry point.
+- **cmd/budget/sub_handler/update.go:** Budget alert update service entry point.
+- **cmd/budget/sub_handler/view.go:** Budget alert view service entry point.
+- **cmd/budget/handler/sub_handler.go:** Sub handler for managing the budget alerts.
 
 #### **Init Command**
 
@@ -162,23 +169,26 @@
 
 - **cmd/spend/sub_handler/remove.go:** Remove the history data.
 - **cmd/spend/sub_handler/show.go:** Show the history data.
+- **cmd/spend/sub_handler/sub_handler.go:** Sub handler for managing the expenditure.
 
 #### **Total Amount Command**
 
 - **cmd/total_amount/main.go:** The management of the total amount to set the target.
-- **cmd/total_amount/handler/add.go:** Handler for adding the total amount.
-- **cmd/total_amount/handler/remove.go:** Handler for removing the total amount data.
-- **cmd/total_amount/handler/status.go:** Handler for handling the total amount's status.
-- **cmd/total_amount/handler/update.go:** Handler for updating the total amount data.
-- **cmd/total_amount/handler/view.go:** Handler for viewing the total amount data.
+- **cmd/total_amount/handler/add.go:** Entry point for adding the total amount.
+- **cmd/total_amount/handler/remove.go:** Entry point for removing the total amount data.
+- **cmd/total_amount/handler/status.go:** Entry point for handling the total amount's status.
+- **cmd/total_amount/handler/update.go:** Entry point for updating the total amount data.
+- **cmd/total_amount/handler/view.go:** Entry point for viewing the total amount data.
+- **cmd/total_amount/handler/handler.go:** Handler for managing the total amount.
 
 #### **Total Amount Sub-command**
 
-- **cmd/total_amount/sub_handler/active.go:** Handler for making the total amount status active.
-- **cmd/total_amount/sub_handler/inactive.go:** Handler for making the total amount status inactive.
-- **cmd/total_amount/sub_handler/categories.go:** Handler for handling categories related to the total amount.
-- **cmd/total_amount/sub_handler/amount.go:** Handler for managing the amount-related logic.
-- **cmd/total_amount/sub_handler/check.go:** Handler for checking the total amount data.
+- **cmd/total_amount/sub_handler/active.go:** Entry point for making the total amount status active.
+- **cmd/total_amount/sub_handler/inactive.go:** Entry point for making the total amount status inactive.
+- **cmd/total_amount/sub_handler/categories.go:** Entry point for handling categories related to the total amount.
+- **cmd/total_amount/sub_handler/amount.go:** Entry point for managing the amount-related logic.
+- **cmd/total_amount/sub_handler/check.go:** Entry point for checking the total amount data.
+- **cmd/total_amount/sub_handler/sub_handler.go:** Sub handler for managing the total amount data.
 
 ### **Common Files**
 

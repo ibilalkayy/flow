@@ -19,6 +19,38 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func TakeHandler() *handler.Handler {
+	myConnection := &db.MyConnection{}
+	myTotalDB := &total_amount_db.MyTotalAmountDB{}
+	mySpendMoney := &usecases_spending.MySpending{}
+	myBudgetAndHistory := &budget_db.MyBudgetDB{}
+	myEmail := &email.MyEmail{}
+	myEnv := &middleware.MyEnv{}
+	myCommon := &conversion.MyCommon{}
+
+	deps := interfaces.Dependencies{
+		Connect:             myConnection,
+		TotalAmount:         myTotalDB,
+		TotalAmountCategory: myTotalDB,
+		SpendAmount:         mySpendMoney,
+		ManageBudget:        myBudgetAndHistory,
+		HandleEmail:         myEmail,
+		Env:                 myEnv,
+		Common:              myCommon,
+	}
+
+	handle := handler.NewHandler(deps)
+	myConnection.Handler = handle
+	mySpendMoney.Handler = handle
+	myTotalDB.Handler = handle
+	myBudgetAndHistory.Handler = handle
+	myEmail.Handler = handle
+	myEnv.Handler = handle
+	myCommon.Handler = handle
+
+	return handle
+}
+
 // spendCmd represents the spend command
 var SpendCmd = &cobra.Command{
 	Use:   "spend",
@@ -27,37 +59,10 @@ var SpendCmd = &cobra.Command{
 		categoryName, _ := cmd.Flags().GetString("category")
 		spendingAmount, _ := cmd.Flags().GetString("amount")
 
-		myConnection := &db.MyConnection{}
-		myTotalDB := &total_amount_db.MyTotalAmountDB{}
-		mySpendMoney := &usecases_spending.MySpending{}
-		myBudgetAndHistory := &budget_db.MyBudgetDB{}
-		myEmail := &email.MyEmail{}
-		myEnv := &middleware.MyEnv{}
-		myCommon := &conversion.MyCommon{}
-
-		deps := interfaces.Dependencies{
-			Connect:             myConnection,
-			TotalAmount:         myTotalDB,
-			TotalAmountCategory: myTotalDB,
-			SpendAmount:         mySpendMoney,
-			ManageBudget:        myBudgetAndHistory,
-			HandleEmail:         myEmail,
-			Env:                 myEnv,
-			Common:              myCommon,
-		}
-
-		handle := handler.NewHandler(deps)
-		myConnection.Handler = handle
-		mySpendMoney.Handler = handle
-		myTotalDB.Handler = handle
-		myBudgetAndHistory.Handler = handle
-		myEmail.Handler = handle
-		myEnv.Handler = handle
-		myCommon.Handler = handle
-
-		spendingAmountInt := handle.Deps.Common.StringToInt(spendingAmount)
+		h := TakeHandler()
+		spendingAmountInt := h.Deps.Common.StringToInt(spendingAmount)
 		if len(categoryName) != 0 && spendingAmountInt != 0 {
-			err := handle.Deps.SpendAmount.SpendMoney(categoryName, spendingAmountInt)
+			err := h.Deps.SpendAmount.SpendMoney(categoryName, spendingAmountInt)
 			if err != nil {
 				log.Fatal(err)
 			}

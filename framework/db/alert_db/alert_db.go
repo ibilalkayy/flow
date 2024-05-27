@@ -123,7 +123,7 @@ func (h MyAlertDB) RemoveAlert(category string) error {
 	}
 
 	if len(category) != 0 {
-		fmt.Printf("Alert values of '%s' category is successfully removed", category)
+		fmt.Printf("Alert values of '%s' category is successfully removed\n", category)
 	} else {
 		if len(foundCategory) != 0 {
 			fmt.Println("Alert data is successfully deleted!")

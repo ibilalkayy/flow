@@ -70,7 +70,7 @@ func initApp(cmd *cobra.Command, args []string) {
 	}
 }
 
-func InitializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables) error {
+func takeHandler() *handler.Handler {
 	myConnection := &db.MyConnection{}
 	myInit := &usecases_init.MyInit{}
 	deps := interfaces.Dependencies{
@@ -81,12 +81,17 @@ func InitializeApplication(authParams *entities.AuthVariables, dbParams *entitie
 	myInit.Handler = handle
 	myConnection.Handler = handle
 
-	err := handle.Deps.Init.WriteEnvFile(authParams, dbParams)
+	return handle
+}
+
+func InitializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables) error {
+	h := takeHandler()
+	err := h.Deps.Init.WriteEnvFile(authParams, dbParams)
 	if err != nil {
 		return fmt.Errorf("error writing to .env file: %v", err)
 	}
 
-	_, err = handle.Deps.Connect.Connection()
+	_, err = h.Deps.Connect.Connection()
 	if err != nil {
 		return fmt.Errorf("error connecting to the database: %v", err)
 	}
