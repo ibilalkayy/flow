@@ -127,18 +127,18 @@ func (h MyAlert) SendNotification(category string) error {
 		return errors.New("unable to convert to int or string")
 	}
 
-	if len(alertCategory) != 0 {
-		if len(category) != 0 && category == budgetCategory {
+	if len(category) != 0 {
+		if category == budgetCategory && category == alertCategory {
 			if spentAmount > budgetAmount {
 				h.Deps.ManageAlerts.SendAlert(category)
 			} else {
 				fmt.Printf("The '%s' category amount is not exceeded\n", category)
 			}
 		} else {
-			log.Fatal("Write the correct category. See 'flow budget alert msg -h'")
+			log.Fatal("Notification can't be sent. Either the category is not stored in budget or in alert")
 		}
 	} else {
-		log.Fatal("Write the category in the alert. See 'flow budget alert -h'")
+		log.Fatal("Enter the category. See 'flow budget alert msg -h'")
 	}
 	return nil
 }

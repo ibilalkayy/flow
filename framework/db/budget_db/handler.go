@@ -1,6 +1,10 @@
 package budget_db
 
-import "github.com/ibilalkayy/flow/entities"
+import (
+	"errors"
+
+	"github.com/ibilalkayy/flow/entities"
+)
 
 func (h MyBudgetDB) TakeBudgetAmount() ([]int, error) {
 	bv := new(entities.BudgetVariables)
@@ -54,4 +58,22 @@ func (h MyBudgetDB) BudgetAmountWithException(bv *entities.BudgetVariables) (int
 		}
 	}
 	return amounts, nil
+}
+
+func (MyBudgetDB) CalculateRemaining(details [4]int) ([2]int, error) {
+	if details[0] > details[1] {
+		updatedRemaining := details[0] - details[1]
+		details[3] += updatedRemaining
+	} else if details[0] < details[1] {
+		if details[2] <= details[0] {
+			details[3] = details[0] - details[2]
+		} else {
+			details[2] = details[0]
+			details[3] = 0
+		}
+	} else {
+		return [2]int{}, errors.New("this amount is already present. enter a different amount")
+	}
+	result := [2]int{details[2], details[3]}
+	return result, nil
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ibilalkayy/flow/entities"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +19,12 @@ var UpdateCmd = &cobra.Command{
 
 		h := TakeHandler()
 		newAmount := h.Deps.Common.StringToInt(amount)
-		err := h.Deps.ManageBudget.UpdateBudget(oldCategory, newCategory, newAmount)
+
+		bv := entities.BudgetVariables{
+			Category: oldCategory,
+			Amount:   newAmount,
+		}
+		err := h.Deps.ManageBudget.UpdateBudget(&bv, newCategory)
 		if err != nil {
 			log.Fatal(err)
 		}

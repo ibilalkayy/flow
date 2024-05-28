@@ -170,7 +170,7 @@ func (h MyBudgetDB) RemoveBudget(category string) error {
 	return nil
 }
 
-func (h MyBudgetDB) UpdateBudget(old, new string, amount int) error {
+func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category string) error {
 	var count int
 	var query string
 	var params []interface{}
@@ -181,13 +181,13 @@ func (h MyBudgetDB) UpdateBudget(old, new string, amount int) error {
 	}
 
 	// Check if the old category exists
-	err = db.QueryRow("SELECT COUNT(*) FROM Budget WHERE categories = $1", old).Scan(&count)
+	err = db.QueryRow("SELECT COUNT(*) FROM Budget WHERE categories = $1", bv.Category).Scan(&count)
 	if err != nil {
 		return err
 	}
 
 	if count == 0 {
-		return errors.New("'" + old + "'" + " category does not exist")
+		return errors.New("'" + bv.Category + "'" + " category does not exist")
 	}
 
 	includedCategory, value, err := h.Deps.TotalAmount.TotalAmountValues()
@@ -210,22 +210,44 @@ func (h MyBudgetDB) UpdateBudget(old, new string, amount int) error {
 		totalBudgetAmount += amount
 	}
 
-	bv := entities.BudgetVariables{Category: old}
-	expectional_budget_amount, err := h.Deps.ManageBudget.BudgetAmountWithException(&bv)
+	// bv := entities.BudgetVariables{Category: old}
+	expectional_budget_amount, err := h.Deps.ManageBudget.BudgetAmountWithException(bv)
 	if err != nil {
 		return err
 	}
 
-	if len(includedCategory) != 0 && fullTotalAmount != 0 && amount <= fullTotalAmount && totalBudgetAmount <= fullTotalAmount && expectional_budget_amount+amount <= fullTotalAmount {
-		if len(new) != 0 && amount != 0 {
-			query = "UPDATE Budget SET categories=$1, amounts=$2 WHERE categories=$3"
-			params = []interface{}{new, amount, old}
-		} else if len(new) != 0 {
+	details, err := h.Deps.ManageBudget.ViewBudget(bv.Category)
+	if err != nil {
+		return err
+	}
+
+	budgetAmountInDB, ok1 := details[2].(int)
+	spentAmountInDB, ok2 := details[3].(int)
+	remainingAmountInDB, ok3 := details[4].(int)
+	if !ok1 || !ok2 || !ok3 {
+		return errors.New("unable to convert to int")
+	}
+
+	if len(includedCategory) != 0 && fullTotalAmount != 0 && bv.Amount <= fullTotalAmount && totalBudgetAmount <= fullTotalAmount && expectional_budget_amount+bv.Amount <= fullTotalAmount {
+		if len(new_category) != 0 && bv.Amount != 0 {
+			details := [4]int{bv.Amount, budgetAmountInDB, spentAmountInDB, remainingAmountInDB}
+			data, err := h.Deps.ManageBudget.CalculateRemaining(details)
+			if err != nil {
+				return err
+			}
+			query = "UPDATE Budget SET categories=$1, amounts=$2, spent=$3, remaining=$4 WHERE categories=$5"
+			params = []interface{}{new_category, bv.Amount, data[0], data[1], bv.Category}
+		} else if len(new_category) != 0 {
 			query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
-			params = []interface{}{new, old}
-		} else if amount != 0 {
-			query = "UPDATE Budget SET amounts=$1 WHERE categories=$2"
-			params = []interface{}{amount, old}
+			params = []interface{}{new_category, bv.Category}
+		} else if bv.Amount != 0 {
+			details := [4]int{bv.Amount, budgetAmountInDB, spentAmountInDB, remainingAmountInDB}
+			data, err := h.Deps.ManageBudget.CalculateRemaining(details)
+			if err != nil {
+				return err
+			}
+			query = "UPDATE Budget SET amounts=$1, spent=$2, remaining=$3 WHERE categories=$4"
+			params = []interface{}{bv.Amount, data[0], data[1], bv.Category}
 		} else {
 			fmt.Println("No field provided to update")
 		}
