@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/ibilalkayy/flow/entities"
@@ -234,25 +235,42 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 		RemainingAmountInDB: remainingAmountInDB,
 	}
 
+	specificIndex := 0
+	var storeCategory []string
+	for _, list := range includedCategory {
+		if specificIndex < len(list) {
+			storeCategory = append(storeCategory, list[specificIndex])
+		} else {
+			fmt.Println("Index out of range")
+		}
+	}
+
 	if len(includedCategory) != 0 && fullTotalAmount != 0 && bv.Amount <= fullTotalAmount && totalBudgetAmount <= fullTotalAmount && expectional_budget_amount+bv.Amount <= fullTotalAmount {
+		if len(new_category) != 0 && bv.Amount != 0 {
+			log.Fatal("Update one a time. either amount or category")
+		}
 		if bv.Amount != 0 {
 			data, err := h.Deps.ManageBudget.CalculateRemaining(&cr)
 			if err != nil {
 				return err
 			}
-
-			if len(new_category) != 0 {
-				query = "UPDATE Budget SET categories=$1, amounts=$2, spent=$3, remaining=$4 WHERE categories=$5"
-				params = []interface{}{new_category, bv.Amount, data[0], data[1], bv.Category}
-			} else {
-				query = "UPDATE Budget SET amounts=$1, spent=$2, remaining=$3 WHERE categories=$4"
-				params = []interface{}{bv.Amount, data[0], data[1], bv.Category}
-			}
+			query = "UPDATE Budget SET amounts=$1, spent=$2, remaining=$3 WHERE categories=$4"
+			params = []interface{}{bv.Amount, data[0], data[1], bv.Category}
 		} else if len(new_category) != 0 {
-			query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
-			params = []interface{}{new_category, bv.Category}
+			found := false
+			for i := 0; i < len(storeCategory); i++ {
+				if new_category == storeCategory[i] {
+					query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
+					params = []interface{}{new_category, bv.Category}
+					found = true
+					break
+				}
+			}
+			if !found {
+				log.Fatal("enter the category in the total amount also")
+			}
 		} else {
-			fmt.Println("No field provided to update")
+			return errors.New("no field provided to update")
 		}
 
 		_, err = db.Exec(query, params...)
