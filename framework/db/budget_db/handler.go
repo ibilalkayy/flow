@@ -61,19 +61,21 @@ func (h MyBudgetDB) BudgetAmountWithException(bv *entities.BudgetVariables) (int
 }
 
 func (MyBudgetDB) CalculateRemaining(cr *entities.BudgetCalculateVariables) ([2]int, error) {
-	if cr.BudgetAmount > cr.BudgetAmountInDB {
-		updatedRemaining := cr.BudgetAmount - cr.BudgetAmountInDB
-		cr.RemainingAmountInDB += updatedRemaining
-	} else if cr.BudgetAmount < cr.BudgetAmountInDB {
-		if cr.SpentAmountInDB <= cr.BudgetAmount {
-			cr.RemainingAmountInDB = cr.BudgetAmount - cr.SpentAmountInDB
-		} else {
+	// If the new budget amount is greater than or less than the amount in the database
+	if cr.BudgetAmount != cr.BudgetAmountInDB {
+		if cr.SpentAmountInDB > cr.BudgetAmount {
+			// If spent amount is greater than the new budget, reset both spent and remaining amounts to 0
 			cr.SpentAmountInDB = 0
 			cr.RemainingAmountInDB = 0
+		} else {
+			// Calculate the remaining amount based on the new budget and spent amount
+			cr.RemainingAmountInDB = cr.BudgetAmount - cr.SpentAmountInDB
 		}
 	} else {
+		// If the new budget amount is the same as the old one, return an error
 		return [2]int{}, errors.New("this amount is already present. enter a different amount")
 	}
+
 	result := [2]int{cr.SpentAmountInDB, cr.RemainingAmountInDB}
 	return result, nil
 }

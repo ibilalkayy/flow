@@ -235,23 +235,22 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 	}
 
 	if len(includedCategory) != 0 && fullTotalAmount != 0 && bv.Amount <= fullTotalAmount && totalBudgetAmount <= fullTotalAmount && expectional_budget_amount+bv.Amount <= fullTotalAmount {
-		if len(new_category) != 0 && bv.Amount != 0 {
+		if bv.Amount != 0 {
 			data, err := h.Deps.ManageBudget.CalculateRemaining(&cr)
 			if err != nil {
 				return err
 			}
-			query = "UPDATE Budget SET categories=$1, amounts=$2, spent=$3, remaining=$4 WHERE categories=$5"
-			params = []interface{}{new_category, bv.Amount, data[0], data[1], bv.Category}
+
+			if len(new_category) != 0 {
+				query = "UPDATE Budget SET categories=$1, amounts=$2, spent=$3, remaining=$4 WHERE categories=$5"
+				params = []interface{}{new_category, bv.Amount, data[0], data[1], bv.Category}
+			} else {
+				query = "UPDATE Budget SET amounts=$1, spent=$2, remaining=$3 WHERE categories=$4"
+				params = []interface{}{bv.Amount, data[0], data[1], bv.Category}
+			}
 		} else if len(new_category) != 0 {
 			query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
 			params = []interface{}{new_category, bv.Category}
-		} else if bv.Amount != 0 {
-			data, err := h.Deps.ManageBudget.CalculateRemaining(&cr)
-			if err != nil {
-				return err
-			}
-			query = "UPDATE Budget SET amounts=$1, spent=$2, remaining=$3 WHERE categories=$4"
-			params = []interface{}{bv.Amount, data[0], data[1], bv.Category}
 		} else {
 			fmt.Println("No field provided to update")
 		}
