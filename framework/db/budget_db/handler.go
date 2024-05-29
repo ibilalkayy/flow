@@ -68,7 +68,7 @@ func (MyBudgetDB) CalculateRemaining(details [4]int) ([2]int, error) {
 		if details[2] <= details[0] {
 			details[3] = details[0] - details[2]
 		} else {
-			details[2] = details[0]
+			details[2] = 0
 			details[3] = 0
 		}
 	} else {

@@ -51,7 +51,7 @@ func (h MyBudgetDB) CreateBudget(bv *entities.BudgetVariables) error {
 
 	for i := 0; i < len(includedCategory); i++ {
 		if len(bv.Category) != 0 && len(includedCategory) != 0 && includedCategory[i][0] == bv.Category && fullTotalAmount != 0 && totalBudgetAmount+bv.Amount <= fullTotalAmount {
-			_, err = insert.Exec(bv.Category, bv.Amount, 0, 0)
+			_, err = insert.Exec(bv.Category, bv.Amount, 0, bv.Amount)
 			if err != nil {
 				return err
 			}

@@ -16,7 +16,7 @@ func (h MyTotalAmount) SetTotalAmount(totalAmount int, include_category, label s
 	tav := entities.TotalAmountVariables{
 		TotalAmount:     totalAmount,
 		SpentAmount:     0,
-		RemainingAmount: 0,
+		RemainingAmount: totalAmount,
 		Status:          "inactive",
 	}
 
