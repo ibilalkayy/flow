@@ -6,3 +6,10 @@ type BudgetVariables struct {
 	Spent     int
 	Remaining int
 }
+
+type BudgetCalculateVariables struct {
+	BudgetAmount        int
+	BudgetAmountInDB    int
+	SpentAmountInDB     int
+	RemainingAmountInDB int
+}

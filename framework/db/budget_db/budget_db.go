@@ -210,7 +210,6 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 		totalBudgetAmount += amount
 	}
 
-	// bv := entities.BudgetVariables{Category: old}
 	expectional_budget_amount, err := h.Deps.ManageBudget.BudgetAmountWithException(bv)
 	if err != nil {
 		return err
@@ -228,10 +227,16 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 		return errors.New("unable to convert to int")
 	}
 
+	cr := entities.BudgetCalculateVariables{
+		BudgetAmount:        bv.Amount,
+		BudgetAmountInDB:    budgetAmountInDB,
+		SpentAmountInDB:     spentAmountInDB,
+		RemainingAmountInDB: remainingAmountInDB,
+	}
+
 	if len(includedCategory) != 0 && fullTotalAmount != 0 && bv.Amount <= fullTotalAmount && totalBudgetAmount <= fullTotalAmount && expectional_budget_amount+bv.Amount <= fullTotalAmount {
 		if len(new_category) != 0 && bv.Amount != 0 {
-			details := [4]int{bv.Amount, budgetAmountInDB, spentAmountInDB, remainingAmountInDB}
-			data, err := h.Deps.ManageBudget.CalculateRemaining(details)
+			data, err := h.Deps.ManageBudget.CalculateRemaining(&cr)
 			if err != nil {
 				return err
 			}
@@ -241,8 +246,7 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 			query = "UPDATE Budget SET categories=$1 WHERE categories=$2"
 			params = []interface{}{new_category, bv.Category}
 		} else if bv.Amount != 0 {
-			details := [4]int{bv.Amount, budgetAmountInDB, spentAmountInDB, remainingAmountInDB}
-			data, err := h.Deps.ManageBudget.CalculateRemaining(details)
+			data, err := h.Deps.ManageBudget.CalculateRemaining(&cr)
 			if err != nil {
 				return err
 			}

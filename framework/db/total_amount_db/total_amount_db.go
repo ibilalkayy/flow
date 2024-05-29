@@ -176,7 +176,7 @@ func (h MyTotalAmountDB) UpdateTotalAmount(tv *entities.TotalAmountVariables) er
 			if spentAmountInDB <= tv.TotalAmount {
 				remainingAmountInDB = tv.TotalAmount - spentAmountInDB
 			} else {
-				spentAmountInDB = tv.TotalAmount
+				spentAmountInDB = 0
 				remainingAmountInDB = 0
 			}
 		} else {
