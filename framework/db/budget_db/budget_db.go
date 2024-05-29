@@ -80,6 +80,8 @@ func (h MyBudgetDB) ViewBudget(category string) ([5]interface{}, error) {
 
 	// Initialize total amount
 	totalAmount := 0
+	spentAmount := 0
+	remainingAmount := 0
 
 	// Query the database based on the provided category
 	var rows *sql.Rows
@@ -105,11 +107,13 @@ func (h MyBudgetDB) ViewBudget(category string) ([5]interface{}, error) {
 			tw.AppendRow([]interface{}{bv.Category, bv.Amount, bv.Spent, bv.Remaining})
 			tw.AppendSeparator()
 			totalAmount += bv.Amount
+			spentAmount += bv.Spent
+			remainingAmount += bv.Remaining
 		}
 	}
 
 	// Add total amount row to the table
-	tw.AppendFooter(table.Row{"Total Amount", totalAmount})
+	tw.AppendFooter(table.Row{"Total Amount", totalAmount, spentAmount, remainingAmount})
 
 	// Render the table
 	tableRender := "Budget Data\n" + tw.Render()
