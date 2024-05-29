@@ -125,14 +125,22 @@ func (h MyBudgetDB) RemoveBudget(category string) error {
 	}
 	defer db.Close()
 
-	data, err := h.ViewBudget(category)
+	budgetData, err := h.ViewBudget(category)
 	if err != nil {
 		return err
 	}
 
-	foundCategory, ok := data[1].(string)
-	if !ok {
-		return errors.New("unable to convert data to string")
+	totalAmountData, err := h.Deps.TotalAmount.ViewTotalAmount()
+	if err != nil {
+		return err
+	}
+
+	foundCategory, ok1 := budgetData[1].(string)
+	budgetSpent, ok2 := budgetData[3].(int)
+	totalAmountSpent, ok3 := totalAmountData[2].(int)
+	totalAmountRemaining, ok4 := totalAmountData[3].(int)
+	if !ok1 || !ok2 || !ok3 || !ok4 {
+		return errors.New("unable to convert data to string or int")
 	}
 
 	query := "DELETE FROM Budget"
@@ -142,6 +150,12 @@ func (h MyBudgetDB) RemoveBudget(category string) error {
 		if len(foundCategory) != 0 {
 			query += " WHERE categories=$1"
 			args = append(args, category)
+			removeSpent := totalAmountSpent - budgetSpent
+			addRemaining := budgetSpent + totalAmountRemaining
+			err := h.Deps.TotalAmount.UpdateSpentAndRemaining(removeSpent, addRemaining)
+			if err != nil {
+				return err
+			}
 		} else {
 			return errors.New("category is not found")
 		}
@@ -162,6 +176,11 @@ func (h MyBudgetDB) RemoveBudget(category string) error {
 		fmt.Printf("'%s' category is successfully removed!\n", category)
 	} else {
 		if len(foundCategory) != 0 {
+			addRemaining := budgetSpent + totalAmountRemaining
+			err := h.Deps.TotalAmount.UpdateSpentAndRemaining(0, addRemaining)
+			if err != nil {
+				return err
+			}
 			fmt.Println("Budget data is successfully deleted!")
 		} else {
 			return errors.New("no data is found")
@@ -267,7 +286,7 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 				}
 			}
 			if !found {
-				log.Fatal("enter the category in the total amount also")
+				return errors.New("enter the category in the total amount also")
 			}
 		} else {
 			return errors.New("no field provided to update")

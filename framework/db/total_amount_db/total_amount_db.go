@@ -202,6 +202,20 @@ func (h MyTotalAmountDB) UpdateTotalAmount(tv *entities.TotalAmountVariables) er
 	return nil
 }
 
+func (h MyTotalAmountDB) UpdateSpentAndRemaining(spentAmount, remainingAmount int) error {
+	db, err := h.Deps.Connect.Connection()
+	if err != nil {
+		return err
+	}
+
+	query := "UPDATE TotalAmount SET spent_amount=$1, remaining_amount=$2"
+	_, err = db.Exec(query, spentAmount, remainingAmount)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h MyTotalAmountDB) UpdateStatus(tv *entities.TotalAmountVariables) error {
 	db, err := h.Deps.Connect.Connection()
 	if err != nil {

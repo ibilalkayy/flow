@@ -22,6 +22,7 @@ type TotalAmountDB interface {
 	ViewTotalAmount() ([5]interface{}, error)
 	RemoveTotalAmount(category string) error
 	UpdateTotalAmount(tv *entities.TotalAmountVariables) error
+	UpdateSpentAndRemaining(spentAmount, remainingAmount int) error
 	UpdateStatus(tv *entities.TotalAmountVariables) error
 	CalculateRemaining(category string) error
 	TotalAmountValues() ([][2]string, [3]interface{}, error)
