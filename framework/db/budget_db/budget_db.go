@@ -364,7 +364,7 @@ func (h MyBudgetDB) GetBudgetData(filepath, filename string) error {
 		return err
 	}
 
-	query := "SELECT categories, amounts FROM Budget"
+	query := "SELECT categories, amounts, spent, remaining FROM Budget"
 	rows, err := db.Query(query)
 	if err != nil {
 		return err
@@ -380,18 +380,20 @@ func (h MyBudgetDB) GetBudgetData(filepath, filename string) error {
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
-	header := []string{"Category", "Amount"}
+	header := []string{"Category", "Amount", "Spent Amount", "Remaining Amount"}
 	if err := writer.Write(header); err != nil {
 		return err
 	}
 	for rows.Next() {
-		if err := rows.Scan(&bv.Category, &bv.Amount); err != nil {
+		if err := rows.Scan(&bv.Category, &bv.Amount, &bv.Spent, &bv.Remaining); err != nil {
 			return err
 		}
 
 		var data []string
 		amountStr := h.Deps.Common.IntToString(bv.Amount)
-		data = append(data, bv.Category, amountStr)
+		spentStr := h.Deps.Common.IntToString(bv.Spent)
+		remainingStr := h.Deps.Common.IntToString(bv.Remaining)
+		data = append(data, bv.Category, amountStr, spentStr, remainingStr)
 		if err := writer.Write(data); err != nil {
 			return err
 		}
