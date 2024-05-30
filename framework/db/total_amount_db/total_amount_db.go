@@ -173,11 +173,26 @@ func (h MyTotalAmountDB) UpdateTotalAmount(tv *entities.TotalAmountVariables) er
 			remainingAmountInDB += updatedRemaining
 		} else if tv.TotalAmount < totalAmountInDB {
 			// Update Spent Amount and Remaining Amount if Total Amount decreases
-			if spentAmountInDB <= tv.TotalAmount {
-				remainingAmountInDB = tv.TotalAmount - spentAmountInDB
+			_, budgetAmount, err := h.Deps.ManageBudget.TakeBudgetAmount()
+			if err != nil {
+				return nil
+			}
+
+			totalBudgetAmount := 0
+			for _, amount := range budgetAmount {
+				totalBudgetAmount += amount
+			}
+
+			// if entered amount is greater than the total budget amount
+			if tv.TotalAmount >= totalBudgetAmount {
+				if spentAmountInDB <= tv.TotalAmount {
+					remainingAmountInDB = tv.TotalAmount - spentAmountInDB
+				} else {
+					spentAmountInDB = 0
+					remainingAmountInDB = 0
+				}
 			} else {
-				spentAmountInDB = 0
-				remainingAmountInDB = 0
+				return errors.New("update the budget amount to make it equal to your new amount")
 			}
 		} else {
 			return errors.New("this amount is already present. enter a different amount")
