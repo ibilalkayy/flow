@@ -154,46 +154,67 @@ func (h MyAlertDB) UpdateAlert(av *entities.AlertVariables) error {
 	var params []interface{}
 	query := "UPDATE Alert SET "
 	paramCount := 1 // Start with $1 for the first parameter
+	updatedFields := false
 
-	if len(av.Category) != 0 {
-		query += "categories=$" + strconv.Itoa(paramCount) + ", "
-		params = append(params, av.Category)
-		paramCount++
+	categoriesList, _, err := h.Deps.ManageBudget.TakeBudgetAmount()
+	if err != nil {
+		return err
+	}
+
+	for i := 0; i < len(categoriesList); i++ {
+		if len(av.NewCategory) != 0 && av.NewCategory != av.Category && av.NewCategory == categoriesList[i] {
+			query += "categories=$" + strconv.Itoa(paramCount) + ", "
+			params = append(params, av.NewCategory)
+			paramCount++
+			updatedFields = true
+			break
+		}
 	}
 	if len(av.Method) != 0 {
 		query += "alert_methods=$" + strconv.Itoa(paramCount) + ", "
 		params = append(params, av.Method)
 		paramCount++
+		updatedFields = true
 	}
 	if len(av.Frequency) != 0 {
 		query += "alert_frequencies=$" + strconv.Itoa(paramCount) + ", "
 		params = append(params, av.Frequency)
 		paramCount++
+		updatedFields = true
 	}
 	if av.Days != 0 {
 		query += "alert_days=$" + strconv.Itoa(paramCount) + ", "
 		params = append(params, av.Days)
 		paramCount++
+		updatedFields = true
 	}
 	if len(av.Weekdays) != 0 {
 		query += "alert_weekdays=$" + strconv.Itoa(paramCount) + ", "
 		params = append(params, av.Weekdays)
 		paramCount++
+		updatedFields = true
 	}
 	if av.Hours != 0 {
 		query += "alert_hours=$" + strconv.Itoa(paramCount) + ", "
 		params = append(params, av.Hours)
 		paramCount++
+		updatedFields = true
 	}
 	if av.Minutes != 0 {
 		query += "alert_minutes=$" + strconv.Itoa(paramCount) + ", "
 		params = append(params, av.Minutes)
 		paramCount++
+		updatedFields = true
 	}
 	if av.Seconds != 0 {
 		query += "alert_seconds=$" + strconv.Itoa(paramCount) + ", "
 		params = append(params, av.Seconds)
 		paramCount++
+		updatedFields = true
+	}
+
+	if !updatedFields {
+		return errors.New("field is not found to update")
 	}
 
 	// Remove the trailing comma and space

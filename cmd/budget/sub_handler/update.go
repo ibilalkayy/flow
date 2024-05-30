@@ -12,7 +12,8 @@ var UpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the alert values for notification",
 	Run: func(cmd *cobra.Command, args []string) {
-		category, _ := cmd.Flags().GetString("category")
+		new_category, _ := cmd.Flags().GetString("new-category")
+		old_category, _ := cmd.Flags().GetString("old-category")
 		method, _ := cmd.Flags().GetString("method")
 		frequency, _ := cmd.Flags().GetString("frequency")
 		day, _ := cmd.Flags().GetString("day")
@@ -28,14 +29,15 @@ var UpdateCmd = &cobra.Command{
 		secondInt := h.Deps.Common.StringToInt(second)
 
 		av := entities.AlertVariables{
-			Category:  category,
-			Method:    method,
-			Frequency: frequency,
-			Days:      dayInt,
-			Weekdays:  weekday,
-			Hours:     hourInt,
-			Minutes:   minuteInt,
-			Seconds:   secondInt,
+			Category:    old_category,
+			NewCategory: new_category,
+			Method:      method,
+			Frequency:   frequency,
+			Days:        dayInt,
+			Weekdays:    weekday,
+			Hours:       hourInt,
+			Minutes:     minuteInt,
+			Seconds:     secondInt,
 		}
 
 		err := h.Deps.AlertDB.UpdateAlert(&av)
@@ -46,7 +48,8 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateCmd.Flags().StringP("category", "c", "", "Write the category name to take its budget amount")
+	UpdateCmd.Flags().StringP("new-category", "n", "", "Write the new category name to update it")
+	UpdateCmd.Flags().StringP("old-category", "l", "", "Write the old category name to take its budget amount")
 	UpdateCmd.Flags().StringP("frequency", "f", "", "Write the frequency of notifications (e.g., hourly, daily, weekly, monthly)")
 	UpdateCmd.Flags().StringP("method", "t", "", "Write the preferred method of notification [email or CLI] message")
 	UpdateCmd.Flags().StringP("day", "d", "", "Write the day to set the notification")

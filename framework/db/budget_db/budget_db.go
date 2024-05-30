@@ -40,7 +40,7 @@ func (h MyBudgetDB) CreateBudget(bv *entities.BudgetVariables) error {
 		return errors.New("unable to convert to int")
 	}
 
-	budgetAmount, err := h.Deps.ManageBudget.TakeBudgetAmount()
+	_, budgetAmount, err := h.Deps.ManageBudget.TakeBudgetAmount()
 	if err != nil {
 		return nil
 	}
@@ -224,7 +224,7 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 		return errors.New("unable to convert to int")
 	}
 
-	budgetAmount, err := h.Deps.ManageBudget.TakeBudgetAmount()
+	_, budgetAmount, err := h.Deps.ManageBudget.TakeBudgetAmount()
 	if err != nil {
 		return nil
 	}

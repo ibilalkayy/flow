@@ -6,33 +6,35 @@ import (
 	"github.com/ibilalkayy/flow/entities"
 )
 
-func (h MyBudgetDB) TakeBudgetAmount() ([]int, error) {
+func (h MyBudgetDB) TakeBudgetAmount() ([]string, []int, error) {
 	bv := new(entities.BudgetVariables)
 	var amounts []int
+	var categories []string
 
 	db, err := h.Deps.Connect.Connection()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer db.Close()
 
-	query := "SELECT amounts FROM Budget"
+	query := "SELECT categories, amounts FROM Budget"
 	rows, err := db.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&bv.Amount)
+		err := rows.Scan(&bv.Category, &bv.Amount)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		amounts = append(amounts, bv.Amount)
+		categories = append(categories, bv.Category)
 	}
 
-	return amounts, nil
+	return categories, amounts, nil
 }
 
 func (h MyBudgetDB) BudgetAmountWithException(bv *entities.BudgetVariables) (int, error) {
