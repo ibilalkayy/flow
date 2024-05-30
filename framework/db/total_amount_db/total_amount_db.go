@@ -188,9 +188,19 @@ func (h MyTotalAmountDB) UpdateTotalAmount(tv *entities.TotalAmountVariables) er
 		if len(tv.NewCategory) != 0 && len(tv.Label) != 0 {
 			query = "UPDATE TotalAmountCategories SET included_categories=$1, labels=$2 WHERE included_categories=$3"
 			params = []interface{}{tv.NewCategory, tv.Label, tv.Included}
+
+			err := h.Deps.ManageBudget.UpdateBudgetCategory(tv.NewCategory, tv.Included)
+			if err != nil {
+				return err
+			}
 		} else if len(tv.NewCategory) != 0 {
 			query = "UPDATE TotalAmountCategories SET included_categories=$1 WHERE included_categories=$2"
 			params = []interface{}{tv.NewCategory, tv.Included}
+
+			err := h.Deps.ManageBudget.UpdateBudgetCategory(tv.NewCategory, tv.Included)
+			if err != nil {
+				return err
+			}
 		} else if len(tv.Label) != 0 {
 			query = "UPDATE TotalAmountCategories SET labels=$1 WHERE included_categories=$2"
 			params = []interface{}{tv.Label, tv.Included}

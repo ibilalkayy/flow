@@ -194,6 +194,20 @@ func (h MyBudgetDB) RemoveBudget(category string) error {
 	return nil
 }
 
+func (h MyBudgetDB) UpdateBudgetCategory(new, old string) error {
+	db, err := h.Deps.Connect.Connection()
+	if err != nil {
+		return err
+	}
+
+	query := "UPDATE Budget SET categories=$1 WHERE categories=$2"
+	_, err = db.Exec(query, new, old)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category string) error {
 	var count int
 	var query string
@@ -290,7 +304,7 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 				}
 			}
 			if !found {
-				return errors.New("enter the category in the total amount also")
+				return errors.New("this category is not present in the total amount. see 'flow total-amount -h' for help")
 			}
 		} else {
 			return errors.New("no field provided to update")

@@ -58,6 +58,7 @@ type ManageBudget interface {
 	BudgetAmountWithException(bv *entities.BudgetVariables) (int, error)
 	ViewBudget(category string) ([5]interface{}, error)
 	UpdateBudget(bv *entities.BudgetVariables, new_category string) error
+	UpdateBudgetCategory(new, old string) error
 	RemoveBudget(category string) error
 	AddBudgetExpenditure(spent int, category string) error
 	GetBudgetData(filepath, filename string) error
