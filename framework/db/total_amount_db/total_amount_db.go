@@ -184,12 +184,19 @@ func (h MyTotalAmountDB) UpdateTotalAmount(tv *entities.TotalAmountVariables) er
 		}
 		query = "UPDATE TotalAmount SET total_amount = $1, spent_amount = $2, remaining_amount = $3"
 		params = []interface{}{tv.TotalAmount, spentAmountInDB, remainingAmountInDB}
-	} else if len(tv.Included) != 0 && len(tv.NewCategory) != 0 {
-		query = "UPDATE TotalAmountCategories SET included_categories=$1 WHERE included_categories=$2"
-		params = []interface{}{tv.NewCategory, tv.Included}
-	} else if len(tv.Label) != 0 && len(tv.Included) != 0 {
-		query = "UPDATE TotalAmountCategories SET labels=$1 WHERE included_categories=$2"
-		params = []interface{}{tv.Label, tv.Included}
+	} else if len(tv.Included) != 0 {
+		if len(tv.NewCategory) != 0 && len(tv.Label) != 0 {
+			query = "UPDATE TotalAmountCategories SET included_categories=$1, labels=$2 WHERE included_categories=$3"
+			params = []interface{}{tv.NewCategory, tv.Label, tv.Included}
+		} else if len(tv.NewCategory) != 0 {
+			query = "UPDATE TotalAmountCategories SET included_categories=$1 WHERE included_categories=$2"
+			params = []interface{}{tv.NewCategory, tv.Included}
+		} else if len(tv.Label) != 0 {
+			query = "UPDATE TotalAmountCategories SET labels=$1 WHERE included_categories=$2"
+			params = []interface{}{tv.Label, tv.Included}
+		} else {
+			return errors.New("provide either new category or label to update the values")
+		}
 	} else {
 		return errors.New("write the present category also to update the values")
 	}
