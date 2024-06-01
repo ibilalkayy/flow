@@ -37,6 +37,38 @@ func (h MyBudgetDB) TakeBudgetAmount() ([]string, []int, error) {
 	return categories, amounts, nil
 }
 
+func (h MyBudgetDB) ListOfExpection(bv *entities.BudgetVariables) ([]int, error) {
+	var spents []int
+
+	db, err := h.Deps.Connect.Connection()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	query := "SELECT spent FROM Budget WHERE NOT (categories=$1)"
+	rows, err := db.Query(query, &bv.Category)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var spent int
+		err := rows.Scan(&spent)
+		if err != nil {
+			return nil, err
+		}
+		spents = append(spents, spent)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return spents, nil
+}
+
 func (h MyBudgetDB) BudgetAmountWithException(bv *entities.BudgetVariables) (int, error) {
 	var amounts int
 
@@ -62,13 +94,46 @@ func (h MyBudgetDB) BudgetAmountWithException(bv *entities.BudgetVariables) (int
 	return amounts, nil
 }
 
-func (MyBudgetDB) CalculateRemaining(cr *entities.BudgetCalculateVariables) ([2]int, error) {
+func (h MyBudgetDB) CalculateRemaining(cr *entities.BudgetCalculateVariables) ([2]int, error) {
 	// If the new budget amount is greater than or less than the amount in the database
 	if cr.BudgetAmount != cr.BudgetAmountInDB {
+		// If spent amount is greater than the new budget, reset both spent and remaining amounts to 0
 		if cr.SpentAmountInDB > cr.BudgetAmount {
-			// If spent amount is greater than the new budget, reset both spent and remaining amounts to 0
 			cr.SpentAmountInDB = 0
 			cr.RemainingAmountInDB = 0
+
+			values, err := h.Deps.TotalAmount.ViewTotalAmount()
+			if err != nil {
+				return [2]int{}, err
+			}
+
+			totalAmount, ok := values[1].(int)
+			if !ok {
+				return [2]int{}, errors.New("unable to convert to int")
+			}
+
+			category := entities.BudgetVariables{Category: cr.Category}
+			spentAmounts, err := h.Deps.ManageBudget.ListOfExpection(&category)
+			if err != nil {
+				return [2]int{}, err
+			}
+
+			totalSpent := 0
+			for _, spentAmount := range spentAmounts {
+				totalSpent += spentAmount
+			}
+
+			if totalSpent != 0 {
+				err = h.Deps.TotalAmount.UpdateSpentAndRemaining(totalSpent, totalAmount-totalSpent)
+				if err != nil {
+					return [2]int{}, err
+				}
+			} else {
+				err = h.Deps.TotalAmount.UpdateSpentAndRemaining(0, 0)
+				if err != nil {
+					return [2]int{}, err
+				}
+			}
 		} else {
 			// Calculate the remaining amount based on the new budget and spent amount
 			cr.RemainingAmountInDB = cr.BudgetAmount - cr.SpentAmountInDB

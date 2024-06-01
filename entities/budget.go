@@ -8,6 +8,7 @@ type BudgetVariables struct {
 }
 
 type BudgetCalculateVariables struct {
+	Category            string
 	BudgetAmount        int
 	BudgetAmountInDB    int
 	SpentAmountInDB     int

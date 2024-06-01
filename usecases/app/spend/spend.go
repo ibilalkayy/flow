@@ -142,7 +142,7 @@ func (h MySpending) UpdateBudgetAndTotalAmount(sv *entities.SpendingVariables) e
 
 func (h MySpending) HandleExceededBudget(sv *entities.SpendingVariables) error {
 	var answer string
-	fmt.Printf("You have spent %d and your remaining balance is %d but your budget is %d\n", sv.BudgetCategorySpentAmount, sv.BudgetCategoryRemainingAmount, sv.BudgetCategoryAmount)
+	fmt.Printf("Your budget is %d, you have spent %d and your remaining balance is: %d\n", sv.BudgetCategoryAmount, sv.BudgetCategorySpentAmount, sv.BudgetCategoryRemainingAmount)
 	fmt.Printf("Do you still want to spend? [yes/no]: ")
 	fmt.Scanln(&answer)
 

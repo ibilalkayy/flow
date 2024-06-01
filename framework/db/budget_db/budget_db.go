@@ -266,6 +266,7 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 	}
 
 	cr := entities.BudgetCalculateVariables{
+		Category:            bv.Category,
 		BudgetAmount:        bv.Amount,
 		BudgetAmountInDB:    budgetAmountInDB,
 		SpentAmountInDB:     spentAmountInDB,
@@ -284,13 +285,19 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 
 	if len(includedCategory) != 0 && fullTotalAmount != 0 && bv.Amount <= fullTotalAmount && totalBudgetAmount <= fullTotalAmount && expectional_budget_amount+bv.Amount <= fullTotalAmount {
 		if len(new_category) != 0 && bv.Amount != 0 {
-			log.Fatal("Update one a time. either amount or category")
+			log.Fatal("Update one at a time. either amount or category")
 		}
 		if bv.Amount != 0 {
+			err = h.Deps.TotalAmount.CalculateRemaining(bv.Category)
+			if err != nil {
+				return err
+			}
+
 			data, err := h.Deps.ManageBudget.CalculateRemaining(&cr)
 			if err != nil {
 				return err
 			}
+
 			query = "UPDATE Budget SET amounts=$1, spent=$2, remaining=$3 WHERE categories=$4"
 			params = []interface{}{bv.Amount, data[0], data[1], bv.Category}
 		} else if len(new_category) != 0 {
