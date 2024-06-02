@@ -100,7 +100,7 @@ func (h MyBudgetDB) CalculateRemaining(cr *entities.BudgetCalculateVariables) ([
 		// If spent amount is greater than the new budget, reset both spent and remaining amounts to 0
 		if cr.SpentAmountInDB > cr.BudgetAmount {
 			cr.SpentAmountInDB = 0
-			cr.RemainingAmountInDB = 0
+			cr.RemainingAmountInDB = cr.BudgetAmount
 
 			values, err := h.Deps.TotalAmount.ViewTotalAmount()
 			if err != nil {

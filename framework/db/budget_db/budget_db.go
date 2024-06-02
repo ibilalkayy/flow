@@ -240,7 +240,7 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 
 	_, budgetAmount, err := h.Deps.ManageBudget.TakeBudgetAmount()
 	if err != nil {
-		return nil
+		return err
 	}
 
 	totalBudgetAmount := 0
