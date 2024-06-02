@@ -37,61 +37,37 @@ func (h MyBudgetDB) TakeBudgetAmount() ([]string, []int, error) {
 	return categories, amounts, nil
 }
 
-func (h MyBudgetDB) ListOfExpection(bv *entities.BudgetVariables) ([]int, error) {
-	var spents []int
+func (h MyBudgetDB) ListOfExpection(bv *entities.BudgetVariables) ([]int, []int, error) {
+	var amounts, spents []int
 
 	db, err := h.Deps.Connect.Connection()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer db.Close()
 
-	query := "SELECT spent FROM Budget WHERE NOT (categories=$1)"
+	query := "SELECT amounts, spent FROM Budget WHERE NOT (categories=$1)"
 	rows, err := db.Query(query, &bv.Category)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var spent int
-		err := rows.Scan(&spent)
+		var amount, spent int
+		err := rows.Scan(&amount, &spent)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
+		amounts = append(amounts, amount)
 		spents = append(spents, spent)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return spents, nil
-}
-
-func (h MyBudgetDB) BudgetAmountWithException(bv *entities.BudgetVariables) (int, error) {
-	var amounts int
-
-	db, err := h.Deps.Connect.Connection()
-	if err != nil {
-		return 0, err
-	}
-	defer db.Close()
-
-	query := "SELECT amounts FROM Budget WHERE NOT (categories=$1)"
-	rows, err := db.Query(query, &bv.Category)
-	if err != nil {
-		return 0, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		err := rows.Scan(&amounts)
-		if err != nil {
-			return 0, err
-		}
-	}
-	return amounts, nil
+	return amounts, spents, nil
 }
 
 func (h MyBudgetDB) CalculateRemaining(cr *entities.BudgetCalculateVariables) ([2]int, error) {
@@ -113,7 +89,7 @@ func (h MyBudgetDB) CalculateRemaining(cr *entities.BudgetCalculateVariables) ([
 			}
 
 			category := entities.BudgetVariables{Category: cr.Category}
-			spentAmounts, err := h.Deps.ManageBudget.ListOfExpection(&category)
+			_, spentAmounts, err := h.Deps.ManageBudget.ListOfExpection(&category)
 			if err != nil {
 				return [2]int{}, err
 			}

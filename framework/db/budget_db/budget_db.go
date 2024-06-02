@@ -248,7 +248,7 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 		totalBudgetAmount += amount
 	}
 
-	expectional_budget_amount, err := h.Deps.ManageBudget.BudgetAmountWithException(bv)
+	exceptionalBudgetAmount, _, err := h.Deps.ManageBudget.ListOfExpection(bv)
 	if err != nil {
 		return err
 	}
@@ -283,10 +283,16 @@ func (h MyBudgetDB) UpdateBudget(bv *entities.BudgetVariables, new_category stri
 		}
 	}
 
-	if len(includedCategory) != 0 && fullTotalAmount != 0 && bv.Amount <= fullTotalAmount && totalBudgetAmount <= fullTotalAmount && expectional_budget_amount+bv.Amount <= fullTotalAmount {
+	sum := 0
+	for _, exception := range exceptionalBudgetAmount {
+		sum += exception
+	}
+
+	if len(includedCategory) != 0 && fullTotalAmount != 0 && bv.Amount <= fullTotalAmount && totalBudgetAmount <= fullTotalAmount && sum+bv.Amount <= fullTotalAmount {
 		if len(new_category) != 0 && bv.Amount != 0 {
 			log.Fatal("Update one at a time. either amount or category")
 		}
+
 		if bv.Amount != 0 {
 			err = h.Deps.TotalAmount.CalculateRemaining(bv.Category)
 			if err != nil {

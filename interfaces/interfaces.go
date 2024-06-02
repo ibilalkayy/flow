@@ -55,8 +55,7 @@ type SpendAmount interface {
 type ManageBudget interface {
 	CreateBudget(bv *entities.BudgetVariables) error
 	TakeBudgetAmount() ([]string, []int, error)
-	BudgetAmountWithException(bv *entities.BudgetVariables) (int, error)
-	ListOfExpection(bv *entities.BudgetVariables) ([]int, error)
+	ListOfExpection(bv *entities.BudgetVariables) ([]int, []int, error)
 	ViewBudget(category string) ([5]interface{}, error)
 	UpdateBudget(bv *entities.BudgetVariables, new_category string) error
 	UpdateBudgetCategory(new, old string) error
