@@ -20,13 +20,11 @@ var UpdateCmd = &cobra.Command{
 		weekday, _ := cmd.Flags().GetString("weekday")
 		hour, _ := cmd.Flags().GetString("hour")
 		minute, _ := cmd.Flags().GetString("minute")
-		second, _ := cmd.Flags().GetString("second")
 
 		h := TakeHandler()
 		dayInt := h.Deps.Common.StringToInt(day)
 		hourInt := h.Deps.Common.StringToInt(hour)
 		minuteInt := h.Deps.Common.StringToInt(minute)
-		secondInt := h.Deps.Common.StringToInt(second)
 
 		av := entities.AlertVariables{
 			Category:    old_category,
@@ -37,7 +35,6 @@ var UpdateCmd = &cobra.Command{
 			Weekdays:    weekday,
 			Hours:       hourInt,
 			Minutes:     minuteInt,
-			Seconds:     secondInt,
 		}
 
 		err := h.Deps.AlertDB.UpdateAlert(&av)
@@ -56,5 +53,4 @@ func init() {
 	UpdateCmd.Flags().StringP("weekday", "w", "", "Write the minute to set the notification")
 	UpdateCmd.Flags().StringP("hour", "o", "", "Write the hour to set the notification")
 	UpdateCmd.Flags().StringP("minute", "m", "", "Write the minute to set the notification")
-	UpdateCmd.Flags().StringP("second", "s", "", "Write the second to set the notification")
 }

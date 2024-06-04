@@ -47,9 +47,9 @@ type SpendAmount interface {
 	StoreHistory(category string, spending_amount int) error
 
 	HourlyNotification(category string)
-	DailyNotification(hour, min, sec int, category string)
-	WeeklyNotification(weekday time.Weekday, hour, min, sec int, category string)
-	MonthlyNotification(day, hour, min, sec int, category string)
+	DailyNotification(hour, min int, category string)
+	WeeklyNotification(weekday time.Weekday, hour, min int, category string)
+	MonthlyNotification(day, hour, min int, category string)
 }
 
 type ManageBudget interface {
@@ -85,7 +85,7 @@ type ManageAlerts interface {
 
 type AlertDB interface {
 	CreateAlert(av *entities.AlertVariables) error
-	ViewAlert(category string) ([9]interface{}, error)
+	ViewAlert(category string) ([8]interface{}, error)
 	RemoveAlert(category string) error
 	UpdateAlert(av *entities.AlertVariables) error
 }

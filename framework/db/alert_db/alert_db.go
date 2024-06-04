@@ -22,7 +22,7 @@ func (h MyAlertDB) CreateAlert(av *entities.AlertVariables) error {
 		return err
 	}
 
-	query := "INSERT INTO Alert(categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds) VALUES($1, $2, $3, $4, $5, $6, $7, $8)"
+	query := "INSERT INTO Alert(categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes) VALUES($1, $2, $3, $4, $5, $6, $7)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
@@ -30,7 +30,7 @@ func (h MyAlertDB) CreateAlert(av *entities.AlertVariables) error {
 	defer insert.Close()
 
 	if len(av.Category) != 0 && len(av.Method) != 0 && len(av.Frequency) != 0 {
-		_, err = insert.Exec(av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds)
+		_, err = insert.Exec(av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes)
 		if err != nil {
 			return err
 		}
@@ -40,45 +40,45 @@ func (h MyAlertDB) CreateAlert(av *entities.AlertVariables) error {
 	return nil
 }
 
-func (h MyAlertDB) ViewAlert(category string) ([9]interface{}, error) {
+func (h MyAlertDB) ViewAlert(category string) ([8]interface{}, error) {
 	av := new(entities.AlertVariables)
 
 	db, err := h.Deps.Connect.Connection()
 	if err != nil {
-		return [9]interface{}{}, err
+		return [8]interface{}{}, err
 	}
 
 	tw := table.NewWriter()
-	tw.AppendHeader(table.Row{"Categories", "Methods", "Frequencies", "Days", "Weekdays", "Hours", "Minutes", "Seconds"})
+	tw.AppendHeader(table.Row{"Categories", "Methods", "Frequencies", "Days", "Weekdays", "Hours", "Minutes"})
 
 	var rows *sql.Rows
 	if len(category) != 0 {
-		query := "SELECT categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds FROM Alert WHERE categories=$1"
+		query := "SELECT categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes FROM Alert WHERE categories=$1"
 		rows, err = db.Query(query, category)
 	} else {
-		query := "SELECT categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes, alert_seconds FROM Alert"
+		query := "SELECT categories, alert_methods, alert_frequencies, alert_days, alert_weekdays, alert_hours, alert_minutes FROM Alert"
 		rows, err = db.Query(query)
 	}
 	if err != nil {
-		return [9]interface{}{}, err
+		return [8]interface{}{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&av.Category, &av.Method, &av.Frequency, &av.Days, &av.Weekdays, &av.Hours, &av.Minutes, &av.Seconds); err != nil {
-			return [9]interface{}{}, err
+		if err := rows.Scan(&av.Category, &av.Method, &av.Frequency, &av.Days, &av.Weekdays, &av.Hours, &av.Minutes); err != nil {
+			return [8]interface{}{}, err
 		}
 
-		tw.AppendRow([]interface{}{av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds})
+		tw.AppendRow([]interface{}{av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes})
 		tw.AppendSeparator()
 	}
 	if err := rows.Err(); err != nil {
-		return [9]interface{}{}, err
+		return [8]interface{}{}, err
 	}
 
 	tableRender := "Alert Info\n" + tw.Render()
 
-	values := [9]interface{}{tableRender, av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes, av.Seconds}
+	values := [8]interface{}{tableRender, av.Category, av.Method, av.Frequency, av.Days, av.Weekdays, av.Hours, av.Minutes}
 	return values, nil
 }
 
@@ -203,12 +203,6 @@ func (h MyAlertDB) UpdateAlert(av *entities.AlertVariables) error {
 	if av.Minutes != 0 {
 		query += "alert_minutes=$" + strconv.Itoa(paramCount) + ", "
 		params = append(params, av.Minutes)
-		paramCount++
-		updatedFields = true
-	}
-	if av.Seconds != 0 {
-		query += "alert_seconds=$" + strconv.Itoa(paramCount) + ", "
-		params = append(params, av.Seconds)
 		paramCount++
 		updatedFields = true
 	}

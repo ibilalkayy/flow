@@ -9,5 +9,4 @@ type AlertVariables struct {
 	Weekdays    string
 	Hours       int
 	Minutes     int
-	Seconds     int
 }

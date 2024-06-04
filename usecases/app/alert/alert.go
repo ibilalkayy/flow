@@ -60,9 +60,8 @@ func (h MyAlert) SendAlert(category string) error {
 	weekdayStr, ok4 := value[5].(string)
 	hour, ok5 := value[6].(int)
 	minute, ok6 := value[7].(int)
-	second, ok7 := value[8].(int)
 
-	if !ok1 || !ok2 || !ok3 || !ok4 || !ok5 || !ok6 || !ok7 {
+	if !ok1 || !ok2 || !ok3 || !ok4 || !ok5 || !ok6 {
 		return errors.New("unable to convert string to int and string")
 	}
 
@@ -93,11 +92,11 @@ func (h MyAlert) SendAlert(category string) error {
 		case "hourly":
 			h.Deps.SpendAmount.HourlyNotification(category)
 		case "daily":
-			h.Deps.SpendAmount.DailyNotification(hour, minute, second, category)
+			h.Deps.SpendAmount.DailyNotification(hour, minute, category)
 		case "weekly":
-			h.Deps.SpendAmount.WeeklyNotification(weekday, hour, minute, second, category)
+			h.Deps.SpendAmount.WeeklyNotification(weekday, hour, minute, category)
 		case "monthly":
-			h.Deps.SpendAmount.MonthlyNotification(day, hour, minute, second, category)
+			h.Deps.SpendAmount.MonthlyNotification(day, hour, minute, category)
 		default:
 			return errors.New("wrong or no frequency is selected")
 		}
