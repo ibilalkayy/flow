@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -86,12 +87,23 @@ func (h MyAlert) SendAlert(category string) error {
 		return errors.New("wrong weekday is selected")
 	}
 
+	values := entities.AlertVariables{
+		Category: category,
+		Hours:    hour,
+		Minutes:  minute,
+		Weekdays: weekdayStr,
+	}
+
 	switch method {
 	case "email":
 		switch frequency {
 		case "hourly":
 			h.Deps.SpendAmount.HourlyNotification(category)
 		case "daily":
+			err := h.Deps.ManageAlerts.WriteNotificationValues(&values)
+			if err != nil {
+				return err
+			}
 			h.Deps.SpendAmount.DailyNotification(hour, minute, category)
 		case "weekly":
 			h.Deps.SpendAmount.WeeklyNotification(weekday, hour, minute, category)
@@ -103,6 +115,53 @@ func (h MyAlert) SendAlert(category string) error {
 	case "cli":
 		return errors.New("you can't spend above your budget limit")
 	}
+	return nil
+}
+
+func (h MyAlert) WriteNotificationValues(av *entities.AlertVariables) error {
+	hours := av.Hours
+	minutes := av.Minutes
+
+	desiredWeekday := av.Weekdays
+	desiredTime := fmt.Sprintf("%d:%d", hours, minutes)
+
+	scriptFile := "/mnt/d/go/src/github.com/ibilalkayy/flow/script.sh"
+
+	input, err := os.ReadFile(scriptFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	value, err := h.Deps.AlertDB.ViewAlert(av.Category)
+	if err != nil {
+		return err
+	}
+
+	category, ok := value[1].(string)
+	if !ok {
+		return errors.New("unable to convert to string")
+	}
+
+	if len(av.Category) != 0 && av.Category == category {
+		lines := strings.Split(string(input), "\n")
+		for i, line := range lines {
+			if strings.Contains(line, "DESIRED_TIME=") {
+				lines[i] = fmt.Sprintf(`DESIRED_TIME="%s"`, desiredTime)
+			}
+			if strings.Contains(line, "DESIRED_WEEKDAY") {
+				lines[i] = fmt.Sprintf(`DESIRED_WEEKDAY="%s"`, desiredWeekday)
+			}
+		}
+
+		output := strings.Join(lines, "\n")
+		err = os.WriteFile(scriptFile, []byte(output), 0644)
+		if err != nil {
+			return err
+		}
+	} else {
+		return errors.New("category is not present in the alert")
+	}
+
 	return nil
 }
 
