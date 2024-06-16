@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Desired time in HH:MM format
-DESIRED_TIME="10:52"
+DESIRED_TIME="19:31"
 
-DESIRED_WEEKDAY="friday"
+DESIRED_WEEKDAY="sunday"
 
 # Log file location
-LOG_FILE="/mnt/d/go/src/github.com/ibilalkayy/flow/logfile.log"
+LOG_FILE="${SCRIPT_PATH}logfile.log"
 
 # Function to install and configure NTP
 install_and_sync_ntp() {
@@ -52,7 +52,7 @@ CURRENT_TIME=$(date +"%H:%M")
 CURRENT_WEEKDAY=$(date +"%A")
 
 # Check if the current time matches the desired time
-DESIRED_WEEKDAY="friday"
+DESIRED_WEEKDAY="sunday"
     # Run your command and log the output
     echo "$(date): It's time! Running the desired command." >> "$LOG_FILE"
 fi

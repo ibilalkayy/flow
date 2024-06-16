@@ -85,7 +85,19 @@ Create a `.env` file to put all your PostgresSQL credentials.
 
 There are two ways through which you can run this clonned application.
 
-1. Build and install the flow binary through Golang:
+1. Write the SCRIPT_PATH in the `~/.bashrc` file, build and install the flow binary through Golang:
+
+    ```bash
+    nano ~/.bashrc
+    ```
+    
+    ```bash
+    export SCRIPT_PATH="/file/path/in/which/script.sh/is/present"
+    ```
+
+    ```bash
+    source ~/.bashrc
+    ```
 
     ```bash
     go build

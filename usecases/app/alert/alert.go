@@ -102,7 +102,7 @@ func (h MyAlert) SendAlert(category string) error {
 		case "daily":
 			err := h.Deps.ManageAlerts.WriteNotificationValues(&values)
 			if err != nil {
-				return err
+				log.Fatal(err)
 			}
 			h.Deps.SpendAmount.DailyNotification(hour, minute, category)
 		case "weekly":
@@ -125,7 +125,12 @@ func (h MyAlert) WriteNotificationValues(av *entities.AlertVariables) error {
 	desiredWeekday := av.Weekdays
 	desiredTime := fmt.Sprintf("%d:%d", hours, minutes)
 
-	scriptFile := "/mnt/d/go/src/github.com/ibilalkayy/flow/script.sh"
+	// Retrieve the SCRIPT_PATH environment variable
+	scriptPath := os.Getenv("SCRIPT_PATH")
+	if scriptPath == "" {
+		return errors.New("SCRIPT_PATH environment variable is not set")
+	}
+	scriptFile := fmt.Sprintf("%s/script.sh", scriptPath)
 
 	input, err := os.ReadFile(scriptFile)
 	if err != nil {
@@ -148,7 +153,7 @@ func (h MyAlert) WriteNotificationValues(av *entities.AlertVariables) error {
 			if strings.Contains(line, "DESIRED_TIME=") {
 				lines[i] = fmt.Sprintf(`DESIRED_TIME="%s"`, desiredTime)
 			}
-			if strings.Contains(line, "DESIRED_WEEKDAY") {
+			if strings.Contains(line, "DESIRED_WEEKDAY=") {
 				lines[i] = fmt.Sprintf(`DESIRED_WEEKDAY="%s"`, desiredWeekday)
 			}
 		}
