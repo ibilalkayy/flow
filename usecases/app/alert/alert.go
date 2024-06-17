@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/ibilalkayy/flow/entities"
 	"github.com/ibilalkayy/flow/handler"
@@ -91,6 +92,7 @@ func (h MyAlert) SendAlert(category string) error {
 		Category: category,
 		Hours:    hour,
 		Minutes:  minute,
+		Days:     day,
 		Weekdays: weekdayStr,
 	}
 
@@ -122,10 +124,15 @@ func (h MyAlert) WriteNotificationValues(av *entities.AlertVariables) error {
 	hours := av.Hours
 	minutes := av.Minutes
 
+	desiredDay := av.Days
 	desiredWeekday := av.Weekdays
-	desiredTime := fmt.Sprintf("%d:%d", hours, minutes)
+	desiredTime := fmt.Sprintf("%02d:%02d", hours, minutes)
 
-	// Retrieve the SCRIPT_PATH environment variable
+	// Convert to upper letter
+	if len(desiredWeekday) > 0 {
+		desiredWeekday = string(unicode.ToUpper(rune(desiredWeekday[0]))) + strings.ToLower(desiredWeekday[1:])
+	}
+
 	scriptPath := os.Getenv("SCRIPT_PATH")
 	if scriptPath == "" {
 		return errors.New("SCRIPT_PATH environment variable is not set")
@@ -152,6 +159,9 @@ func (h MyAlert) WriteNotificationValues(av *entities.AlertVariables) error {
 		for i, line := range lines {
 			if strings.Contains(line, "DESIRED_TIME=") {
 				lines[i] = fmt.Sprintf(`DESIRED_TIME="%s"`, desiredTime)
+			}
+			if strings.Contains(line, "DESIRED_DAY=") {
+				lines[i] = fmt.Sprintf(`DESIRED_DAY="%d"`, desiredDay)
 			}
 			if strings.Contains(line, "DESIRED_WEEKDAY=") {
 				lines[i] = fmt.Sprintf(`DESIRED_WEEKDAY="%s"`, desiredWeekday)
