@@ -81,7 +81,6 @@ type ManageAlerts interface {
 	AlertSetup(av *entities.AlertVariables) error
 	SendAlert(category string) error
 	SendNotification(category string) error
-	WriteNotificationValues(av *entities.AlertVariables) error
 }
 
 type AlertDB interface {
