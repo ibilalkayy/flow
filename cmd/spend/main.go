@@ -8,6 +8,7 @@ import (
 	"github.com/ibilalkayy/flow/cmd"
 	spend_handler "github.com/ibilalkayy/flow/cmd/spend/handler"
 	conversion "github.com/ibilalkayy/flow/common"
+	"github.com/ibilalkayy/flow/framework/blockchain"
 	"github.com/ibilalkayy/flow/framework/db"
 	"github.com/ibilalkayy/flow/framework/db/budget_db"
 	"github.com/ibilalkayy/flow/framework/db/total_amount_db"
@@ -56,6 +57,12 @@ var SpendCmd = &cobra.Command{
 	Use:   "spend",
 	Short: "Spending money on various categories",
 	Run: func(cmd *cobra.Command, args []string) {
+		client, err := blockchain.NewClient()
+		if err != nil {
+			log.Fatalf("Failed to create blockchain client: %v", err)
+		}
+		fmt.Println(client)
+
 		categoryName, _ := cmd.Flags().GetString("category")
 		spendingAmount, _ := cmd.Flags().GetString("amount")
 
