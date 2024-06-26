@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/flow/entities"
+	"github.com/ibilalkayy/flow/framework/blockchain"
 	"github.com/ibilalkayy/flow/handler"
 )
 
@@ -12,7 +13,7 @@ type MySpending struct {
 	*handler.Handler
 }
 
-func (h MySpending) SpendMoney(category string, spending_amount int) error {
+func (h MySpending) SpendMoney(category, recipient_address string, spending_amount int) error {
 	values, err := h.Deps.ManageBudget.ViewBudget(category)
 	if err != nil {
 		return err
@@ -48,6 +49,7 @@ func (h MySpending) SpendMoney(category string, spending_amount int) error {
 		IncludedCatogeries:            included_categories_in_total_amount,
 		TotalAmount:                   total_amount,
 		SpendingAmount:                spending_amount,
+		RecipientAddress:              recipient_address,
 		TotalAmountSpent:              total_amount_spent,
 		BudgetCategoryAmount:          budget_category_amount,
 		BudgetCategorySpentAmount:     budget_category_spent_amount,
@@ -58,6 +60,8 @@ func (h MySpending) SpendMoney(category string, spending_amount int) error {
 	if err != nil {
 		return err
 	}
+
+	blockchain.SpendFunds(float64(sv.SpendingAmount), sv.RecipientAddress)
 
 	return nil
 }
@@ -131,7 +135,7 @@ func (h MySpending) UpdateBudgetAndTotalAmount(sv *entities.SpendingVariables) e
 		return err
 	}
 
-	err = h.Deps.SpendAmount.StoreHistory(sv.Category, sv.SpendingAmount)
+	err = h.Deps.SpendAmount.StoreHistory(sv.Category, sv.RecipientAddress, sv.SpendingAmount)
 	if err != nil {
 		return err
 	}

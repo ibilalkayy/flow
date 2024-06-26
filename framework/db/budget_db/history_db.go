@@ -15,7 +15,7 @@ func (h MyBudgetDB) InsertHistory(hv *entities.HistoryVariables) error {
 		return err
 	}
 
-	query := "INSERT INTO History(dates, timez, categories, amounts, transaction_ids, blockchains, addresses) VALUES($1, $2, $3, $4, $5, $6, $7)"
+	query := "INSERT INTO History(dates, timez, categories, amounts, blockchains, addresses) VALUES($1, $2, $3, $4, $5, $6)"
 	insert, err := data.Prepare(query)
 	if err != nil {
 		return err
@@ -34,7 +34,7 @@ func (h MyBudgetDB) InsertHistory(hv *entities.HistoryVariables) error {
 
 	if len(hv.Category) != 0 && len(includedCategory) != 0 {
 		if hv.Amount != 0 && totalAmount != 0 {
-			_, err = insert.Exec(hv.Date, hv.Time, hv.Category, hv.Amount, hv.TransactionID, hv.Blockchain, hv.Address)
+			_, err = insert.Exec(hv.Date, hv.Time, hv.Category, hv.Amount, hv.Blockchain, hv.RecipientAddress)
 			if err != nil {
 				return err
 			}
@@ -58,14 +58,14 @@ func (h MyBudgetDB) ViewHistory(category string) ([2]interface{}, error) {
 	defer db.Close()
 
 	tw := table.NewWriter()
-	tw.AppendHeader(table.Row{"Date", "Time", "Category", "Amounts", "Transaction IDs", "Blockchains", "Addresses"})
+	tw.AppendHeader(table.Row{"Date", "Time", "Category", "Amounts", "Blockchains", "Addresses"})
 
 	var rows *sql.Rows
 	if len(category) != 0 {
-		query := "SELECT dates, timez, categories, amounts, transaction_ids, blockchains, addresses from History WHERE categories=$1"
+		query := "SELECT dates, timez, categories, amounts, blockchains, addresses from History WHERE categories=$1"
 		rows, err = db.Query(query, category)
 	} else {
-		query := "SELECT dates, timez, categories, amounts, transaction_ids, blockchains, addresses from History"
+		query := "SELECT dates, timez, categories, amounts, blockchains, addresses from History"
 		rows, err = db.Query(query)
 	}
 	if err != nil {
@@ -75,12 +75,12 @@ func (h MyBudgetDB) ViewHistory(category string) ([2]interface{}, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&hv.Date, &hv.Time, &hv.Category, &hv.Amount, &hv.TransactionID, &hv.Blockchain, &hv.Address); err != nil {
+		if err := rows.Scan(&hv.Date, &hv.Time, &hv.Category, &hv.Amount, &hv.Blockchain, &hv.RecipientAddress); err != nil {
 			return [2]interface{}{}, err
 		}
 
 		if len(hv.Category) != 0 && hv.Amount != 0 {
-			tw.AppendRow([]interface{}{hv.Date, hv.Time, hv.Category, hv.Amount, hv.TransactionID, hv.Blockchain, hv.Address})
+			tw.AppendRow([]interface{}{hv.Date, hv.Time, hv.Category, hv.Amount, hv.Blockchain, hv.RecipientAddress})
 		}
 	}
 

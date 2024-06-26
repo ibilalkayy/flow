@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS History (
     timez VARCHAR(255) NOT NULL,
     categories VARCHAR(255) NOT NULL,
     amounts INT NOT NULL,
-    transaction_ids VARCHAR(255) NOT NULL,
     blockchains VARCHAR(255) NOT NULL,
     addresses VARCHAR(255) NOT NULL
 );

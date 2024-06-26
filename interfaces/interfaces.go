@@ -43,8 +43,8 @@ type SpendAmount interface {
 	UpdateBudgetAndTotalAmount(sv *entities.SpendingVariables) error
 	HandleExceededBudget(sv *entities.SpendingVariables) error
 	ValidBudgetValues(sv *entities.SpendingVariables) error
-	SpendMoney(category string, spending_amount int) error
-	StoreHistory(category string, spending_amount int) error
+	SpendMoney(category, recipient_address string, spending_amount int) error
+	StoreHistory(category, recipientAddress string, spending_amount int) error
 
 	HourlyNotification(category string)
 	DailyNotification(hour, min int, category string)
