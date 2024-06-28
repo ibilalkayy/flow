@@ -14,3 +14,8 @@ type DatabaseVariables struct {
 	DBName   string
 	SSLMode  string
 }
+
+type BlockchainVariables struct {
+	PrivateKey    string
+	AlchemyApiURL string
+}

@@ -25,8 +25,15 @@ To know about the application in detail, you can visit the [docs](https://github
 To get started in flow, you need to have two applications installed on your machine.
 
 1. [Golang](https://go.dev/dl/)
-2. [Docker](https://www.docker.com/get-started/)
-3. [PostgreSQL](https://www.postgresql.org/)
+2. [Cobra Framework](cobra.dev/)
+3. [Docker](https://www.docker.com/get-started/)
+4. [PostgreSQL](https://www.postgresql.org/)
+5. [Alchemy API URL](https://docs.alchemy.com/docs/alchemy-quickstart-guide)
+6. Wallet Private key
+
+### How to get Alchemy API URL?
+
+Signup to Alchemy, go to it's dashboad and the app section. Create a new app. If the new app is not allowed to create, then select the existing app, go to the network tab of the app and take the Ethereum Seplia API URL.
 
 ## Installation
 
@@ -56,7 +63,7 @@ Each subcommand has its own set of options and arguments. Here are some examples
 
 ```bash
 # Initialize the application
-flow init -n username -g gmail-id -a app-password -o postgresql-host -p postgresql-port -u postgresql-user -w postgresql-password -d postgresql-dbname -s sslmode
+flow init -n username -g gmail-id -a app-password -o postgresql-host -p 5432 -u postgresql-user -w postgresql-password -d postgresql-dbname -s sslmode -k privatekey -i alchemy-url
 
 # Create a budget
 flow budget create --category groceries/utilities --amount 300

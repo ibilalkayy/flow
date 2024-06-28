@@ -8,7 +8,7 @@ import (
 )
 
 type Init interface {
-	WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVariables) error
+	WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVariables, bv *entities.BlockchainVariables) error
 }
 
 type Connect interface {

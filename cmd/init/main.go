@@ -40,6 +40,9 @@ func initApp(cmd *cobra.Command, args []string) {
 	postgresDBName, _ := cmd.Flags().GetString("db-name")
 	sslMode, _ := cmd.Flags().GetString("sslmode")
 
+	privateKey, _ := cmd.Flags().GetString("private-key")
+	alchemyApiURL, _ := cmd.Flags().GetString("alchemy-api-url")
+
 	authParams := &entities.AuthVariables{
 		Username:    username,
 		Gmail:       gmail,
@@ -55,12 +58,18 @@ func initApp(cmd *cobra.Command, args []string) {
 		SSLMode:  sslMode,
 	}
 
+	blockchainParams := &entities.BlockchainVariables{
+		PrivateKey:    privateKey,
+		AlchemyApiURL: alchemyApiURL,
+	}
+
 	if allNonEmpty(
 		authParams.Username, authParams.Gmail, authParams.AppPassword,
 		dbParams.Host, dbParams.Port, dbParams.User, dbParams.Password,
-		dbParams.DBName, dbParams.SSLMode,
+		dbParams.DBName, dbParams.SSLMode, blockchainParams.PrivateKey,
+		blockchainParams.AlchemyApiURL,
 	) {
-		err := InitializeApplication(authParams, dbParams)
+		err := InitializeApplication(authParams, dbParams, blockchainParams)
 		if err != nil {
 			fmt.Println("Error during initialization:", err)
 			return
@@ -84,9 +93,9 @@ func takeHandler() *handler.Handler {
 	return handle
 }
 
-func InitializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables) error {
+func InitializeApplication(authParams *entities.AuthVariables, dbParams *entities.DatabaseVariables, blockchainParams *entities.BlockchainVariables) error {
 	h := takeHandler()
-	err := h.Deps.Init.WriteEnvFile(authParams, dbParams)
+	err := h.Deps.Init.WriteEnvFile(authParams, dbParams, blockchainParams)
 	if err != nil {
 		return fmt.Errorf("error writing to .env file: %v", err)
 	}
@@ -110,4 +119,6 @@ func init() {
 	InitCmd.Flags().StringP("db-user", "u", "", "Write the PostgreSQL user")
 	InitCmd.Flags().StringP("db-name", "d", "", "Write the PostgreSQL DB name")
 	InitCmd.Flags().StringP("sslmode", "s", "", "Write the PostgreSQL SSLMode")
+	InitCmd.Flags().StringP("private-key", "k", "", "Write your wallet private key to store in .env file")
+	InitCmd.Flags().StringP("alchemy-api-url", "i", "", "Write your alchemy api url for sepolia test network")
 }

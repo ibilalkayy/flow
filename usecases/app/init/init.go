@@ -12,7 +12,7 @@ type MyInit struct {
 	*handler.Handler
 }
 
-func (MyInit) WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVariables) error {
+func (MyInit) WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVariables, bv *entities.BlockchainVariables) error {
 	f, err := os.Create(".env")
 	if err != nil {
 		return err
@@ -33,6 +33,9 @@ func (MyInit) WriteEnvFile(av *entities.AuthVariables, dv *entities.DatabaseVari
 		{"DB_PASSWORD", dv.Password},
 		{"DB_NAME", dv.DBName},
 		{"SSL_MODE", dv.SSLMode},
+
+		{"PRIVATE_KEY", bv.PrivateKey},
+		{"ALCHEMY_API_URL", bv.AlchemyApiURL},
 	}
 
 	for _, field := range fields {
